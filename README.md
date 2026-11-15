@@ -133,3 +133,8 @@ Regole di telemedicina veterinaria e testi legali, IVA/fatturazione, disponibili
 
 ## Registrazione veterinario
 `/{lingua}/{paese}/pro/inscription` (componente `src/components/ProSignup.tsx`): crea account (e-mail o Google), poi scrive practice, practitioner, servizi e orari direttamente da Supabase con le regole RLS. Il profilo nasce non pubblicato: per metterlo online imposta `practices.published = true` dalla tabella su Supabase. Per Google serve abilitare il provider in Supabase (vedi `src/lib/auth-client.ts`).
+
+## Dashboard veterinario e conferma automatica
+- `/{lingua}/{paese}/pro/dashboard`: appuntamenti (accetta/rifiuta), profilo, consultazioni e prezzi, orari, pagamenti e link iCal.
+- Migrazione `0007`: aggiunge `practices.auto_confirm` (default vero) e un trigger che impedisce a un veterinario di pubblicarsi da solo o di modificare commissione e stato dei pagamenti. **Esegui la migrazione `0007` su Supabase.**
+- Per pubblicare un profilo: Supabase → Table editor → `practices` → `published = true`.

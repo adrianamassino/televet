@@ -1,5 +1,6 @@
 import { adminClient } from "@/lib/supabase";
 import { getPayment } from "@/lib/payments/mercadopago";
+import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
 
 /**
  * Mercado Pago notifications. We never trust the payload: the payment is re-read
@@ -18,5 +19,6 @@ export async function POST(req: Request) {
   const map: Record<string, string> = { approved: "captured", refunded: "refunded", rejected: "failed", cancelled: "failed", in_process: "pending", pending: "pending" };
   await db.from("bookings").update({ payment_ref: String(p.id), payment_status: map[p.status] ?? "pending" })
     .eq("id", p.external_reference).eq("practice_id", practice.id);
+  if (map[p.status] === "captured") await autoConfirmIfEnabled(p.external_reference);
   return new Response("ok");
 }

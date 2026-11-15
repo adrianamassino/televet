@@ -14,12 +14,17 @@ Nuova piattaforma Televet (Next.js 15 + Supabase) che sostituirà il sito Wix te
 - **Prezzi:** il sito non annuncia prezzi; ogni veterinario fissa i propri e li mostra solo sulla propria scheda.
 
 ## Fatto
-Blog (strumenti di importazione da Wix + redirect 301), FAQ, pagine paese/servizio, scheda pubblica del veterinario, landing `/pro`, chat AI con archivio nell'area admin (`/admin/chats`), SEO (hreflang, JSON-LD, sitemap), migrazioni Supabase `0001`–`0006`, 29 test (`TZ=UTC npm test`), build che passa.
+Blog (strumenti di importazione da Wix + redirect 301), FAQ, pagine paese/servizio, scheda pubblica del veterinario, landing `/pro`, chat AI con archivio nell'area admin (`/admin/chats`), SEO (hreflang, JSON-LD, sitemap), migrazioni Supabase `0001`–`0007`, 29 test (`TZ=UTC npm test`), build che passa.
+
+## Regole di business decise
+- Le prenotazioni si confermano automaticamente (`practices.auto_confirm`, default vero) quando il pagamento è autorizzato/incassato o non è online; il veterinario può disattivarlo nel profilo e confermare/rifiutare a mano. Con Stripe l'addebito parte alla conferma.
+- Il veterinario non può pubblicare da solo il profilo né cambiare commissioni o stato pagamenti: lo impedisce un trigger nel database (migrazione `0007`). Per pubblicare: `practices.published = true` su Supabase.
 
 ## Da fare (in ordine)
 1. ~~Registrazione del veterinario~~ FATTA (prima versione): `/{lingua}/{paese}/pro/inscription` (account, attività, servizi e prezzi, orari, collegamento pagamenti). Il profilo nasce NON pubblicato (`practices.published = false`): va attivato a mano su Supabase finché non c'è un pannello di approvazione. Testi in fr/it/en/es/pl (le altre lingue mostrano l'inglese). Da fare ancora: dashboard del veterinario per modificare profilo, ferie e agenda; collegamento Google Calendar; non provata con un Supabase reale.
 2. ~~Pagina di prenotazione~~ FATTA (prima versione): `/{lingua}/{paese}/reserver/{slug}`, testi fr/it/en/es/pl. Non provata con Supabase e Stripe reali; manca ancora la pagina per il veterinario che conferma/rifiuta (le API ci sono già) e il ritorno dopo il pagamento Mercado Pago.
-3. Home, risultati di ricerca, account del proprietario.
+3. ~~Dashboard veterinario~~ FATTA (prima versione): `/{lingua}/{paese}/pro/dashboard` (appuntamenti con accetta/rifiuta, profilo, consultazioni e prezzi, orari, pagamenti, link calendario iCal). Manca il collegamento Google Calendar dal pannello e le ferie/blocchi.
+3b. Home, risultati di ricerca, account del proprietario (storico appuntamenti, animali).
 4. Connettori: Google Calendar, Vetup, VetIt, Petbooqz.
 5. Script di importazione dal vecchio database AWS (servono export dello schema e accessi).
 6. Verifiche: provare l'importazione del blog su Wix reale (`npm run import:blog -- --limit 3`), far rileggere le traduzioni pt/de/pl/nl, privacy policy e base giuridica della registrazione delle chat, riempire `toConfirm` in `facts.json` solo se le informazioni sono vere.

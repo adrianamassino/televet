@@ -1,6 +1,7 @@
 import type Stripe from "stripe";
 import { adminClient } from "@/lib/supabase";
 import { statusFromAccount, stripe } from "@/lib/payments/stripe";
+import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature") ?? "";
@@ -14,8 +15,11 @@ export async function POST(req: Request) {
       await db.from("practices").update({ stripe_status: statusFromAccount(a) }).eq("stripe_account_id", a.id);
       break;
     }
-    case "payment_intent.amount_capturable_updated":
-      await db.from("bookings").update({ payment_status: "authorized" }).eq("payment_ref", event.data.object.id); break;
+    case "payment_intent.amount_capturable_updated": {
+      const { data: rows } = await db.from("bookings").update({ payment_status: "authorized" }).eq("payment_ref", event.data.object.id).select("id");
+      for (const r of rows ?? []) await autoConfirmIfEnabled(r.id);   // no-op when the vet confirms by hand
+      break;
+    }
     case "payment_intent.succeeded":
       await db.from("bookings").update({ payment_status: "captured" }).eq("payment_ref", event.data.object.id); break;
     case "payment_intent.payment_failed":

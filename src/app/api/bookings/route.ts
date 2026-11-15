@@ -8,6 +8,7 @@ import { commissionCents } from "@/lib/commission";
 import { createBookingPayment } from "@/lib/payments/stripe";
 import { createPreference } from "@/lib/payments/mercadopago";
 import { providerFor, toProviderAmount } from "@/lib/payments";
+import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
 
 const Body = z.object({
   serviceId: z.string().uuid(),
@@ -69,7 +70,7 @@ export const POST = handle(async (req) => {
   }).select("id").single();
   if (error) throw new HttpError(error.code === "23P01" ? 409 : 500, error.code === "23P01" ? "slot_unavailable" : error.message);
 
-  if (!svc.online_payment) return json({ bookingId: booking.id, payment: null });
+  if (!svc.online_payment) { await autoConfirmIfEnabled(booking.id); return json({ bookingId: booking.id, payment: null }); }
 
   // 4) payment
   if (provider === "stripe") {
