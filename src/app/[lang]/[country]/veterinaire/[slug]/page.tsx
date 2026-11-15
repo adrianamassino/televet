@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
-import { COUNTRIES } from "@/lib/countries";
+import { COUNTRIES, ZERO_DECIMAL } from "@/lib/countries";
 import { breadcrumbLd, ldJson, pageMetadata, SITE, veterinaryCareLd } from "@/lib/seo";
 
 /** Public profile of a vet / clinic: /{lang}/{country}/veterinaire/{slug}. Only published practices; the price shown is the one the vet set. */
@@ -43,7 +43,7 @@ export default async function VetProfile({ params }: P) {
   if (!d) notFound();
   const { p } = d, t = TXT[lang] ?? TXT.en;
   const services = (p.services ?? []).filter((s) => s.active);
-  const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(lang, { style: "currency", currency: cur }).format(c / 100); } catch { return `${c / 100} ${cur}`; } };
+  const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(lang, { style: "currency", currency: cur }).format(ZERO_DECIMAL.has(cur) ? c : c / 100); } catch { return `${c} ${cur}`; } };
   const names = (l: string[]) => l.map((x) => { try { return new Intl.DisplayNames([lang], { type: "language" }).of(x) ?? x; } catch { return x; } }).join(", ");
   const base = `${SITE}/${lang}/${country}`;
   // Booking UI is not part of this module yet: the button only appears when BOOKING_URL is set (e.g. https://televet.co/{lang}/{country}/reserver/{slug}).

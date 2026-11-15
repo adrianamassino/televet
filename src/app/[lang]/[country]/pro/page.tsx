@@ -8,8 +8,8 @@ type P = { params: Promise<{ lang: string; country: string }> };
 const ok = (lang: string, cc: string) => !!COUNTRIES[cc] && COUNTRIES[cc].languages.includes(lang);
 const copy = (lang: string) => PRO[lang] ?? PRO.en;   // languages without a translation show English and are not indexed
 
-/** Where the "Create my profile" button leads. Set PRO_SIGNUP_URL once the new sign-up flow (or the current app) is live. */
-const signupUrl = (lang: string, cc: string) => process.env.PRO_SIGNUP_URL?.replace("{lang}", lang).replace("{country}", cc.toLowerCase()) || "mailto:contact@televet.co?subject=Televet%20Pro";
+/** Where the "Create my profile" button leads: the built-in sign-up page, unless PRO_SIGNUP_URL overrides it. */
+const signupUrl = (lang: string, cc: string) => process.env.PRO_SIGNUP_URL?.replace("{lang}", lang).replace("{country}", cc.toLowerCase()) || `/${lang}/${cc.toLowerCase()}/pro/inscription`;
 
 export async function generateMetadata({ params }: P): Promise<Metadata> {
   const { lang, country } = await params;

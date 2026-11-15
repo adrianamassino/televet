@@ -130,3 +130,6 @@ Regole di telemedicina veterinaria e testi legali, IVA/fatturazione, disponibili
 - Il sito è Next.js standard: su Netlify basta importare il repository (rileva Next.js da solo) e inserire le variabili di `.env.example`. Prima del lancio commerciale controlla le condizioni del piano gratuito.
 - `vercel.json` serve solo su Vercel e su Netlify viene ignorato. I cron girano da `.github/workflows/cron.yml`: aggiungi in GitHub il secret `CRON_SECRET` (lo stesso del sito) e la variabile `APP_URL`. Ogni 15 minuti promemoria e sincronizzazione calendari; alle 3 la pulizia delle chat.
 - I redirect dei vecchi link Wix sono in `next.config.mjs` e funzionano su qualsiasi hosting che esegua Next.js.
+
+## Registrazione veterinario
+`/{lingua}/{paese}/pro/inscription` (componente `src/components/ProSignup.tsx`): crea account (e-mail o Google), poi scrive practice, practitioner, servizi e orari direttamente da Supabase con le regole RLS. Il profilo nasce non pubblicato: per metterlo online imposta `practices.published = true` dalla tabella su Supabase. Per Google serve abilitare il provider in Supabase (vedi `src/lib/auth-client.ts`).
