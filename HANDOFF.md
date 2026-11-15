@@ -17,8 +17,8 @@ Nuova piattaforma Televet (Next.js 15 + Supabase) che sostituirà il sito Wix te
 Blog (strumenti di importazione da Wix + redirect 301), FAQ, pagine paese/servizio, scheda pubblica del veterinario, landing `/pro`, chat AI con archivio nell'area admin (`/admin/chats`), SEO (hreflang, JSON-LD, sitemap), migrazioni Supabase `0001`–`0006`, 29 test (`TZ=UTC npm test`), build che passa.
 
 ## Da fare (in ordine)
-1. ~~Registrazione del veterinario~~ FATTA (prima versione): `/{lingua}/{paese}/pro/inscription` (account, attività, servizi e prezzi, orari, collegamento pagamenti). Il profilo nasce NON pubblicato (`practices.published = false`): va attivato a mano su Supabase finché non c'è un pannello di approvazione. Testi in fr/it/en/es (le altre lingue mostrano l'inglese). Da fare ancora: dashboard del veterinario per modificare profilo, ferie e agenda; collegamento Google Calendar; non provata con un Supabase reale.
-2. Pagina di prenotazione per il proprietario (orario, dati dell'animale, pagamento). Il bottone "Prenota" delle schede compare solo con `BOOKING_URL`.
+1. ~~Registrazione del veterinario~~ FATTA (prima versione): `/{lingua}/{paese}/pro/inscription` (account, attività, servizi e prezzi, orari, collegamento pagamenti). Il profilo nasce NON pubblicato (`practices.published = false`): va attivato a mano su Supabase finché non c'è un pannello di approvazione. Testi in fr/it/en/es/pl (le altre lingue mostrano l'inglese). Da fare ancora: dashboard del veterinario per modificare profilo, ferie e agenda; collegamento Google Calendar; non provata con un Supabase reale.
+2. ~~Pagina di prenotazione~~ FATTA (prima versione): `/{lingua}/{paese}/reserver/{slug}`, testi fr/it/en/es/pl. Non provata con Supabase e Stripe reali; manca ancora la pagina per il veterinario che conferma/rifiuta (le API ci sono già) e il ritorno dopo il pagamento Mercado Pago.
 3. Home, risultati di ricerca, account del proprietario.
 4. Connettori: Google Calendar, Vetup, VetIt, Petbooqz.
 5. Script di importazione dal vecchio database AWS (servono export dello schema e accessi).

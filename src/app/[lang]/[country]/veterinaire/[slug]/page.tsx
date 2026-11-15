@@ -46,8 +46,7 @@ export default async function VetProfile({ params }: P) {
   const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(lang, { style: "currency", currency: cur }).format(ZERO_DECIMAL.has(cur) ? c : c / 100); } catch { return `${c} ${cur}`; } };
   const names = (l: string[]) => l.map((x) => { try { return new Intl.DisplayNames([lang], { type: "language" }).of(x) ?? x; } catch { return x; } }).join(", ");
   const base = `${SITE}/${lang}/${country}`;
-  // Booking UI is not part of this module yet: the button only appears when BOOKING_URL is set (e.g. https://televet.co/{lang}/{country}/reserver/{slug}).
-  const book = process.env.BOOKING_URL?.replace("{lang}", lang).replace("{country}", country).replace("{slug}", p.slug);
+  const book = `/${lang}/${country}/reserver/${p.slug}`;
   const ld = [veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }),
     breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: p.name, url: `${base}/veterinaire/${p.slug}` }])];
   return (
@@ -58,7 +57,7 @@ export default async function VetProfile({ params }: P) {
       <h1 style={{ margin: "4px 0 8px" }}>{p.name}</h1>
       {p.headline && <p style={{ fontSize: 18, margin: 0 }}>{p.headline}</p>}
       {p.address && <p style={{ color: "#4a5568" }}>{p.address}{p.postal_code ? `, ${p.postal_code}` : ""}</p>}
-      {book && <p><a href={book} style={{ display: "inline-block", background: "#0b3bbf", color: "#fff", fontWeight: 700, padding: "12px 20px", borderRadius: 10, textDecoration: "none" }}>{t.book}</a></p>}
+      {services.length > 0 && <p><a href={book} style={{ display: "inline-block", background: "#0b3bbf", color: "#fff", fontWeight: 700, padding: "12px 20px", borderRadius: 10, textDecoration: "none" }}>{t.book}</a></p>}
       {p.about && <section><h2>{t.about}</h2><p style={{ whiteSpace: "pre-line" }}>{p.about}</p></section>}
       {services.length > 0 && <section><h2>{t.services}</h2>
         <ul style={{ listStyle: "none", padding: 0 }}>{services.map((s, i) => (

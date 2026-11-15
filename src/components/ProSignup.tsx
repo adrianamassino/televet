@@ -31,6 +31,11 @@ const T = {
     svcs: "Tus consultas", svcName: { video: "Consulta por video", home: "Visita a domicilio", clinic: "Consulta en clínica" }, price: "Precio", dur: "Duración (min)", hours: "Tus horarios", days: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"], from: "de", to: "a",
     save: "Guardar mi perfil", next: "Continuar", back: "Atrás", saving: "Guardando…", err: "Hubo un problema: ", needSvc: "Elige al menos una consulta con su precio.", needHours: "Indica al menos un horario de atención.",
     doneT: "Perfil guardado", done: "Tu perfil está siendo revisado por el equipo de Televet y será visible cuando se valide. Mientras tanto, conecta tu cuenta de pagos.", pay: "Conectar mis pagos", home: "Volver al inicio" },
+  pl: { title: "Załóż profil w Televet", account: "Twoje konto", name: "Imię i nazwisko", email: "E-mail", pass: "Hasło (min. 8 znaków)", create: "Utwórz konto", have: "Mam już konto", login: "Zaloguj się", google: "Kontynuuj z Google", checkMail: "Wysłaliśmy e-mail z potwierdzeniem. Kliknij link, a wrócisz tutaj.",
+    prac: "Twoja działalność", kind: { clinic: "Klinika", vet: "Weterynarz niezależny", home: "Weterynarz z dojazdem" }, pname: "Wyświetlana nazwa (gabinet lub Twoje nazwisko)", headline: "Jedno zdanie o Tobie", address: "Adres (opcjonalnie dla wideo)", postal: "Kod pocztowy", phone: "Telefon (opcjonalnie)", langs: "Języki",
+    svcs: "Twoje konsultacje", svcName: { video: "Konsultacja wideo", home: "Wizyta domowa", clinic: "Wizyta w klinice" }, price: "Cena", dur: "Czas (min)", hours: "Godziny pracy", days: ["Nd", "Pn", "Wt", "Śr", "Cz", "Pt", "Sb"], from: "od", to: "do",
+    save: "Zapisz profil", next: "Dalej", back: "Wstecz", saving: "Zapisywanie…", err: "Wystąpił problem: ", needSvc: "Wybierz co najmniej jedną konsultację z ceną.", needHours: "Dodaj co najmniej jeden przedział godzin.",
+    doneT: "Profil zapisany", done: "Zespół Televet sprawdza Twój profil; będzie widoczny po zatwierdzeniu. W międzyczasie połącz konto płatnicze.", pay: "Połącz płatności", home: "Wróć na stronę główną" },
 } as const;
 
 const CATALOG: Record<Svc, string> = { video: "video_consult", home: "home_visit", clinic: "clinic_visit" };

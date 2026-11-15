@@ -122,7 +122,7 @@ Regole di telemedicina veterinaria e testi legali, IVA/fatturazione, disponibili
 
 - `/{lang}/{country}/pro`: landing per veterinari in 8 lingue (testi in `src/lib/pro-copy.ts`). Il bottone "Crea il mio profilo" va a `PRO_SIGNUP_URL` (vuoto = e-mail a contact@televet.co). Le lingue senza traduzione mostrano l'inglese e non vengono indicizzate.
 - `/{lang}/{country}/veterinaire/{slug}`: scheda pubblica (solo studi con `published = true`; altrimenti 404). Mostra servizi, durata e il prezzo impostato dal veterinario, lingue, JSON-LD `VeterinaryCare`.
-- Il bottone "Prenota" compare solo se `BOOKING_URL` è impostato: la pagina di prenotazione non fa ancora parte di questo modulo.
+- Il bottone "Prenota" porta a `/{lingua}/{paese}/reserver/{slug}` (orario → account → animale → pagamento). Serve `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` per il pagamento con carta.
 - Prima di pubblicare `/pro`: far verificare i testi (soprattutto pt/de/pl/nl) e le frasi su registrazione/trascrizione della visita, che devono corrispondere a ciò che il prodotto fa davvero.
 
 ## Hosting senza Vercel (Netlify) e cron con GitHub Actions
