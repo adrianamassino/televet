@@ -1,0 +1,43 @@
+{
+  "_readme": "Facts the chat assistant may state. Edit freely (no code change needed). Anything NOT listed here the assistant will not promise: it points the visitor to the team (contact@televet.co). Prices are deliberately NOT listed: each vet sets their own, shown before booking.",
+  "company": "Televet — veterinary telemedicine platform, Station F, Paris. Contact: contact@televet.co",
+  "services": [
+    {
+      "key": "teleconseil",
+      "name": "Téléconseil vétérinaire",
+      "what": "A quick conversation with a vet, by video, to understand how serious a situation is and what to do next."
+    },
+    {
+      "key": "teleconsultation",
+      "name": "Téléconsultation",
+      "what": "A video consultation with a vet chosen on the site."
+    },
+    {
+      "key": "domicile",
+      "name": "Vétérinaire à domicile",
+      "what": "A vet comes to the owner's home, which is much easier on stressed, elderly or hard-to-transport animals. Availability depends on the area and is shown when searching."
+    }
+  ],
+  "ownerBooking": "The owner searches by visit type and place, picks a vet and a time slot, enters pet information and pays online. An account (Google, Apple or e-mail) is requested when sending the booking. For video visits the owner is asked to consent to the consultation being transcribed to produce a report; the vet validates the report before the owner receives it.",
+  "vetOnboarding": [
+    "Go to the Televet Pro page and click 'Créer mon profil' (Create my profile).",
+    "Screen 1 — choose the type: clinic, independent vet, or home-visit vet.",
+    "Screen 2 — enter name, city and the services offered with their prices.",
+    "Screen 3 — enter e-mail and password (or continue with Google). If the name matches a clinic already listed in the directory, the site suggests claiming that listing instead of creating a new one.",
+    "Then a setup ring in the vet's home shows 5 steps: profile, online booking, agendas, payments, reminders.",
+    "Agendas: Google Calendar, iCal, Vetup, VetIt (UK), Petbooqz can be connected so booked slots never clash with the vet's own agenda.",
+    "Payments: online payments are received through Stripe (Europe, UK, US, Australia) or Mercado Pago (Argentina, Uruguay, Chile, Mexico, Brazil).",
+    "Home visits: the vet defines the zone served (postcodes or radius)."
+  ],
+  "claimClinic": "A clinic already in the directory can be claimed: the clinic's Google Business listing is matched, the vet must use a professional e-mail on the same domain as the listing's website (free webmail like Gmail is not accepted), and receives a 6-digit code at that address. Alternatively the vet can upload a document that the Televet team checks. No phone or SMS verification.",
+  "toConfirm": [
+    "Exact response time (do not say '5 minutes')",
+    "24/7 availability of vets",
+    "Insurance reimbursement",
+    "Commission for vets",
+    "Cities where home visits are available today"
+  ],
+  "whatTelevetDoes": "Televet helps people find a vet and talk to one quickly, by video, at home or in a clinic, at accessible prices. The vets are independent professionals registered with their order; each vet sets their own price and it is always shown before the owner confirms.",
+  "pricing": "Never quote numbers. If asked: the price depends on the vet and the type of visit, it is shown clearly before confirming (nothing is paid by surprise), and the goal is to keep it accessible.",
+  "coverageRules": "Online vets (téléconseil, téléconsultation) can answer from anywhere in their own country: no city is needed, and a vet only serves their own country. Home visits and clinic appointments depend on the area: the search page shows what is available."
+}
