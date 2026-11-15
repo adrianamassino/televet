@@ -1,0 +1,23 @@
+# Scheduler indipendente dall'hosting: chiama gli endpoint cron del sito con il CRON_SECRET.
+# Serve in GitHub: Settings > Secrets and variables > Actions > Secrets: CRON_SECRET; Variables: APP_URL (es. https://televet.co)
+name: cron
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # promemoria + sincronizzazione calendari (GitHub non garantisce la puntualità al minuto)
+    - cron: "0 3 * * *"      # pulizia chat
+  workflow_dispatch: {}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call cron endpoints
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          set -e
+          [ -n "$APP_URL" ] || { echo "APP_URL non impostato"; exit 1; }
+          call() { curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/$1"; echo; }
+          if [ "$SCHEDULE" = "0 3 * * *" ]; then call purge-chats
+          else call reminders; call sync-calendars; fi

@@ -124,3 +124,9 @@ Regole di telemedicina veterinaria e testi legali, IVA/fatturazione, disponibili
 - `/{lang}/{country}/veterinaire/{slug}`: scheda pubblica (solo studi con `published = true`; altrimenti 404). Mostra servizi, durata e il prezzo impostato dal veterinario, lingue, JSON-LD `VeterinaryCare`.
 - Il bottone "Prenota" compare solo se `BOOKING_URL` è impostato: la pagina di prenotazione non fa ancora parte di questo modulo.
 - Prima di pubblicare `/pro`: far verificare i testi (soprattutto pt/de/pl/nl) e le frasi su registrazione/trascrizione della visita, che devono corrispondere a ciò che il prodotto fa davvero.
+
+## Hosting senza Vercel (Netlify) e cron con GitHub Actions
+
+- Il sito è Next.js standard: su Netlify basta importare il repository (rileva Next.js da solo) e inserire le variabili di `.env.example`. Prima del lancio commerciale controlla le condizioni del piano gratuito.
+- `vercel.json` serve solo su Vercel e su Netlify viene ignorato. I cron girano da `.github/workflows/cron.yml`: aggiungi in GitHub il secret `CRON_SECRET` (lo stesso del sito) e la variabile `APP_URL`. Ogni 15 minuti promemoria e sincronizzazione calendari; alle 3 la pulizia delle chat.
+- I redirect dei vecchi link Wix sono in `next.config.mjs` e funzionano su qualsiasi hosting che esegua Next.js.
