@@ -429,3 +429,18 @@ body { background:
   linear-gradient(180deg, #f2f9ff 0%, #dcedff 50%, #cfe6ff 100%); background-repeat: repeat-y, no-repeat, no-repeat, no-repeat; min-height: 100vh; }
 .hero-panel::before, .band::before { width: auto; height: auto; right: 0; left: 0; top: 0; bottom: 0; }
 .site-footer::before { opacity: .45; }
+
+/* ---- v10: contrasto più forte, bottone bianco, animali ---- */
+:root { --g-aurora: radial-gradient(55% 90% at 100% 0%, rgba(60,230,255,.95) 0%, transparent 62%), radial-gradient(45% 70% at 0% 100%, rgba(20,90,255,.9) 0%, transparent 70%), linear-gradient(115deg, #030c63 0%, #0a38d6 38%, #1f9bff 78%, #35e0ff 100%); --g-btn: linear-gradient(135deg, #0a38d6 0%, #1f9bff 100%); }
+.btn-sun, .btn.btn-sun { background: #fff; color: #05197a; box-shadow: 0 16px 30px -12px rgba(3,12,99,.65), inset 0 0 0 1px rgba(255,255,255,.9); }
+.btn-sun:hover { background: #eaf6ff; color: #030c63; }
+.ticket .top { background: linear-gradient(135deg, #030c63 0%, #0a38d6 100%) !important; }
+.site-footer { background: linear-gradient(115deg, #030c63, #0a38d6 70%, #1f9bff); }
+.side { background: radial-gradient(90% 40% at 100% 100%, rgba(60,230,255,.55) 0%, transparent 70%), linear-gradient(180deg, #030c63, #0a38d6); }
+.vetcard, .vetcard:nth-child(n) { background: linear-gradient(160deg, #0a38d6, #1f9bff); }
+html { background: #d6ebff; }
+body { background:
+  url(/decor/page.svg) center top / 1400px auto repeat-y,
+  radial-gradient(1000px 600px at 100% -80px, rgba(53,224,255,.5) 0%, transparent 62%),
+  radial-gradient(900px 600px at -10% 40%, rgba(10,56,214,.2) 0%, transparent 60%),
+  linear-gradient(180deg, #f6fbff 0%, #d9ecff 50%, #bcdcff 100%); background-repeat: repeat-y, no-repeat, no-repeat, no-repeat; min-height: 100vh; }
