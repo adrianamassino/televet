@@ -29,7 +29,7 @@ export default async function BlogPost({ params }: P) {
     author: { "@type": "Organization", name: "Televet" }, publisher: { "@type": "Organization", name: "Televet", logo: { "@type": "ImageObject", url: `${SITE}/logo.png` } },
   };
   return (
-    <main style={{ maxWidth: 760, margin: "0 auto", padding: 24, fontFamily: "system-ui", lineHeight: 1.65 }}>
+    <main className="wrap narrow prose">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(breadcrumbLd([{ name: "Televet", url: `${SITE}/${lang}/${country}/` }, { name: "Blog", url: `${SITE}/${lang}/${country}/blog` }, { name: post.title, url }])) }} />
       <article>

@@ -14,13 +14,13 @@ export default async function BlogIndex({ params }: P) {
   const { lang, country } = await params;
   const posts = listPosts(lang);
   return (
-    <main style={{ maxWidth: 860, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
+    <main className="wrap narrow">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(breadcrumbLd([{ name: "Televet", url: `${SITE}/${lang}/${country}/` }, { name: "Blog", url: `${SITE}/${lang}/${country}/blog` }])) }} />
       <h1>Blog</h1>
-      <ul style={{ listStyle: "none", padding: 0 }}>
+      <ul className="cards">
         {posts.map((p) => (
-          <li key={p.slug} style={{ margin: "24px 0" }}>
-            <Link href={`/${lang}/${country}/blog/${p.slug}`}><h2 style={{ margin: 0 }}>{p.title}</h2></Link>
+          <li key={p.slug}>
+            <Link href={`/${lang}/${country}/blog/${p.slug}`}><h3>{p.title}</h3></Link>
             <small>{p.category && `${p.category} · `}{new Date(p.published).toLocaleDateString(lang)}</small>
             <p>{p.description}</p>
           </li>

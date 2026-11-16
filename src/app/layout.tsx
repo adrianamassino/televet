@@ -1,3 +1,6 @@
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/figtree";
+import "./globals.css";
 import ChatWidget from "@/components/ChatWidget";
 export const metadata = { title: "Televet", description: "Trouvez un vétérinaire et réservez en ligne" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {

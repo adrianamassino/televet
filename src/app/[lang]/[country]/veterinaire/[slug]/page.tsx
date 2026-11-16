@@ -50,20 +50,20 @@ export default async function VetProfile({ params }: P) {
   const ld = [veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }),
     breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: p.name, url: `${base}/veterinaire/${p.slug}` }])];
   return (
-    <main style={{ maxWidth: 820, margin: "0 auto", padding: "24px 16px 64px", fontFamily: "system-ui", lineHeight: 1.6, color: "#14213d" }}>
+    <main className="wrap narrow">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <nav><a href={`/${lang}/${country}/`}>{t.home}</a></nav>
-      <p style={{ margin: "24px 0 0", color: "#4a5568" }}>{t.kind[p.kind] ?? t.kind.vet}</p>
-      <h1 style={{ margin: "4px 0 8px" }}>{p.name}</h1>
-      {p.headline && <p style={{ fontSize: 18, margin: 0 }}>{p.headline}</p>}
-      {p.address && <p style={{ color: "#4a5568" }}>{p.address}{p.postal_code ? `, ${p.postal_code}` : ""}</p>}
-      {services.length > 0 && <p><a href={book} style={{ display: "inline-block", background: "#0b3bbf", color: "#fff", fontWeight: 700, padding: "12px 20px", borderRadius: 10, textDecoration: "none" }}>{t.book}</a></p>}
+      <p style={{ margin: "24px 0 0" }}><span className="chip">{t.kind[p.kind] ?? t.kind.vet}</span></p>
+      <h1>{p.name}</h1>
+      {p.headline && <p style={{ fontSize: "1.25rem" }}>{p.headline}</p>}
+      {p.address && <p><small>{p.address}{p.postal_code ? `, ${p.postal_code}` : ""}</small></p>}
+      {services.length > 0 && <p><a className="btn btn-lg" href={book}>{t.book}</a></p>}
       {p.about && <section><h2>{t.about}</h2><p style={{ whiteSpace: "pre-line" }}>{p.about}</p></section>}
       {services.length > 0 && <section><h2>{t.services}</h2>
         <ul style={{ listStyle: "none", padding: 0 }}>{services.map((s, i) => (
-          <li key={i} style={{ border: "1px solid #e3e8f4", borderRadius: 12, padding: 14, margin: "10px 0" }}>
-            <strong>{s.custom_name ?? t.types[s.type]}</strong> <span style={{ color: "#4a5568" }}>· {t.types[s.type]} · {s.duration_min} {t.min}</span>
-            <div style={{ fontWeight: 600 }}>{money(s.price_cents, s.currency)}</div>
+          <li key={i} className="panel">
+            <strong>{s.custom_name ?? t.types[s.type]}</strong> <span style={{ color: "var(--ink-soft)" }}>· {t.types[s.type]} · {s.duration_min} {t.min}</span>
+            <div className="price">{money(s.price_cents, s.currency)}</div>
             {s.description && <p style={{ margin: "6px 0 0" }}>{s.description}</p>}
           </li>))}</ul></section>}
       {p.languages?.length > 0 && <p><strong>{t.langs}:</strong> {names(p.languages)}</p>}

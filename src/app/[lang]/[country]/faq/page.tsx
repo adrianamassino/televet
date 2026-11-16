@@ -26,13 +26,13 @@ export default async function FaqPage({ params }: P) {
   const url = `${SITE}/${lang}/${country}/faq`;
   const ld = [organizationLd(), faqLd(items), breadcrumbLd([{ name: "Televet", url: `${SITE}/${lang}/${country}/` }, { name: "FAQ", url }])];
   return (
-    <main style={{ maxWidth: 760, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
+    <main className="wrap narrow">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <nav aria-label="breadcrumb"><a href={`/${lang}/${country}/`}>Televet</a> › FAQ</nav>
       <h1>Foire aux questions</h1>
       {items.map((x, i) => (
-        <details key={i} open={i === 0}>
-          <summary><h2 style={{ display: "inline", fontSize: 18 }}>{x.q}</h2></summary>
+        <details className="qa" key={i} open={i === 0}>
+          <summary>{x.q}</summary>
           <p>{x.a}</p>
         </details>
       ))}

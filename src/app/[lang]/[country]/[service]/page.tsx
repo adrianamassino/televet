@@ -53,13 +53,13 @@ export default async function ServicePage({ params }: P) {
   const ld = [organizationLd(), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: t.h1[d.svc], url: `${base}/${service}` }]),
     ...d.list.map((p) => veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }))];
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "system-ui", lineHeight: 1.55 }}>
+    <main className="wrap narrow">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <h1>{t.h1[d.svc]}</h1>
       <p>{t.intro[d.svc].replace("{c}", d.countryName)}</p>
       {d.list.length === 0
         ? <p>{t.empty.replace("{c}", d.countryName)} <a href="mailto:contact@televet.co">{t.ask}</a></p>
-        : (<><h2>{t.list}</h2><ul>{d.list.map((p) => <li key={p.id}><h3><a href={`/${lang}/${country}/veterinaire/${p.slug}`}>{p.name}</a></h3><p>{p.headline}</p></li>)}</ul></>)}
+        : (<><h2>{t.list}</h2><ul className="cards">{d.list.map((p) => <li key={p.id}><h3><a href={`/${lang}/${country}/veterinaire/${p.slug}`}>{p.name}</a></h3><p>{p.headline}</p></li>)}</ul></>)}
     </main>
   );
 }

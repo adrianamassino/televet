@@ -45,3 +45,9 @@ export function computeSlots(i: AvailabilityInput): Slot[] {
   }
   return out.sort((a, b) => a.start.localeCompare(b.start));
 }
+
+/** Keeps only the slots on days of the week the service is offered. `day` is the local date (YYYY-MM-DD) of the slot. */
+export function filterWeekdays(slots: Slot[], weekdays: number[] | null | undefined): Slot[] {
+  if (!weekdays || weekdays.length === 0 || weekdays.length >= 7) return slots;
+  return slots.filter((s) => weekdays.includes(new Date(`${s.day}T00:00:00Z`).getUTCDay()));
+}

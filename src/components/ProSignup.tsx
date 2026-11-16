@@ -40,10 +40,6 @@ const T = {
 
 const CATALOG: Record<Svc, string> = { video: "video_consult", home: "home_visit", clinic: "clinic_visit" };
 const slugify = (x: string) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-const inp = { width: "100%", padding: 10, border: "1px solid #c9d2e6", borderRadius: 8, font: "inherit", boxSizing: "border-box" } as const;
-const btn = { background: "#0b3bbf", color: "#fff", fontWeight: 700, padding: "12px 20px", borderRadius: 10, border: 0, cursor: "pointer", font: "inherit" } as const;
-const ghost = { background: "#fff", color: "#0b3bbf", border: "1px solid #0b3bbf", fontWeight: 600, padding: "10px 16px", borderRadius: 10, cursor: "pointer", font: "inherit" } as const;
-const label = { display: "block", margin: "12px 0 4px", fontWeight: 600 } as const;
 
 export default function ProSignup({ lang, country, currency, languages, timezone, provider }: { lang: string; country: string; currency: string; languages: string[]; timezone: string; provider: "stripe" | "mercadopago" }) {
   const t = T[lang as keyof typeof T] ?? T.en;
@@ -110,45 +106,45 @@ export default function ProSignup({ lang, country, currency, languages, timezone
       <h1>{t.title}</h1>
       {step === 0 && <section>
         <h2>{t.account}</h2>
-        <button style={ghost} onClick={() => signInWithProvider("google", here)}>{t.google}</button>
-        {!login && <><label style={label}>{t.name}</label><input style={inp} value={name} onChange={(e) => setName(e.target.value)} /></>}
-        <label style={label}>{t.email}</label><input style={inp} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <label style={label}>{t.pass}</label><input style={inp} type="password" value={pass} onChange={(e) => setPass(e.target.value)} />
-        <p><button style={btn} disabled={busy || !email || !pass || (!login && !name)} onClick={account}>{login ? t.login : t.create}</button>{" "}
-          <button style={{ ...ghost, border: 0 }} onClick={() => { setLogin(!login); setMsg(""); }}>{login ? t.create : t.have}</button></p>
+        <button className="btn btn-ghost" onClick={() => signInWithProvider("google", here)}>{t.google}</button>
+        {!login && <><label className="label">{t.name}</label><input className="field" value={name} onChange={(e) => setName(e.target.value)} /></>}
+        <label className="label">{t.email}</label><input className="field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <label className="label">{t.pass}</label><input className="field" type="password" value={pass} onChange={(e) => setPass(e.target.value)} />
+        <p><button className="btn" disabled={busy || !email || !pass || (!login && !name)} onClick={account}>{login ? t.login : t.create}</button>{" "}
+          <button className="btn btn-quiet" onClick={() => { setLogin(!login); setMsg(""); }}>{login ? t.create : t.have}</button></p>
       </section>}
       {step === 1 && <section>
         <h2>{t.prac}</h2>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{(Object.keys(t.kind) as Kind[]).map((k) => <button key={k} style={kind === k ? btn : ghost} onClick={() => { setKind(k); setSvc({ ...svc, home: { ...svc.home, on: k === "home" || svc.home.on }, clinic: { ...svc.clinic, on: k === "clinic" || svc.clinic.on } }); }}>{t.kind[k]}</button>)}</div>
-        <label style={label}>{t.pname}</label><input style={inp} value={pname} onChange={(e) => setPname(e.target.value)} />
-        <label style={label}>{t.headline}</label><input style={inp} value={headline} maxLength={140} onChange={(e) => setHeadline(e.target.value)} />
-        <label style={label}>{t.address}</label><input style={inp} value={address} onChange={(e) => setAddress(e.target.value)} />
-        <label style={label}>{t.postal}</label><input style={inp} value={postal} onChange={(e) => setPostal(e.target.value)} />
-        <label style={label}>{t.phone}</label><input style={inp} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        <label style={label}>{t.langs}</label>
+        <div className="row">{(Object.keys(t.kind) as Kind[]).map((k) => <button key={k} className={kind === k ? "btn" : "btn btn-ghost"} onClick={() => { setKind(k); setSvc({ ...svc, home: { ...svc.home, on: k === "home" || svc.home.on }, clinic: { ...svc.clinic, on: k === "clinic" || svc.clinic.on } }); }}>{t.kind[k]}</button>)}</div>
+        <label className="label">{t.pname}</label><input className="field" value={pname} onChange={(e) => setPname(e.target.value)} />
+        <label className="label">{t.headline}</label><input className="field" value={headline} maxLength={140} onChange={(e) => setHeadline(e.target.value)} />
+        <label className="label">{t.address}</label><input className="field" value={address} onChange={(e) => setAddress(e.target.value)} />
+        <label className="label">{t.postal}</label><input className="field" value={postal} onChange={(e) => setPostal(e.target.value)} />
+        <label className="label">{t.phone}</label><input className="field" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <label className="label">{t.langs}</label>
         {languages.map((l) => <label key={l} style={{ marginRight: 14 }}><input type="checkbox" checked={spoken.includes(l)} onChange={(e) => setSpoken(e.target.checked ? [...spoken, l] : spoken.filter((x) => x !== l))} /> {new Intl.DisplayNames([lang], { type: "language" }).of(l)}</label>)}
-        <p><button style={btn} disabled={!pname.trim() || !spoken.length} onClick={() => setStep(2)}>{t.next}</button></p>
+        <p><button className="btn" disabled={!pname.trim() || !spoken.length} onClick={() => setStep(2)}>{t.next}</button></p>
       </section>}
       {step === 2 && <section>
         <h2>{t.svcs}</h2>
-        {(Object.keys(svc) as Svc[]).map((k) => <div key={k} style={{ border: "1px solid #e3e8f4", borderRadius: 12, padding: 12, margin: "10px 0" }}>
+        {(Object.keys(svc) as Svc[]).map((k) => <div key={k} className="panel">
           <label><input type="checkbox" checked={svc[k].on} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], on: e.target.checked } })} /> <strong>{t.svcName[k]}</strong></label>
-          {svc[k].on && <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-            <div style={{ flex: 1 }}><small>{t.price} ({currency})</small><input style={inp} inputMode="decimal" value={svc[k].price} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], price: e.target.value.replace(",", ".") } })} /></div>
-            <div style={{ flex: 1 }}><small>{t.dur}</small><input style={inp} inputMode="numeric" value={svc[k].dur} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], dur: e.target.value } })} /></div></div>}
+          {svc[k].on && <div className="grid2" style={{ marginTop: 8 }}>
+            <div style={{ flex: 1 }}><small>{t.price} ({currency})</small><input className="field" inputMode="decimal" value={svc[k].price} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], price: e.target.value.replace(",", ".") } })} /></div>
+            <div style={{ flex: 1 }}><small>{t.dur}</small><input className="field" inputMode="numeric" value={svc[k].dur} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], dur: e.target.value } })} /></div></div>}
         </div>)}
         <h2>{t.hours}</h2>
         {[1, 2, 3, 4, 5, 6, 0].map((d) => <div key={d} style={{ display: "flex", alignItems: "center", gap: 8, margin: "6px 0" }}>
           <label style={{ width: 70 }}><input type="checkbox" checked={days[d].on} onChange={(e) => setDays({ ...days, [d]: { ...days[d], on: e.target.checked } })} /> {t.days[d]}</label>
           {days[d].on && <>{t.from} <input type="time" value={days[d].from} onChange={(e) => setDays({ ...days, [d]: { ...days[d], from: e.target.value } })} /> {t.to} <input type="time" value={days[d].to} onChange={(e) => setDays({ ...days, [d]: { ...days[d], to: e.target.value } })} /></>}
         </div>)}
-        <p><button style={ghost} onClick={() => setStep(1)}>{t.back}</button>{" "}<button style={btn} disabled={busy} onClick={save}>{busy ? t.saving : t.save}</button></p>
+        <p><button className="btn btn-ghost" onClick={() => setStep(1)}>{t.back}</button>{" "}<button className="btn" disabled={busy} onClick={save}>{busy ? t.saving : t.save}</button></p>
       </section>}
       {step === 3 && <section>
         <h2>{t.doneT}</h2><p>{t.done}</p>
-        <p><button style={btn} disabled={busy} onClick={pay}>{t.pay}</button>{" "}<a href={`/${lang}/${country.toLowerCase()}/pro/dashboard`}>{t.dash}</a></p>
+        <p><button className="btn" disabled={busy} onClick={pay}>{t.pay}</button>{" "}<a href={`/${lang}/${country.toLowerCase()}/pro/dashboard`}>{t.dash}</a></p>
       </section>}
-      {msg && <p role="alert" style={{ color: msg.startsWith(t.err) ? "#b00020" : "#14213d" }}>{msg}</p>}
+      {msg && <p role="alert" className={msg.startsWith(t.err) ? "alert" : ""}>{msg}</p>}
     </div>
   );
 }

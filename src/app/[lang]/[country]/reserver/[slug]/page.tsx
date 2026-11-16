@@ -19,7 +19,7 @@ export default async function Page({ params, searchParams }: P) {
   const services: SvcIn[] = (p?.services ?? []).filter((s: { active: boolean }) => s.active).map((s: { id: string; type: SvcIn["type"]; custom_name: string | null; duration_min: number; price_cents: number; currency: string; online_payment: boolean }) => ({ id: s.id, type: s.type, name: s.custom_name, duration: s.duration_min, price: s.price_cents, currency: s.currency, onlinePayment: s.online_payment }));
   if (!p || !pr || services.length === 0) notFound();
   return (
-    <main style={{ maxWidth: 640, margin: "0 auto", padding: "24px 16px 64px", fontFamily: "system-ui", lineHeight: 1.5, color: "#14213d" }}>
+    <main className="wrap narrow">
       <BookingFlow lang={lang} country={c.code} slug={slug} practiceName={p.name} practitionerId={pr.id} timezone={p.timezone} services={services} preselect={service} stripeKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY} />
     </main>
   );

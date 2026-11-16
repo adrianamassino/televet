@@ -138,3 +138,7 @@ Regole di telemedicina veterinaria e testi legali, IVA/fatturazione, disponibili
 - `/{lingua}/{paese}/pro/dashboard`: appuntamenti (accetta/rifiuta), profilo, consultazioni e prezzi, orari, pagamenti e link iCal.
 - Migrazione `0007`: aggiunge `practices.auto_confirm` (default vero) e un trigger che impedisce a un veterinario di pubblicarsi da solo o di modificare commissione e stato dei pagamenti. **Esegui la migrazione `0007` su Supabase.**
 - Per pubblicare un profilo: Supabase → Table editor → `practices` → `published = true`.
+
+## Design e dashboard completa
+- Design system in `src/app/globals.css`; caratteri via `@fontsource-variable` (nessuna richiesta a Google Fonts).
+- **Esegui anche la migrazione `0008`** (foto, prenotazioni on/off, titolo, giorni per consultazione, tempo minimo di preavviso, bucket `avatars`).

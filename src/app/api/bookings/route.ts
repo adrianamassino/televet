@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { adminClient, handle, HttpError, json, userFromRequest } from "@/lib/supabase";
-import { computeSlots } from "@/lib/availability";
+import { computeSlots, filterWeekdays } from "@/lib/availability";
 import { busyFor } from "@/lib/busy";
 import { extractPostalCode, geocode, matchZones, type ServiceZone } from "@/lib/zones";
 import { localDay } from "@/lib/time";
@@ -29,20 +29,20 @@ export const POST = handle(async (req) => {
   const db = adminClient();
 
   const { data: svc } = await db.from("services")
-    .select("id, type, duration_min, price_cents, currency, online_payment, custom_name, catalog_code, practice_id, active, practices(id, country, timezone, published, commission_pct, stripe_account_id, stripe_status, mp_status, name)")
+    .select("id, type, duration_min, price_cents, currency, online_payment, custom_name, catalog_code, practice_id, active, weekdays, practices(id, country, timezone, published, booking_enabled, commission_pct, stripe_account_id, stripe_status, mp_status, name)")
     .eq("id", body.serviceId).single();
-  type P = { id: string; country: string; timezone: string; published: boolean; commission_pct: number | null; stripe_account_id: string | null; stripe_status: string; mp_status: string; name: string };
+  type P = { id: string; country: string; timezone: string; published: boolean; booking_enabled: boolean; commission_pct: number | null; stripe_account_id: string | null; stripe_status: string; mp_status: string; name: string };
   const practice = (svc as unknown as { practices: P } | null)?.practices;
-  if (!svc || !svc.active || !practice?.published) throw new HttpError(404, "service not found");
+  if (!svc || !svc.active || !practice?.published || !practice.booking_enabled) throw new HttpError(404, "service not found");
 
-  const { data: pr } = await db.from("practitioners").select("id, practice_id, commission_pct, active").eq("id", body.practitionerId).single();
+  const { data: pr } = await db.from("practitioners").select("id, practice_id, commission_pct, active, lead_time_min").eq("id", body.practitionerId).single();
   if (!pr || pr.practice_id !== practice.id || !pr.active) throw new HttpError(400, "invalid practitioner");
 
   // 1) slot still free?
   const start = new Date(body.start), end = new Date(start.getTime() + svc.duration_min * 60000);
   const { data: rules } = await db.from("opening_rules").select("weekday, start_time, end_time, slot_min").eq("practitioner_id", pr.id);
   const dayStart = new Date(start.getTime() - 86400000);
-  const slots = computeSlots({ rules: rules ?? [], timeZone: practice.timezone, durationMin: svc.duration_min, from: dayStart, days: 3, busy: await busyFor(pr.id, dayStart, new Date(end.getTime() + 86400000)) });
+  const slots = filterWeekdays(computeSlots({ rules: rules ?? [], timeZone: practice.timezone, durationMin: svc.duration_min, from: dayStart, days: 3, busy: await busyFor(pr.id, dayStart, new Date(end.getTime() + 86400000)), leadTimeMin: pr.lead_time_min ?? 120 }), svc.weekdays);
   if (!slots.some((s) => s.start === start.toISOString())) throw new HttpError(409, "slot_unavailable");
 
   // 2) home visit: address must be inside the practitioner's zone

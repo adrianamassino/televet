@@ -34,10 +34,6 @@ const T = {
     doneT: "Prośba wysłana", done: "Weterynarz potwierdzi Twoją wizytę. Otrzymasz e-mail z potwierdzeniem.", err: "Wystąpił problem: ", taken: "Ten termin został właśnie zajęty, wybierz inny.", zone: "Ten weterynarz nie dojeżdża pod ten adres.", nopay: "Ten weterynarz nie włączył jeszcze płatności online.", home: "Wróć na stronę główną", types: { video: "Wideo", home: "W domu", clinic: "W klinice", expertise: "Opinia eksperta" } },
 } as const;
 
-const inp = { width: "100%", padding: 10, border: "1px solid #c9d2e6", borderRadius: 8, font: "inherit", boxSizing: "border-box" } as const;
-const btn = { background: "#0b3bbf", color: "#fff", fontWeight: 700, padding: "12px 20px", borderRadius: 10, border: 0, cursor: "pointer", font: "inherit" } as const;
-const ghost = { background: "#fff", color: "#0b3bbf", border: "1px solid #0b3bbf", fontWeight: 600, padding: "10px 16px", borderRadius: 10, cursor: "pointer", font: "inherit" } as const;
-const lab = { display: "block", margin: "12px 0 4px", fontWeight: 600 } as const;
 
 function PayForm({ t, onDone, onErr }: { t: (typeof T)["en"]; onDone: () => void; onErr: (m: string) => void }) {
   const stripe = useStripe(), elements = useElements(); const [busy, setBusy] = useState(false);
@@ -45,7 +41,7 @@ function PayForm({ t, onDone, onErr }: { t: (typeof T)["en"]; onDone: () => void
     const { error } = await stripe.confirmPayment({ elements, redirect: "if_required", confirmParams: { return_url: window.location.href } });
     setBusy(false); if (error) onErr(error.message ?? "payment"); else onDone(); }}>
     <PaymentElement /><p style={{ fontSize: 14 }}>{t.notCharged}</p>
-    <button style={btn} disabled={busy || !stripe}>{busy ? t.paying : t.pay}</button></form>;
+    <button className="btn" disabled={busy || !stripe}>{busy ? t.paying : t.pay}</button></form>;
 }
 
 export default function BookingFlow({ lang, country, practiceName, practitionerId, timezone, services, preselect, stripeKey }: Props) {
@@ -121,36 +117,36 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
   const detailsOk = !!svc && (petId && petId !== "new" ? true : petName.trim().length > 0) && (svc.type !== "home" || address.trim().length > 5);
   return (
     <div>
-      <p style={{ color: "#4a5568", margin: 0 }}>{practiceName}</p>
+      <p style={{ margin: 0 }}><small>{practiceName}</small></p>
       {svc && step !== "svc" && step !== "done" && <p><strong>{svc.name ?? t.types[svc.type]}</strong> · {svc.duration} min · {money(svc.price, svc.currency)}{slot && <> · {dayLabel(slot.start)} {hour(slot.start)}</>}</p>}
-      {step === "svc" && <section><h2>{t.svc}</h2>{services.map((s) => <button key={s.id} style={{ ...ghost, display: "block", width: "100%", textAlign: "left", margin: "8px 0" }} onClick={() => { setSvc(s); setStep("slot"); }}>
+      {step === "svc" && <section><h2>{t.svc}</h2>{services.map((s) => <button key={s.id} className="btn btn-ghost choice" onClick={() => { setSvc(s); setStep("slot"); }}>
         <strong>{s.name ?? t.types[s.type]}</strong> · {t.types[s.type]} · {s.duration} min · {money(s.price, s.currency)}</button>)}</section>}
       {step === "slot" && <section><h2>{t.slot}</h2>
         {slots === null ? <p>…</p> : grouped.length === 0 ? <p>{t.none}</p> : grouped.map(([day, list]) => <div key={day} style={{ margin: "10px 0" }}>
           <strong style={{ textTransform: "capitalize" }}>{dayLabel(list[0].start)}</strong>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>{list.map((s) => <button key={s.start} style={ghost} onClick={async () => { setSlot(s); const { data } = await supabaseBrowser().auth.getUser(); if (data.user) { await ensureOwnerAndPets(data.user.id); setStep("details"); } else setStep("auth"); }}>{hour(s.start)}</button>)}</div></div>)}
-        <p>{offset > 0 && <button style={ghost} onClick={() => setOffset(offset - 1)}>{t.back}</button>} <button style={ghost} onClick={() => setOffset(offset + 1)}>{t.more}</button>
-          {services.length > 1 && <> <button style={{ ...ghost, border: 0 }} onClick={() => { setSvc(undefined); setStep("svc"); }}>{t.svc}</button></>}</p></section>}
+          <div className="slots">{list.map((s) => <button key={s.start} className="btn btn-ghost" onClick={async () => { setSlot(s); const { data } = await supabaseBrowser().auth.getUser(); if (data.user) { await ensureOwnerAndPets(data.user.id); setStep("details"); } else setStep("auth"); }}>{hour(s.start)}</button>)}</div></div>)}
+        <p>{offset > 0 && <button className="btn btn-ghost" onClick={() => setOffset(offset - 1)}>{t.back}</button>} <button className="btn btn-ghost" onClick={() => setOffset(offset + 1)}>{t.more}</button>
+          {services.length > 1 && <> <button className="btn btn-quiet" onClick={() => { setSvc(undefined); setStep("svc"); }}>{t.svc}</button></>}</p></section>}
       {step === "auth" && <section><h2>{t.account}</h2>
-        <button style={ghost} onClick={() => signInWithProvider("google", here)}>{t.google}</button>
-        {!login && <><label style={lab}>{t.name}</label><input style={inp} value={name} onChange={(e) => setName(e.target.value)} /></>}
-        <label style={lab}>{t.email}</label><input style={inp} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <label style={lab}>{t.pass}</label><input style={inp} type="password" value={pass} onChange={(e) => setPass(e.target.value)} />
-        <p><button style={btn} disabled={busy || !email || !pass || (!login && !name)} onClick={auth}>{login ? t.login : t.create}</button> <button style={{ ...ghost, border: 0 }} onClick={() => setLogin(!login)}>{login ? t.create : t.have}</button></p></section>}
+        <button className="btn btn-ghost" onClick={() => signInWithProvider("google", here)}>{t.google}</button>
+        {!login && <><label className="label">{t.name}</label><input className="field" value={name} onChange={(e) => setName(e.target.value)} /></>}
+        <label className="label">{t.email}</label><input className="field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <label className="label">{t.pass}</label><input className="field" type="password" value={pass} onChange={(e) => setPass(e.target.value)} />
+        <p><button className="btn" disabled={busy || !email || !pass || (!login && !name)} onClick={auth}>{login ? t.login : t.create}</button> <button className="btn btn-quiet" onClick={() => setLogin(!login)}>{login ? t.create : t.have}</button></p></section>}
       {step === "details" && svc && <section><h2>{t.pet}</h2>
-        <select style={inp} value={petId || "new"} onChange={(e) => setPetId(e.target.value)}>{pets.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}<option value="new">{t.newPet}</option></select>
-        {(petId === "new" || pets.length === 0) && <div style={{ display: "flex", gap: 8, marginTop: 8 }}><input style={inp} placeholder={t.petName} value={petName} onChange={(e) => setPetName(e.target.value)} />
-          <select style={inp} value={species} onChange={(e) => setSpecies(e.target.value)}>{Object.entries(t.species).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></div>}
-        <label style={lab}>{t.motive}</label><textarea style={{ ...inp, minHeight: 80 }} maxLength={1000} value={motive} onChange={(e) => setMotive(e.target.value)} />
-        {svc.type === "home" && <><label style={lab}>{t.address}</label><input style={inp} value={address} onChange={(e) => setAddress(e.target.value)} /><label style={lab}>{t.access}</label><input style={inp} maxLength={300} value={access} onChange={(e) => setAccess(e.target.value)} /></>}
+        <select className="field" value={petId || "new"} onChange={(e) => setPetId(e.target.value)}>{pets.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}<option value="new">{t.newPet}</option></select>
+        {(petId === "new" || pets.length === 0) && <div className="row" style={{ marginTop: 8 }}><input className="field" placeholder={t.petName} value={petName} onChange={(e) => setPetName(e.target.value)} />
+          <select className="field" value={species} onChange={(e) => setSpecies(e.target.value)}>{Object.entries(t.species).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></div>}
+        <label className="label">{t.motive}</label><textarea className="field" style={{ minHeight: 80 }} maxLength={1000} value={motive} onChange={(e) => setMotive(e.target.value)} />
+        {svc.type === "home" && <><label className="label">{t.address}</label><input className="field" value={address} onChange={(e) => setAddress(e.target.value)} /><label className="label">{t.access}</label><input className="field" maxLength={300} value={access} onChange={(e) => setAccess(e.target.value)} /></>}
         {svc.type === "video" && <label style={{ display: "block", margin: "14px 0" }}><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /> {t.consent}</label>}
         {needsPay && <p style={{ fontSize: 14 }}>{t.notCharged}</p>}
-        <p><button style={ghost} onClick={() => setStep("slot")}>{t.back}</button> <button style={btn} disabled={busy || !detailsOk} onClick={submit}>{busy ? t.paying : needsPay ? t.go : t.send}</button></p></section>}
+        <p><button className="btn btn-ghost" onClick={() => setStep("slot")}>{t.back}</button> <button className="btn" disabled={busy || !detailsOk} onClick={submit}>{busy ? t.paying : needsPay ? t.go : t.send}</button></p></section>}
       {step === "pay" && stripePromise && secret && <section><h2>{t.total}: {money(price, svc!.currency)}</h2>
         <Elements stripe={stripePromise} options={{ clientSecret: secret, locale: lang as "fr" }}><PayForm t={t} onDone={() => setStep("done")} onErr={err} /></Elements></section>}
       {step === "pay" && !stripePromise && <p role="alert">{t.err}NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</p>}
       {step === "done" && <section><h2>{t.doneT}</h2><p>{t.done}</p><p><a href={`/${lang}/${country.toLowerCase()}/`}>{t.home}</a></p></section>}
-      {msg && <p role="alert" style={{ color: "#b00020" }}>{msg}</p>}
+      {msg && <p role="alert" className="alert">{msg}</p>}
       {signedIn && step === "svc" && null}
     </div>
   );

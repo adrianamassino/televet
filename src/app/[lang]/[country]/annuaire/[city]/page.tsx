@@ -31,7 +31,7 @@ export default async function DirectoryCity({ params }: P) {
   const ld = [organizationLd(), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: "Annuaire", url: `${base}/annuaire` }, { name: d.cityName, url: `${base}/annuaire/${city}` }]),
     { "@context": "https://schema.org", "@type": "ItemList", itemListElement: d.list.map((x, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "VeterinaryCare", name: x.name, address: { "@type": "PostalAddress", streetAddress: x.address, postalCode: x.postal_code, addressLocality: x.city, addressCountry: d.cc } } })) }];
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
+    <main className="wrap narrow">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <h1>Cliniques vétérinaires à {d.cityName}</h1>
       <ul>{d.list.map((x) => (

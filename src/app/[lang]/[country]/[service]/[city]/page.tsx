@@ -51,7 +51,7 @@ export default async function CityPage({ params }: P) {
   const ld = [organizationLd(), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: h1, url: `${base}/${service}/${city}` }]),
     ...d.list.map((p) => veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }))];
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
+    <main className="wrap narrow">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <nav aria-label="breadcrumb"><a href={`/${lang}/${country}/`}>Televet</a> › {h1}</nav>
       <h1>{h1}</h1>
