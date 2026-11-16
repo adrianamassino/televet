@@ -19,25 +19,25 @@ const KEY = "televet_chat_v1";
 const HIDDEN = /^\/(admin|visio|auth|api)(\/|$)/;
 
 const CSS = `
-.tvc-fab{position:fixed;right:16px;bottom:16px;z-index:2147483000;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;background:linear-gradient(135deg,#2b5fd9,#5a3fe0);color:#fff;font:600 15px system-ui,sans-serif;padding:13px 18px;cursor:pointer;box-shadow:0 6px 24px rgba(58,47,168,.4)}
+.tvc-fab{position:fixed;right:16px;bottom:16px;z-index:2147483000;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;background:linear-gradient(135deg,#1d5cf0,#5b6dff);color:#fff;font:600 15px system-ui,sans-serif;padding:13px 18px;cursor:pointer;box-shadow:0 6px 24px rgba(58,47,168,.4)}
 .tvc-fab:focus-visible,.tvc-send:focus-visible,.tvc-x:focus-visible,.tvc-chip:focus-visible,.tvc-cta:focus-visible{outline:3px solid #ffb703;outline-offset:2px}
 .tvc-panel{position:fixed;right:16px;bottom:16px;z-index:2147483001;width:380px;max-width:calc(100vw - 32px);height:min(640px,calc(100dvh - 32px));display:flex;flex-direction:column;background:#fff;color:#14213d;border-radius:16px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.28);font:15px/1.45 system-ui,sans-serif}
 @media(max-width:520px){.tvc-panel{right:0;bottom:0;width:100vw;max-width:100vw;height:100dvh;border-radius:0}}
-.tvc-head{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2b5fd9,#5a3fe0);color:#fff;padding:12px 14px}
+.tvc-head{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1d5cf0,#5b6dff);color:#fff;padding:12px 14px}
 .tvc-head b{font-size:16px}.tvc-badge{background:rgba(255,255,255,.2);border-radius:6px;font-size:11px;padding:2px 6px;font-weight:700}
 .tvc-x{margin-left:auto;background:transparent;border:0;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:4px 8px}
 .tvc-notice{font-size:12px;color:#4a5568;background:#f1f4fb;padding:8px 14px;border-bottom:1px solid #e3e8f4}
 .tvc-sos{background:#b00020;color:#fff;font-weight:600;font-size:13px;padding:8px 14px}
 .tvc-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#fafbff}
 .tvc-m{max-width:86%;padding:9px 12px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word}
-.tvc-m.a{align-self:flex-start;background:#fff;border:1px solid #e3e8f4}.tvc-m.u{align-self:flex-end;background:linear-gradient(135deg,#2b5fd9,#5a3fe0);color:#fff}
+.tvc-m.a{align-self:flex-start;background:#fff;border:1px solid #e3e8f4}.tvc-m.u{align-self:flex-end;background:linear-gradient(135deg,#1d5cf0,#5b6dff);color:#fff}
 .tvc-ctas{display:flex;flex-direction:column;gap:6px;align-self:flex-start;max-width:86%}
 .tvc-cta{display:block;text-align:center;text-decoration:none;background:#ffb703;color:#14213d;font-weight:700;border-radius:10px;padding:10px 12px}
 .tvc-cta.s{background:#fff;border:1px solid #0b3bbf;color:#0b3bbf}
 .tvc-chips{display:flex;flex-wrap:wrap;gap:6px}.tvc-chip{border:1px solid #0b3bbf;color:#0b3bbf;background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer;font:inherit;font-size:14px}
 .tvc-form{display:flex;gap:8px;padding:10px;border-top:1px solid #e3e8f4;background:#fff}
 .tvc-form input{flex:1;min-width:0;border:1px solid #c5cde0;border-radius:10px;padding:10px 12px;font:inherit}
-.tvc-send{border:0;background:linear-gradient(135deg,#2b5fd9,#5a3fe0);color:#fff;border-radius:10px;padding:0 16px;font-weight:700;cursor:pointer}.tvc-send:disabled{opacity:.5;cursor:default}
+.tvc-send{border:0;background:linear-gradient(135deg,#1d5cf0,#5b6dff);color:#fff;border-radius:10px;padding:0 16px;font-weight:700;cursor:pointer}.tvc-send:disabled{opacity:.5;cursor:default}
 .tvc-dots{align-self:flex-start;color:#6b7690;padding:4px 8px}
 @media(prefers-reduced-motion:no-preference){.tvc-dots{animation:tvcp 1s infinite}@keyframes tvcp{50%{opacity:.35}}}
 `;

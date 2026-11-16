@@ -363,3 +363,30 @@ body { background:
   radial-gradient(900px 520px at 100% -80px, rgba(77,157,240,.26) 0%, transparent 62%),
   radial-gradient(900px 600px at -10% 45%, rgba(106,76,240,.13) 0%, transparent 60%),
   linear-gradient(180deg, #f8f9ff 0%, #eef2ff 55%, #e6ebff 100%); background-repeat: no-repeat; min-height: 100vh; }
+
+/* ---- v7: blu più chiaro, più contrasto ---- */
+:root { --g-aurora: radial-gradient(55% 80% at 100% 0%, rgba(125,211,252,.95) 0%, transparent 62%), radial-gradient(50% 70% at 5% 115%, rgba(124,92,255,.65) 0%, transparent 62%), linear-gradient(120deg, #0b1f66 0%, #1d4ed8 45%, #3b9bff 100%); --g-btn: linear-gradient(135deg, #1d5cf0 0%, #5b6dff 100%); }
+body { background:
+  radial-gradient(900px 520px at 100% -80px, rgba(56,189,248,.30) 0%, transparent 62%),
+  radial-gradient(900px 600px at -10% 45%, rgba(91,109,255,.12) 0%, transparent 60%),
+  linear-gradient(180deg, #ffffff 0%, #f0f6ff 50%, #e3efff 100%); background-repeat: no-repeat; min-height: 100vh; }
+.hero-panel { box-shadow: 0 44px 80px -40px rgba(29,78,216,.75); }
+.hero-panel h1 { text-shadow: 0 2px 24px rgba(8,20,80,.35); }
+.ticket .top { background: linear-gradient(135deg, #1d4ed8 0%, #3b9bff 100%) !important; }
+.facts li, .facts li:nth-child(n) { background: #fff; border: 1px solid #cfe0fb; box-shadow: 0 22px 40px -28px rgba(29,78,216,.55); }
+.facts li .ico, .facts li:nth-child(n) .ico { background: linear-gradient(145deg, #3b9bff, #1d4ed8) !important; }
+.pets { background: #fff; border-color: #cfe0fb; }
+.pets .ico, .pets .ico:nth-child(n) { background: linear-gradient(145deg, #e6f1ff, #cfe3ff) !important; color: #1d4ed8 !important; }
+details.qa { background: #fff; border-color: #cfe0fb; } details.qa[open] { border-color: #1d5cf0; }
+.steps li::before, .steps li:nth-child(n)::before { background: var(--g-btn); }
+.band { background: var(--g-aurora); }
+.site-footer { background: linear-gradient(120deg, #0b1f66, #1d4ed8); }
+.side { background: radial-gradient(90% 40% at 100% 100%, rgba(125,211,252,.5) 0%, transparent 70%), linear-gradient(180deg, #0b1f66, #1d4ed8); }
+.vetcard, .vetcard:nth-child(n) { background: linear-gradient(160deg, #1d4ed8, #3b9bff); }
+.stat .ico, .stat:nth-child(n) .ico { background: linear-gradient(145deg, #3b9bff, #1d4ed8) !important; }
+.chip { background: #e0edff; color: #1d4ed8; }
+.site-header { background: rgba(255,255,255,.82); border-bottom-color: #d6e4fb; }
+.brand { color: #0b1f66; } .brand svg { color: #1d5cf0; }
+a { color: #1d5cf0; } a:hover { color: #0b1f66; }
+.btn-ghost { box-shadow: inset 0 0 0 1.5px #1d5cf0; color: #1d5cf0; }
+.ticket .top { background: linear-gradient(135deg, #0b1f66 0%, #3a3fc8 100%) !important; }
