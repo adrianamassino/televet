@@ -414,3 +414,18 @@ a { color: #1d5cf0; } a:hover { color: #0b1f66; }
 .btn-sun, .btn.btn-sun { background: linear-gradient(135deg, #ffe066, #ffa94d); color: #3b2300; box-shadow: 0 14px 28px -12px rgba(255,150,40,.75); }
 .btn-sun:hover { background: linear-gradient(135deg, #ffd23d, #ff9a2e); color: #3b2300; }
 html, body { overflow-x: clip; }
+
+/* ---- v9: decorazione più marcata (croci di vetro, molecole, cuore, battito) ---- */
+.hero-panel::before, .band::before { background: url(/decor/hero.svg) center / cover no-repeat, url(/decor/hex.svg) center / 60px auto repeat; -webkit-mask-image: none; mask-image: none; }
+.hero-panel::after { display: none; }
+.site-footer::before { background: url(/decor/hero.svg) center / cover no-repeat; opacity: .8; }
+.hero-panel { min-height: 560px; display: flex; align-items: center; }
+.hero-panel .hero { width: 100%; }
+html { background: #dff0ff; }
+body { background:
+  url(/decor/page.svg) center top / 1400px auto repeat-y,
+  radial-gradient(1000px 600px at 100% -80px, rgba(34,211,255,.42) 0%, transparent 62%),
+  radial-gradient(900px 600px at -10% 40%, rgba(29,107,255,.22) 0%, transparent 60%),
+  linear-gradient(180deg, #f2f9ff 0%, #dcedff 50%, #cfe6ff 100%); background-repeat: repeat-y, no-repeat, no-repeat, no-repeat; min-height: 100vh; }
+.hero-panel::before, .band::before { width: auto; height: auto; right: 0; left: 0; top: 0; bottom: 0; }
+.site-footer::before { opacity: .45; }
