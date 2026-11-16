@@ -262,3 +262,56 @@ body { background:
 .vetcard, .vetcard:nth-child(n) { background: linear-gradient(160deg, #1738b8, #2f7bff); }
 details.qa { background: rgba(255,255,255,.8); }
 .chip.ok { background: #dbe8ff; color: var(--cobalt); } .chip.wait { background: #e8efff; color: var(--cobalt-deep); }
+
+/* ---- v4: aurora — sfumature brillanti (indaco, viola, azzurro, turchese, rosa), card sobrie ---- */
+:root {
+  --g-aurora: radial-gradient(60% 80% at 8% 0%, #3b1fd6 0%, transparent 60%), radial-gradient(55% 70% at 100% 8%, #00b8ff 0%, transparent 58%), radial-gradient(60% 80% at 92% 108%, #ff4fa3 0%, transparent 60%), radial-gradient(50% 70% at 0% 110%, #00d4b4 0%, transparent 62%), linear-gradient(135deg, #1a1b8a, #4b2bd0);
+  --g-btn: linear-gradient(135deg, #2457ff 0%, #6a3dff 100%);
+  --g-ic1: linear-gradient(145deg, #2f7bff, #6a3dff); --g-ic2: linear-gradient(145deg, #7a4dff, #e04fd0);
+  --g-ic3: linear-gradient(145deg, #00b8ff, #00d4b4); --g-ic4: linear-gradient(145deg, #ff6aa8, #ff9a5e); --g-ic5: linear-gradient(145deg, #2f7bff, #00c6ff);
+}
+html { background: #f1f0ff; }
+body { background:
+  radial-gradient(900px 520px at 100% -60px, rgba(0,184,255,.28) 0%, transparent 62%),
+  radial-gradient(900px 600px at -10% 18%, rgba(122,77,255,.22) 0%, transparent 60%),
+  radial-gradient(800px 600px at 105% 55%, rgba(255,106,168,.18) 0%, transparent 60%),
+  radial-gradient(900px 600px at -5% 90%, rgba(0,212,180,.20) 0%, transparent 60%),
+  linear-gradient(180deg, #f7f6ff 0%, #eef2ff 50%, #f4f0ff 100%);
+  background-repeat: no-repeat; min-height: 100vh; }
+.site-header { background: rgba(247,246,255,.72); border-bottom-color: rgba(122,77,255,.16); }
+.hero-panel { background: var(--g-aurora); box-shadow: 0 40px 80px -40px rgba(74,43,208,.7); }
+.hero-panel::before { background: radial-gradient(circle, rgba(255,255,255,.22), transparent 65%); }
+.hero-panel::after { background: radial-gradient(circle, rgba(255,255,255,.14), transparent 65%); }
+.hero-panel .float { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.4); box-shadow: 0 12px 30px -14px rgba(20,10,80,.6); }
+.ticket .top { background: linear-gradient(135deg, #6a3dff 0%, #2f7bff 70%, #00b8ff 120%) !important; }
+.btn { background: var(--g-btn); box-shadow: 0 12px 24px -12px rgba(88,52,255,.85); }
+.btn:hover { background: linear-gradient(135deg, #1a45e8, #5a2ee8); }
+.btn-sun { background: linear-gradient(135deg, #ffe066, #ff9a5e 60%, #ff6aa8 130%); color: #3b1a00; box-shadow: 0 14px 28px -12px rgba(255,106,100,.8); }
+.btn-ghost { box-shadow: inset 0 0 0 1.5px #6a3dff; color: #4b2bd0; }
+.ico { background: linear-gradient(145deg, #ece8ff, #dbe8ff) !important; color: #4b2bd0 !important; }
+.facts li, .facts li:nth-child(n) { background: rgba(255,255,255,.78); border: 1px solid rgba(122,77,255,.16); box-shadow: 0 24px 40px -30px rgba(74,43,208,.5); backdrop-filter: blur(6px); }
+.facts li .ico { color: #fff !important; box-shadow: 0 12px 22px -10px rgba(74,43,208,.7); }
+.facts li:nth-child(1) .ico { background: var(--g-ic1) !important; } .facts li:nth-child(2) .ico { background: var(--g-ic2) !important; }
+.facts li:nth-child(3) .ico { background: var(--g-ic3) !important; } .facts li:nth-child(4) .ico { background: var(--g-ic4) !important; }
+.facts li:nth-child(5) .ico { background: var(--g-ic5) !important; }
+.pets { background: rgba(255,255,255,.6); border: 1px solid rgba(122,77,255,.16); }
+.pets .ico:nth-child(1) { background: var(--g-ic1) !important; } .pets .ico:nth-child(2) { background: var(--g-ic2) !important; }
+.pets .ico:nth-child(3) { background: var(--g-ic3) !important; } .pets .ico:nth-child(4) { background: var(--g-ic4) !important; }
+.pets .ico { color: #fff !important; }
+.steps li::before { background: var(--g-btn); box-shadow: 0 10px 18px -8px rgba(88,52,255,.7); }
+.band { background: var(--g-aurora); }
+.band::after { background: radial-gradient(circle, rgba(255,255,255,.2), transparent 65%); }
+.band .btn { background: #fff; color: #4b2bd0; box-shadow: 0 14px 28px -14px rgba(20,10,80,.7); }
+details.qa { border-color: rgba(122,77,255,.18); } details.qa[open] { border-color: #6a3dff; }
+details.qa summary::after { color: #6a3dff; }
+.site-footer { background: var(--g-aurora); }
+.side { background: radial-gradient(90% 40% at 0% 0%, #6a3dff 0%, transparent 70%), radial-gradient(90% 40% at 100% 100%, #ff4fa3 0%, transparent 70%), linear-gradient(180deg, #1a1b8a, #3a2bd0); }
+.side button.nav[aria-current="page"] { color: #4b2bd0; }
+.side .brand svg { color: #fff; }
+.vetcard, .vetcard:nth-child(n) { background: linear-gradient(160deg, #2f4fe8, #7a4dff); }
+.chip { background: #ece8ff; color: #4b2bd0; } .chip.ok { background: #d9f6ee; color: #0a7a62; } .chip.wait { background: #ffe9d6; color: #9a4a00; }
+.stat { background: rgba(255,255,255,.82) !important; border-color: rgba(122,77,255,.16); }
+.stat:nth-child(1) .ico { background: var(--g-ic4) !important; } .stat:nth-child(2) .ico { background: var(--g-ic1) !important; } .stat:nth-child(3) .ico { background: var(--g-ic3) !important; }
+.stat .ico { color: #fff !important; }
+.brand { color: #3a2bd0; }
+.site-nav .pill { background: var(--g-btn); color: #fff; box-shadow: 0 10px 20px -12px rgba(88,52,255,.8); }
