@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import { Hospital, House, Stethoscope, Video } from "lucide-react";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { signInWithEmail, signInWithProvider, signUpWithEmail, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
@@ -119,8 +120,8 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
     <div>
       <p style={{ margin: 0 }}><small>{practiceName}</small></p>
       {svc && step !== "svc" && step !== "done" && <p><strong>{svc.name ?? t.types[svc.type]}</strong> · {svc.duration} min · {money(svc.price, svc.currency)}{slot && <> · {dayLabel(slot.start)} {hour(slot.start)}</>}</p>}
-      {step === "svc" && <section><h2>{t.svc}</h2>{services.map((s) => <button key={s.id} className="btn btn-ghost choice" onClick={() => { setSvc(s); setStep("slot"); }}>
-        <strong>{s.name ?? t.types[s.type]}</strong> · {t.types[s.type]} · {s.duration} min · {money(s.price, s.currency)}</button>)}</section>}
+      {step === "svc" && <section><h2>{t.svc}</h2>{services.map((s) => <button key={s.id} className="btn btn-ghost choice" style={{ gap: 14, padding: "10px 16px", height: "auto" }} onClick={() => { setSvc(s); setStep("slot"); }}>
+        <span className={`ico sm ${({ video: "t-coral", home: "t-mint", clinic: "t-sky", expertise: "t-lilac" } as const)[s.type]}`} aria-hidden>{(() => { const I = ({ video: Video, home: House, clinic: Hospital, expertise: Stethoscope } as const)[s.type]; return <I />; })()}</span><span><strong>{s.name ?? t.types[s.type]}</strong><br /><small>{t.types[s.type]} · {s.duration} min · {money(s.price, s.currency)}</small></span></button>)}</section>}
       {step === "slot" && <section><h2>{t.slot}</h2>
         {slots === null ? <p>…</p> : grouped.length === 0 ? <p>{t.none}</p> : grouped.map(([day, list]) => <div key={day} style={{ margin: "10px 0" }}>
           <strong style={{ textTransform: "capitalize" }}>{dayLabel(list[0].start)}</strong>

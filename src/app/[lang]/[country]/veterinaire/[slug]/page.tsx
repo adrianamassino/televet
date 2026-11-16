@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
+import { Hospital, House, PawPrint, Stethoscope, Video } from "lucide-react";
 import { COUNTRIES, ZERO_DECIMAL } from "@/lib/countries";
 import { breadcrumbLd, ldJson, pageMetadata, SITE, veterinaryCareLd } from "@/lib/seo";
 
@@ -46,6 +47,7 @@ export default async function VetProfile({ params }: P) {
   const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(lang, { style: "currency", currency: cur }).format(ZERO_DECIMAL.has(cur) ? c : c / 100); } catch { return `${c} ${cur}`; } };
   const names = (l: string[]) => l.map((x) => { try { return new Intl.DisplayNames([lang], { type: "language" }).of(x) ?? x; } catch { return x; } }).join(", ");
   const base = `${SITE}/${lang}/${country}`;
+  const SI = { video: Video, home: House, clinic: Hospital, expertise: Stethoscope } as const; const TC = { video: "t-coral", home: "t-mint", clinic: "t-sky", expertise: "t-lilac" } as const;
   const book = `/${lang}/${country}/reserver/${p.slug}`;
   const ld = [veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }),
     breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: p.name, url: `${base}/veterinaire/${p.slug}` }])];
@@ -53,19 +55,24 @@ export default async function VetProfile({ params }: P) {
     <main className="wrap narrow">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <nav><a href={`/${lang}/${country}/`}>{t.home}</a></nav>
-      <p style={{ margin: "24px 0 0" }}><span className="chip">{t.kind[p.kind] ?? t.kind.vet}</span></p>
-      <h1>{p.name}</h1>
-      {p.headline && <p style={{ fontSize: "1.25rem" }}>{p.headline}</p>}
-      {p.address && <p><small>{p.address}{p.postal_code ? `, ${p.postal_code}` : ""}</small></p>}
-      {services.length > 0 && <p><a className="btn btn-lg" href={book}>{t.book}</a></p>}
+      <header className="vet-hero">
+        <span className="ico" style={{ width: 76, height: 76, borderRadius: 24, background: "rgba(255,255,255,.16)", color: "#fff" }} aria-hidden><Stethoscope style={{ width: 38, height: 38 }} /></span>
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <span className="chip">{t.kind[p.kind] ?? t.kind.vet}</span>
+          <h1 style={{ marginTop: 10 }}>{p.name}</h1>
+          {p.headline && <p style={{ fontSize: "1.15rem" }}>{p.headline}</p>}
+          {p.address && <p><small style={{ color: "rgba(255,255,255,.8)" }}>{p.address}{p.postal_code ? `, ${p.postal_code}` : ""}</small></p>}
+        </div>
+        {services.length > 0 && <a className="btn btn-sun btn-lg" href={book}><PawPrint aria-hidden size={20} />{t.book}</a>}
+      </header>
       {p.about && <section><h2>{t.about}</h2><p style={{ whiteSpace: "pre-line" }}>{p.about}</p></section>}
       {services.length > 0 && <section><h2>{t.services}</h2>
         <ul style={{ listStyle: "none", padding: 0 }}>{services.map((s, i) => (
-          <li key={i} className="panel">
+          <li key={i} className="panel svc-ico"><span className={`ico ${TC[s.type as keyof typeof TC] ?? "t-sky"}`} aria-hidden>{(() => { const I = SI[s.type as keyof typeof SI] ?? Stethoscope; return <I />; })()}</span><div style={{ flex: 1 }}>
             <strong>{s.custom_name ?? t.types[s.type]}</strong> <span style={{ color: "var(--ink-soft)" }}>· {t.types[s.type]} · {s.duration_min} {t.min}</span>
             <div className="price">{money(s.price_cents, s.currency)}</div>
             {s.description && <p style={{ margin: "6px 0 0" }}>{s.description}</p>}
-          </li>))}</ul></section>}
+          </div></li>))}</ul></section>}
       {p.languages?.length > 0 && <p><strong>{t.langs}:</strong> {names(p.languages)}</p>}
       <p style={{ marginTop: 32 }}><a href="mailto:contact@televet.co">{t.contact}</a></p>
     </main>

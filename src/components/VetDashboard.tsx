@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { BellRing, CalendarCheck, CalendarDays, Clock, Hospital, Settings, Stethoscope, Users } from "lucide-react";
 import { signInWithEmail, signInWithProvider, signOut, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
 import { zonedToUtc, addDays } from "@/lib/time";
@@ -174,21 +175,25 @@ export default function VetDashboard({ lang, country, currency, languages, provi
     {actions && <div style={{ marginTop: 10 }}>{replyFor === b.id && <input className="field" style={{ marginBottom: 8 }} placeholder={t("reason")} value={reply} onChange={(e) => setReply(e.target.value)} />}
       <button className="btn" onClick={() => act(b.id, "confirm")}>{t("accept")}</button>{" "}<button className="btn btn-ghost" onClick={() => (replyFor === b.id ? act(b.id, "decline") : setReplyFor(b.id))}>{t("decline")}</button></div>}
   </div>;
-  const Pill = ({ k, label }: { k: Tab; label: string }) => <button className="nav" aria-current={tab === k ? "page" : undefined} onClick={() => { setTab(k); setSub("menu"); setVetId(k === "vets" ? "" : vetId); }}>{label}{k === "agenda" && pending.length ? ` (${pending.length})` : ""}</button>;
+  const Pill = ({ k, label, I }: { k: Tab; label: string; I: typeof Clock }) => <button className="nav" aria-current={tab === k ? "page" : undefined} onClick={() => { setTab(k); setSub("menu"); setVetId(k === "vets" ? "" : vetId); }}><I aria-hidden />{label}{k === "agenda" && pending.length ? ` (${pending.length})` : ""}</button>;
   const vetSvcs = svcs.filter((s) => s.practitioner_id === vetId);
   const tzList: string[] = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [p.timezone];
 
   return (
     <div className="app">
       <aside className="side">
-        <a className="brand" href={`/${lang}/${country.toLowerCase()}/`}>televet</a>
-        <Pill k="agenda" label={t("nAgenda")} /><Pill k="clinic" label={t("nClinic")} /><Pill k="vets" label={t("nVets")} /><Pill k="settings" label={t("nSettings")} /><Pill k="reminders" label={t("nReminders")} />
+        <a className="brand" href={`/${lang}/${country.toLowerCase()}/`}><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 29C6 21.6 2 17.2 2 11.6 2 7.4 5.2 4.5 9 4.5c2.6 0 5 1.4 7 4 2-2.6 4.4-4 7-4 3.8 0 7 2.9 7 7.1 0 5.6-4 10-14 17.4Z" /></svg>televet</a>
+        <Pill k="agenda" label={t("nAgenda")} I={CalendarDays} /><Pill k="clinic" label={t("nClinic")} I={Hospital} /><Pill k="vets" label={t("nVets")} I={Stethoscope} /><Pill k="settings" label={t("nSettings")} I={Settings} /><Pill k="reminders" label={t("nReminders")} I={BellRing} />
         <div className="who">{p.name}<br /><button onClick={async () => { await signOut(); setSigned(false); }}>{t("out")}</button></div>
       </aside>
       <div className="main">
         <p style={{ margin: "0 0 18px" }}>{p.published ? <span className="chip ok">{t("live")}</span> : <span className="chip wait">{t("review")}</span>}</p>
 
         {tab === "agenda" && <section><h1>{t("nAgenda")}</h1>
+          <div className="stats">
+            <div className="stat t-sun" style={{ ["--tile" as string]: "var(--sun-bg)" }}><span className="ico t-sun" style={{ background: "#fff" }}><Clock /></span><div><b>{pending.length}</b><span>{t("pending")}</span></div></div>
+            <div className="stat t-sky" style={{ ["--tile" as string]: "var(--sky-bg)" }}><span className="ico t-sky" style={{ background: "#fff" }}><CalendarCheck /></span><div><b>{upcoming.length}</b><span>{t("upcoming")}</span></div></div>
+            <div className="stat t-mint" style={{ ["--tile" as string]: "var(--mint-bg)" }}><span className="ico t-mint" style={{ background: "#fff" }}><Users /></span><div><b>{vets.length}</b><span>{t("nVets")}</span></div></div></div>
           {pending.length > 0 && <><h2>{t("pending")}</h2>{pending.map((b) => row(b, true))}</>}
           <h2>{t("upcoming")}</h2>{upcoming.length ? upcoming.map((b) => row(b, false)) : <p>{t("none")}</p>}
           {past.length > 0 && <><h2>{t("past")}</h2>{past.slice(0, 30).map((b) => row(b, false))}</>}</section>}

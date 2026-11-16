@@ -2,12 +2,14 @@
 export interface ProCopy {
   title: string; description: string; h1: string; sub: string; cta: string; ctaNote: string;
   benefitsTitle: string; benefits: [string, string][]; stepsTitle: string; steps: string[];
+  pets: string;
   ticket: { kind: string; when: string; s0: string; s1: string; paid: string; sample: string };
   faqTitle: string; faq: [string, string][]; legal: string; contact: string; home: string;
 }
 
 export const PRO: Record<string, ProCopy> = {
   fr: {
+    pets: "Chiens, chats, lapins, oiseaux : chaque animal a son vétérinaire.",
     ticket: { kind: "Visio", when: "Aujourd'hui · 18:30", s0: "À confirmer", s1: "Confirmé", paid: "Payé en ligne", sample: "Exemple de rendez-vous" },
     title: "Televet Pro : consultations vétérinaires en ligne pour les vétérinaires", description: "Créez votre profil Televet, recevez des demandes de rendez-vous en visio, à domicile ou en clinique, avec agenda synchronisé et paiement en ligne.",
     h1: "Votre agenda, vos patients, à votre rythme", sub: "Televet met en relation les propriétaires d'animaux et les vétérinaires pour des consultations en visio, à domicile ou en clinique. Vous gardez la main sur vos horaires, vos tarifs et vos zones.", cta: "Créer mon profil", ctaNote: "Quelques minutes, sans engagement.",
@@ -25,6 +27,7 @@ export const PRO: Record<string, ProCopy> = {
       ["Que se passe-t-il pour les données de la consultation ?", "L'enregistrement de l'échange n'est utilisé que pour préparer le brouillon de compte rendu, avec le consentement du propriétaire, puis il est supprimé une fois le compte rendu validé."]],
     legal: "Les règles de la télémédecine vétérinaire (diagnostic, prescription, premier contact) varient selon les pays : vous restez responsable de les respecter dans votre pratique.", contact: "Une question ? Écrivez-nous", home: "Retour à l'accueil" },
   it: {
+    pets: "Cani, gatti, conigli, uccelli: ogni animale ha il suo veterinario.",
     ticket: { kind: "Video", when: "Oggi · 18:30", s0: "Da confermare", s1: "Confermato", paid: "Pagato online", sample: "Esempio di appuntamento" },
     title: "Televet Pro: visite veterinarie online per i veterinari", description: "Crea il tuo profilo Televet e ricevi richieste di visita in video, a domicilio o in clinica, con agenda sincronizzata e pagamento online.",
     h1: "La tua agenda, i tuoi pazienti, con i tuoi tempi", sub: "Televet mette in contatto proprietari di animali e veterinari per visite in video, a domicilio o in clinica. Orari, tariffe e zone le decidi tu.", cta: "Crea il mio profilo", ctaNote: "Pochi minuti, senza impegno.",
@@ -42,6 +45,7 @@ export const PRO: Record<string, ProCopy> = {
       ["Che fine fanno i dati della visita?", "La registrazione della conversazione serve solo a preparare la bozza del referto, con il consenso del proprietario, e viene eliminata dopo la convalida del referto."]],
     legal: "Le regole sulla telemedicina veterinaria (diagnosi, prescrizione, primo contatto) cambiano da paese a paese: resta tua la responsabilità di rispettarle nella tua pratica.", contact: "Una domanda? Scrivici", home: "Torna alla home" },
   en: {
+    pets: "Dogs, cats, rabbits, birds: every pet has their vet.",
     ticket: { kind: "Video", when: "Today · 6:30 pm", s0: "To confirm", s1: "Confirmed", paid: "Paid online", sample: "Example appointment" },
     title: "Televet Pro: online vet consultations for veterinarians", description: "Create your Televet profile and receive booking requests for video, home and clinic visits, with a synced agenda and online payment.",
     h1: "Your agenda, your patients, on your terms", sub: "Televet connects pet owners and vets for video, home and clinic visits. You stay in control of your hours, your prices and your area.", cta: "Create my profile", ctaNote: "A few minutes, no commitment.",
@@ -59,6 +63,7 @@ export const PRO: Record<string, ProCopy> = {
       ["What happens to the consultation data?", "The recording of the conversation is used only to prepare the draft report, with the owner's consent, and is deleted once the report is validated."]],
     legal: "Rules on veterinary telemedicine (diagnosis, prescribing, first contact) vary by country: you remain responsible for complying with them in your practice.", contact: "Questions? Write to us", home: "Back to home" },
   es: {
+    pets: "Perros, gatos, conejos, aves: cada mascota tiene su veterinario.",
     ticket: { kind: "Video", when: "Hoy · 18:30", s0: "Por confirmar", s1: "Confirmada", paid: "Pagada online", sample: "Ejemplo de cita" },
     title: "Televet Pro: consultas veterinarias online para veterinarios", description: "Crea tu perfil en Televet y recibe solicitudes de cita por video, a domicilio o en clínica, con agenda sincronizada y pago online.",
     h1: "Tu agenda, tus pacientes, a tu ritmo", sub: "Televet conecta a propietarios de mascotas y veterinarios para consultas por video, a domicilio o en clínica. Tú decides tus horarios, tus tarifas y tu zona.", cta: "Crear mi perfil", ctaNote: "Unos minutos, sin compromiso.",
@@ -76,6 +81,7 @@ export const PRO: Record<string, ProCopy> = {
       ["¿Qué pasa con los datos de la consulta?", "La grabación de la conversación solo sirve para preparar el borrador del informe, con el consentimiento del propietario, y se elimina cuando validas el informe."]],
     legal: "Las normas sobre telemedicina veterinaria (diagnóstico, prescripción, primer contacto) varían según el país: sigues siendo responsable de cumplirlas en tu práctica.", contact: "¿Dudas? Escríbenos", home: "Volver al inicio" },
   pt: {
+    pets: "Cães, gatos, coelhos, aves: cada animal tem o seu veterinário.",
     ticket: { kind: "Vídeo", when: "Hoje · 18:30", s0: "Por confirmar", s1: "Confirmada", paid: "Pago online", sample: "Exemplo de marcação" },
     title: "Televet Pro: consultas veterinárias online para veterinários", description: "Crie o seu perfil na Televet e receba pedidos de consulta por vídeo, ao domicílio ou em clínica, com agenda sincronizada e pagamento online.",
     h1: "A sua agenda, os seus pacientes, ao seu ritmo", sub: "A Televet liga donos de animais e veterinários para consultas por vídeo, ao domicílio ou em clínica. Os horários, os preços e a zona são consigo.", cta: "Criar o meu perfil", ctaNote: "Poucos minutos, sem compromisso.",
@@ -93,6 +99,7 @@ export const PRO: Record<string, ProCopy> = {
       ["O que acontece aos dados da consulta?", "A gravação da conversa só serve para preparar o rascunho do relatório, com o consentimento do dono, e é eliminada depois de o relatório ser validado."]],
     legal: "As regras sobre telemedicina veterinária (diagnóstico, prescrição, primeiro contacto) variam consoante o país: continua responsável por as cumprir na sua prática.", contact: "Dúvidas? Escreva-nos", home: "Voltar ao início" },
   de: {
+    pets: "Hunde, Katzen, Kaninchen, Vögel: jedes Tier hat seinen Tierarzt.",
     ticket: { kind: "Video", when: "Heute · 18:30", s0: "Zu bestätigen", s1: "Bestätigt", paid: "Online bezahlt", sample: "Beispieltermin" },
     title: "Televet Pro: Online-Tierarztsprechstunde für Tierärzte", description: "Erstelle dein Televet-Profil und erhalte Terminanfragen für Video-, Haus- und Praxisbesuche – mit synchronisiertem Kalender und Online-Zahlung.",
     h1: "Dein Kalender, deine Patienten, dein Tempo", sub: "Televet verbindet Tierhalter und Tierärzte für Video-, Haus- und Praxisbesuche. Zeiten, Preise und Einsatzgebiet bestimmst du.", cta: "Mein Profil erstellen", ctaNote: "Wenige Minuten, unverbindlich.",
@@ -110,6 +117,7 @@ export const PRO: Record<string, ProCopy> = {
       ["Was passiert mit den Daten der Beratung?", "Die Aufzeichnung des Gesprächs dient nur dem Berichtsentwurf, mit Einwilligung des Tierhalters, und wird nach der Freigabe des Berichts gelöscht."]],
     legal: "Die Regeln zur tierärztlichen Telemedizin (Diagnose, Verschreibung, Erstkontakt) unterscheiden sich je nach Land: Du bleibst dafür verantwortlich, sie in deiner Praxis einzuhalten.", contact: "Fragen? Schreib uns", home: "Zur Startseite" },
   pl: {
+    pets: "Psy, koty, króliki, ptaki: każde zwierzę ma swojego weterynarza.",
     ticket: { kind: "Wideo", when: "Dziś · 18:30", s0: "Do potwierdzenia", s1: "Potwierdzona", paid: "Opłacona online", sample: "Przykładowa wizyta" },
     title: "Televet Pro: konsultacje weterynaryjne online dla weterynarzy", description: "Załóż profil w Televet i przyjmuj zgłoszenia na wizyty wideo, domowe i w klinice – z zsynchronizowanym kalendarzem i płatnością online.",
     h1: "Twój kalendarz, Twoi pacjenci, Twoje tempo", sub: "Televet łączy właścicieli zwierząt z weterynarzami na wizyty wideo, domowe i w klinice. Godziny, ceny i obszar dojazdu ustalasz Ty.", cta: "Załóż profil", ctaNote: "Kilka minut, bez zobowiązań.",
@@ -127,6 +135,7 @@ export const PRO: Record<string, ProCopy> = {
       ["Co dzieje się z danymi z konsultacji?", "Nagranie rozmowy służy tylko do przygotowania szkicu raportu, za zgodą właściciela, i jest usuwane po zatwierdzeniu raportu."]],
     legal: "Przepisy dotyczące telemedycyny weterynaryjnej (diagnoza, recepty, pierwszy kontakt) różnią się w zależności od kraju: odpowiadasz za ich przestrzeganie w swojej praktyce.", contact: "Pytania? Napisz do nas", home: "Wróć na stronę główną" },
   nl: {
+    pets: "Honden, katten, konijnen, vogels: elk dier heeft zijn dierenarts.",
     ticket: { kind: "Video", when: "Vandaag · 18:30", s0: "Te bevestigen", s1: "Bevestigd", paid: "Online betaald", sample: "Voorbeeldafspraak" },
     title: "Televet Pro: online dierenartsconsulten voor dierenartsen", description: "Maak je Televet-profiel en ontvang aanvragen voor video-, huis- en praktijkbezoeken, met gesynchroniseerde agenda en online betaling.",
     h1: "Jouw agenda, jouw patiënten, jouw tempo", sub: "Televet verbindt dierhouders en dierenartsen voor video-, huis- en praktijkbezoeken. Jij bepaalt je uren, tarieven en werkgebied.", cta: "Mijn profiel maken", ctaNote: "Een paar minuten, vrijblijvend.",

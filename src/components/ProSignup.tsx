@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Hospital, House, Stethoscope } from "lucide-react";
 import { signInWithEmail, signInWithProvider, signUpWithEmail, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
 
@@ -115,7 +116,7 @@ export default function ProSignup({ lang, country, currency, languages, timezone
       </section>}
       {step === 1 && <section>
         <h2>{t.prac}</h2>
-        <div className="row">{(Object.keys(t.kind) as Kind[]).map((k) => <button key={k} className={kind === k ? "btn" : "btn btn-ghost"} onClick={() => { setKind(k); setSvc({ ...svc, home: { ...svc.home, on: k === "home" || svc.home.on }, clinic: { ...svc.clinic, on: k === "clinic" || svc.clinic.on } }); }}>{t.kind[k]}</button>)}</div>
+        <div className="row">{(Object.keys(t.kind) as Kind[]).map((k) => <button key={k} className={kind === k ? "btn" : "btn btn-ghost"} onClick={() => { setKind(k); setSvc({ ...svc, home: { ...svc.home, on: k === "home" || svc.home.on }, clinic: { ...svc.clinic, on: k === "clinic" || svc.clinic.on } }); }}>{k === "clinic" ? <Hospital size={18} aria-hidden /> : k === "home" ? <House size={18} aria-hidden /> : <Stethoscope size={18} aria-hidden />}{t.kind[k]}</button>)}</div>
         <label className="label">{t.pname}</label><input className="field" value={pname} onChange={(e) => setPname(e.target.value)} />
         <label className="label">{t.headline}</label><input className="field" value={headline} maxLength={140} onChange={(e) => setHeadline(e.target.value)} />
         <label className="label">{t.address}</label><input className="field" value={address} onChange={(e) => setAddress(e.target.value)} />
