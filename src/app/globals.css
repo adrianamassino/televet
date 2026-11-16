@@ -244,3 +244,21 @@ h2 .ico, .h-ico { vertical-align: -10px; margin-right: 10px; }
 .ticket .top { background: linear-gradient(135deg, #5b4be0 0%, #2f7bff 85%); color: #fff; }
 .hero-panel .f1 { left: auto; right: 46%; top: 6%; } .hero-panel .f5 { right: auto; left: 3%; top: auto; bottom: 7%; }
 .hero-panel .f2 { left: auto; right: 6%; top: 5%; } .hero-panel .f4 { left: 40%; bottom: 5%; }
+
+/* ---- v3: monocromo blu — meno colori, più gradiente (sfondo incluso) ---- */
+html { background: #eaf1ff; }
+body { background:
+  radial-gradient(1100px 620px at 105% -120px, #b9d2ff 0%, transparent 62%),
+  radial-gradient(900px 560px at -15% 22%, #cfe0ff 0%, transparent 60%),
+  linear-gradient(180deg, #f4f8ff 0%, #e4eeff 45%, #d3e3ff 100%);
+  background-repeat: no-repeat; min-height: 100vh; }
+.site-header { background: rgba(244,248,255,.78); border-bottom-color: #cddcf7; }
+.ico { background: linear-gradient(145deg, #e3edff, #c9dcff) !important; color: var(--cobalt) !important; }
+.facts li, .facts li:nth-child(n) { --tile: rgba(255,255,255,.72); background: rgba(255,255,255,.72); border: 1px solid #c9dafa; box-shadow: 0 18px 34px -26px rgba(23,56,184,.55); }
+.facts li .ico { background: linear-gradient(145deg, #2f6df0, #1738b8) !important; color: #fff !important; }
+.pets { background: rgba(255,255,255,.55); border: 1px solid #c9dafa; }
+.pets .ico { background: linear-gradient(145deg, #e3edff, #bcd2ff) !important; }
+.stat { background: rgba(255,255,255,.8) !important; border: 1px solid #c9dafa; color: var(--ink); }
+.vetcard, .vetcard:nth-child(n) { background: linear-gradient(160deg, #1738b8, #2f7bff); }
+details.qa { background: rgba(255,255,255,.8); }
+.chip.ok { background: #dbe8ff; color: var(--cobalt); } .chip.wait { background: #e8efff; color: var(--cobalt-deep); }
