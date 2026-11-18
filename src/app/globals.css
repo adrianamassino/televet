@@ -820,3 +820,45 @@ main.narrow .vet-hero h1::before, main.narrow .vet-hero h1::after { display: non
 .menu-list{border-top:0}
 .menu-list button{background:rgba(255,255,255,.9);border-radius:14px;padding:16px 16px;margin-bottom:8px}
 .fab{background:linear-gradient(135deg,#0b5ea8,#2aa8e0)!important}
+
+/* v31 clinic + vet profile pages (Doctolib-style structure) */
+main.profile{max-width:1080px;margin:0 auto;padding:16px 16px 60px}
+.crumbs{font-size:14px;margin:8px 0 12px}
+.profile-head{display:flex;gap:22px;align-items:center;padding:28px;border-radius:24px;color:#fff;background:linear-gradient(135deg,#0a3f8f,#0b6fd0 55%,#12a0e6);background-size:cover;background-position:center;box-shadow:0 24px 50px -30px rgba(11,94,168,.8)}
+.profile-head h1{color:#fff;margin:8px 0 4px;font-size:clamp(1.6rem,3.4vw,2.3rem);background:none;padding:0}
+.profile-head .lead{margin:0 0 6px;font-size:1.1rem;opacity:.95}
+.profile-head .addr{margin:6px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap;opacity:.95}
+.profile-head a{color:#fff;text-decoration:underline}
+.p-logo{width:92px;height:92px;border-radius:24px;object-fit:cover;flex:none;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.p-avatar{border-radius:50%;object-fit:cover;flex:none;background:#fff}
+.p-avatar.ph{display:inline-grid;place-items:center;background:linear-gradient(135deg,#e3f6ff,#bfe9fb);color:#0b5ea8;font-weight:700}
+.profile-head.vet .p-avatar{border:4px solid rgba(255,255,255,.6)}
+.anchor-nav{display:flex;gap:6px;overflow-x:auto;margin:14px 0 4px;padding:6px;border-radius:16px;background:rgba(255,255,255,.9);position:sticky;top:0;z-index:5;scrollbar-width:none}
+.anchor-nav a{white-space:nowrap;padding:9px 14px;border-radius:12px;color:#0b3a73;font-weight:600;text-decoration:none}
+.anchor-nav a:hover{background:#e3f4ff}
+.profile-cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start;margin-top:14px}
+.profile-section{background:rgba(255,255,255,.92);border-radius:20px;padding:20px 22px;margin-bottom:14px;box-shadow:0 12px 28px -22px rgba(11,94,168,.45);scroll-margin-top:70px}
+.profile-section h2{margin:0 0 10px}.profile-section h3{margin:16px 0 8px;font-size:1rem}
+.muted{color:#5b7794}
+.book-card{position:sticky;top:76px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 18px 40px -24px rgba(11,94,168,.6);display:grid;gap:10px}
+.book-card .next{margin:0;font-size:1.1rem;font-weight:700;color:#0b5ea8}.book-card .next.date{text-transform:capitalize}
+.book-card .btn{justify-content:center;text-align:center}
+.contact-list{list-style:none;margin:6px 0 0;padding:12px 0 0;border-top:1px solid #e3eef8;display:grid;gap:8px}
+.contact-list li{display:flex;gap:10px;align-items:center}
+.team-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.team-grid li{display:flex;gap:14px;align-items:center;padding:12px;border-radius:16px;background:linear-gradient(135deg,#f2fbff,#e3f4ff)}
+.team-grid li div{display:grid;gap:2px}.team-grid small{color:#4a6a8a}
+.svc-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.svc{display:flex;gap:14px;align-items:center;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#f2fbff,#e3f4ff)}
+.svc>div{flex:1;display:grid;gap:2px}.svc small{color:#4a6a8a}.svc p{margin:4px 0 0}
+.svc .ico{width:52px;height:52px;border-radius:15px;background:#fff;display:grid;place-items:center;flex:none}
+.svc .price{font-weight:800;color:#0b5ea8;font-size:1.1rem;white-space:nowrap}
+table.hours{width:100%;border-collapse:collapse}
+table.hours th{text-align:left;font-weight:600;padding:8px 0;width:40%}table.hours td{padding:8px 0}
+table.hours tr+tr{border-top:1px solid #e3eef8}table.hours tr.today{color:#0b5ea8;font-weight:700}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.chips li{display:flex;gap:6px;align-items:center;padding:6px 12px;border-radius:999px;background:#e3f4ff;color:#0b3a73}
+.animal-tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.animal-tiles li{display:grid;justify-items:center;gap:6px;padding:12px;border-radius:16px;background:linear-gradient(135deg,#f2fbff,#e3f4ff);font-weight:600}
+.facts{list-style:none;margin:0;padding:0;display:grid;gap:8px}.facts li{display:flex;gap:10px;align-items:center}
+@media(max-width:860px){.profile-cols{grid-template-columns:1fr}.book-card{position:static;order:-1}.profile-head{flex-direction:column;align-items:flex-start;padding:22px}}
