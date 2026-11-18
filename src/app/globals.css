@@ -728,3 +728,34 @@ html { background: linear-gradient(180deg,#bfe6ff,#8fd3ff 60%,#7fe0ff) fixed !im
   box-shadow: 0 24px 60px rgba(10,60,200,.35) !important; }
 .band { background: linear-gradient(120deg,#0a38c8,#0f5af0 60%,#1f86ff) !important; }
 .block { background: rgba(255,255,255,.72); }
+
+/* v25 — duotone vet icon set, placed around the site + glowing ghost-icon pattern in the background */
+body::before { background: url(/decor/icons.svg) center / cover no-repeat, linear-gradient(180deg, rgba(255,255,255,.52), rgba(255,255,255,.30)), url(/decor/bg2.svg) center / cover no-repeat !important; }
+.trust li .ico, .animals li .ico, .steps li .ico, .block.how .steps li .ico, .vet-list .ico { background: radial-gradient(circle at 30% 25%, #ffffff, #d6f3ff 70%) !important; border: 1.5px solid #bfe6ff; box-shadow: 0 6px 16px rgba(10,90,200,.18) !important; }
+.trust .ico { width: 48px; height: 48px; border-radius: 15px; } .animals .ico { width: 76px; height: 76px; }
+.steps .ico, .vet-list .ico { width: 54px; height: 54px; border-radius: 16px; }
+.trust .ico svg, .animals .ico svg, .steps .ico svg, .vet-list .ico svg { width: auto; height: auto; stroke: #0b5ea8 !important; color: initial !important; }
+.block.how .steps li .ico svg, .block.how .steps li .ico svg * { stroke-width: 2.6; }
+.med-strip { gap: 8px; }
+.med-strip > span { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #fff, #d6f3ff 75%); box-shadow: 0 8px 20px rgba(10,90,200,.22); }
+.collage .fb { background: radial-gradient(circle at 30% 25%, #fff, #d6f3ff 75%); width: 62px; height: 62px; } .collage .b3 { width: 54px; height: 54px; } .collage .b4 { width: 50px; height: 50px; }
+.collage .fb svg { width: auto; height: auto; }
+.consult .photo { position: relative; display: block; } .consult .photo img { display: block; }
+.consult .tag { position: absolute; right: 14px; bottom: -22px; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #fff, #d6f3ff 75%); box-shadow: 0 10px 24px rgba(10,60,200,.3); border: 2px solid #fff; }
+.consult div { padding-top: 26px; }
+@media (max-width: 640px) { .med-strip > span:nth-child(n+6) { display: none; } }
+
+/* v25b — specificity/size fixes for duotone icons */
+.animals li:nth-child(n) .ico, .trust li:nth-child(n) .ico, .steps li:nth-child(n) .ico, .block.how .steps li:nth-child(n) .ico, .vet-list li .ico { background: radial-gradient(circle at 30% 25%, #ffffff, #d6f3ff 70%) !important; }
+.animals .ico svg { width: 50px !important; height: 50px !important; } .trust .ico svg { width: 34px !important; height: 34px !important; }
+.steps .ico svg, .vet-list .ico svg { width: 38px !important; height: 38px !important; }
+.animals .ico svg, .trust .ico svg, .steps .ico svg, .vet-list .ico svg { stroke: #0b5ea8 !important; }
+.animals .ico svg *, .trust .ico svg *, .steps .ico svg *, .vet-list .ico svg * { vector-effect: none; }
+.collage .fb svg { width: 36px !important; height: 36px !important; } .collage .b3 svg, .collage .b4 svg { width: 30px !important; height: 30px !important; }
+.med-strip > span svg { width: 38px !important; height: 38px !important; stroke: #0b5ea8 !important; }
+.consult .tag svg { width: 40px !important; height: 40px !important; }
+
+/* v25c */
+.trust li .ico svg, .animals li .ico svg, .steps li .ico svg, .block.how .steps li .ico svg, .vet-list li .ico svg, .med-strip > span svg, .collage .fb svg, .consult .tag svg { stroke: #0b5ea8 !important; color: #0b5ea8 !important; opacity: 1 !important; }
+.med-strip > span svg { padding: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; width: 40px !important; height: 40px !important; }
+.med-strip > span { width: 64px; height: 64px; }

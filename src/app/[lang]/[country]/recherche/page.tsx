@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Stethoscope } from "lucide-react";
+import { VI } from "@/components/VI";
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
 import { pageMetadata } from "@/lib/seo";
@@ -35,7 +35,7 @@ export default async function Results({ params, searchParams }: P) {
         <div className="row"><input name="q" type="search" defaultValue={sp.q ?? ""} placeholder={t.ph} aria-label={t.ph} /><button className="btn" type="submit">{t.go}</button></div>
       </form>
       {list.length ? <ul className="vet-list">{list.map((v, i) => (
-        <li key={v.id}><span className="ico" aria-hidden><Stethoscope /></span>
+        <li key={v.id}><span className="ico" aria-hidden><VI n="vet" size={34} /></span>
           <div><h3><a href={`${base}/veterinaire/${v.slug}`}>{v.name}</a></h3><small>{t.kind[v.kind] ?? t.kind.vet}{v.address ? ` · ${v.address}` : ""}</small>{v.headline && <p>{v.headline}</p>}{slots[i] && <p className="next-slot"><b>{t.next}</b> {fmt(slots[i]!.start, v.timezone)}</p>}</div>
           <a className="btn btn-ghost" href={`${base}/reserver/${v.slug}`}>{t.book}</a></li>))}</ul> : <p className="muted">{t.noRes}</p>}
     </main>

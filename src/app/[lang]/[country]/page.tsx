@@ -4,6 +4,7 @@ import { Bird, Cat, CalendarCheck, ClipboardList, Dog, FileText, Fish, Hospital,
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
 import { breadcrumbLd, ldJson, organizationLd, pageMetadata, SITE } from "@/lib/seo";
+import { VI } from "@/components/VI";
 import { CONSULT, HOME } from "./home-copy";
 
 export const dynamic = "force-dynamic";
@@ -21,10 +22,9 @@ export default async function OwnerHome({ params }: P) {
   let vets: { id: string; name: string; slug: string; kind: string; headline: string | null; address: string | null }[] = [];
   try { const { data } = await adminClient().from("practices").select("id, name, slug, kind, headline, address").eq("country", cc).eq("published", true).order("created_at", { ascending: false }).limit(6); vets = data ?? []; } catch { /* no data yet */ }
   const C = CONSULT[lang] ?? CONSULT.en, CP = { home: "vet-family", video: "girl-cat", clinic: "vet-dachshund" } as const;
-  const AI = [Dog, Cat, Rabbit, Bird, Turtle, Rat], MI = [Stethoscope, Syringe, Pill, Microscope, HeartPulse, Bone], TI = [ShieldCheck, CalendarCheck, BellRing, FileText], SI = [Search, CalendarCheck, Stethoscope];
+  const AI = ["dog", "cat", "rabbit", "bird", "turtle", "hamster"], MI = ["stethoscope", "syringe", "bottle", "pill", "thermometer", "bandage", "bone", "pawHeart"], TI = ["shield", "calendar", "chat", "clipboard"], SI = ["magnifier", "calendar", "vet"];
   return (
     <main className="wrap">
-      <div className="bg-icons" aria-hidden><Dog className="i1" /><Cat className="i2" /><Syringe className="i3" /><Pill className="i4" /><Bone className="i5" /><Stethoscope className="i6" /><Rabbit className="i7" /><Microscope className="i8" /><Bird className="i9" /><Thermometer className="i10" /><Fish className="i11" /><HeartPulse className="i12" /></div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }])]) }} />
       <section className="hero-panel">
         <div className="hero">
@@ -37,21 +37,21 @@ export default async function OwnerHome({ params }: P) {
             <div className="row"><input name="q" type="search" placeholder={t.ph} aria-label={t.ph} autoComplete="address-level2" /><button className="btn" type="submit"><Search aria-hidden />{t.go}</button></div>
           </form>
         </div>
-        <div className="collage" aria-hidden><img src="/photos/vet-pomeranian.jpg" alt="" /><img src="/photos/nurse-cat.jpg" alt="" /><span className="fb b1"><HeartPulse /></span><span className="fb b2"><PawPrint /></span><span className="fb b3"><Syringe /></span><span className="fb b4"><Bone /></span></div>
+        <div className="collage" aria-hidden><img src="/photos/vet-pomeranian.jpg" alt="" /><img src="/photos/nurse-cat.jpg" alt="" /><span className="fb b1"><VI n="heartPulse" size={34} /></span><span className="fb b2"><VI n="paw" size={32} /></span><span className="fb b3"><VI n="syringe" size={30} /></span><span className="fb b4"><VI n="bone" size={28} /></span></div>
       </section>
-      <ul className="trust">{t.trust.map((x, i) => { const Ic = TI[i]; return <li key={i}><span className="ico" aria-hidden><Ic /></span>{x}</li>; })}</ul>
+      <ul className="trust">{t.trust.map((x, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={TI[i]} size={34} /></span>{x}</li>; })}</ul>
       <section className="block"><h2><span className="h2i"><Stethoscope /></span>{t.vets}</h2>
         {vets.length ? <ul className="vet-list">{vets.map((v) => (
-          <li key={v.id}><span className="ico" aria-hidden><Stethoscope /></span>
+          <li key={v.id}><span className="ico" aria-hidden><VI n="vet" size={34} /></span>
             <div><h3><a href={`${base}/veterinaire/${v.slug}`}>{v.name}</a></h3><small>{t.kind[v.kind] ?? t.kind.vet}{v.address ? ` · ${v.address}` : ""}</small>{v.headline && <p>{v.headline}</p>}</div>
             <a className="btn btn-ghost" href={`${base}/reserver/${v.slug}`}>{t.book}</a></li>))}</ul> : <p className="muted">{t.none}</p>}
         {vets.length > 0 && <p><a href={`${base}/recherche`}>{t.all}</a></p>}
       </section>
       <section className="block"><h2><span className="h2i"><HeartPulse /></span>{C.title}</h2><ul className="consult">{C.items.map((c) => (
-        <li key={c.k}><a href={`${base}/recherche?type=${c.k}`}><img src={`/photos/${CP[c.k]}.jpg`} alt="" loading="lazy" /><div><h3>{c.t}</h3><p>{c.d}</p></div></a></li>))}</ul></section>
-      <section className="block"><h2><span className="h2i"><PawPrint /></span>{t.animals}</h2><ul className="animals">{t.animalsList.map((a, i) => { const Ic = AI[i]; return <li key={a}><span className="ico" aria-hidden><Ic /></span>{a}</li>; })}</ul></section>
-      <section className="block how"><h2><span className="h2i"><Sparkles /></span>{t.how}</h2><ol className="steps">{t.steps.map((s, i) => { const Ic = SI[i]; return <li key={i}><span className="ico" aria-hidden><Ic /></span><h3>{s.t}</h3><p>{s.d}</p></li>; })}</ol></section>
-      <div className="med-strip" aria-hidden>{MI.map((Ic, i) => <Ic key={i} />)}<PawPrint /><Fish /></div>
+        <li key={c.k}><a href={`${base}/recherche?type=${c.k}`}><span className="photo"><img src={`/photos/${CP[c.k]}.jpg`} alt="" loading="lazy" /><span className="tag"><VI n={{ home: "housePaw", video: "monitor", clinic: "clinic" }[c.k]} size={36} /></span></span><div><h3>{c.t}</h3><p>{c.d}</p></div></a></li>))}</ul></section>
+      <section className="block"><h2><span className="h2i"><PawPrint /></span>{t.animals}</h2><ul className="animals">{t.animalsList.map((a, i) => { return <li key={a}><span className="ico" aria-hidden><VI n={AI[i]} size={46} /></span>{a}</li>; })}</ul></section>
+      <section className="block how"><h2><span className="h2i"><Sparkles /></span>{t.how}</h2><ol className="steps">{t.steps.map((s, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={SI[i]} size={34} /></span><h3>{s.t}</h3><p>{s.d}</p></li>; })}</ol></section>
+      <div className="med-strip" aria-hidden>{MI.map((n) => <span key={n}><VI n={n} size={34} /></span>)}</div>
       <div className="band"><h2>{t.pro}</h2><a className="btn btn-sun" href={`${base}/pro`}><ClipboardList aria-hidden />{t.proBtn}</a></div>
     </main>
   );
