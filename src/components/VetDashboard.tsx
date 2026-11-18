@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { BellRing, CalendarCheck, CalendarDays, Clock, Hospital, Settings, Stethoscope, Users } from "lucide-react";
 import { signInWithEmail, signInWithProvider, signOut, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
+import { VI } from "@/components/VI";
 import { zonedToUtc, addDays } from "@/lib/time";
 
 /**
@@ -191,9 +192,9 @@ export default function VetDashboard({ lang, country, currency, languages, provi
 
         {tab === "agenda" && <section><h1>{t("nAgenda")}</h1>
           <div className="stats">
-            <div className="stat t-sun" style={{ ["--tile" as string]: "var(--sun-bg)" }}><span className="ico t-sun" style={{ background: "#fff" }}><Clock /></span><div><b>{pending.length}</b><span>{t("pending")}</span></div></div>
-            <div className="stat t-sky" style={{ ["--tile" as string]: "var(--sky-bg)" }}><span className="ico t-sky" style={{ background: "#fff" }}><CalendarCheck /></span><div><b>{upcoming.length}</b><span>{t("upcoming")}</span></div></div>
-            <div className="stat t-mint" style={{ ["--tile" as string]: "var(--mint-bg)" }}><span className="ico t-mint" style={{ background: "#fff" }}><Users /></span><div><b>{vets.length}</b><span>{t("nVets")}</span></div></div></div>
+            <div className="stat t-sun" style={{ ["--tile" as string]: "var(--sun-bg)" }}><span className="ico t-sun"><VI n="clock" size={34} /></span><div><b>{pending.length}</b><span>{t("pending")}</span></div></div>
+            <div className="stat t-sky" style={{ ["--tile" as string]: "var(--sky-bg)" }}><span className="ico t-sky"><VI n="calendar" size={34} /></span><div><b>{upcoming.length}</b><span>{t("upcoming")}</span></div></div>
+            <div className="stat t-mint" style={{ ["--tile" as string]: "var(--mint-bg)" }}><span className="ico t-mint"><VI n="vet" size={34} /></span><div><b>{vets.length}</b><span>{t("nVets")}</span></div></div></div>
           {pending.length > 0 && <><h2>{t("pending")}</h2>{pending.map((b) => row(b, true))}</>}
           <h2>{t("upcoming")}</h2>{upcoming.length ? upcoming.map((b) => row(b, false)) : <p>{t("none")}</p>}
           {past.length > 0 && <><h2>{t("past")}</h2>{past.slice(0, 30).map((b) => row(b, false))}</>}</section>}

@@ -806,3 +806,17 @@ main.narrow .vet-hero h1::before, main.narrow .vet-hero h1::after { display: non
 .acct-list .ico.sm{width:48px;height:48px;border-radius:14px;display:inline-grid;place-items:center;background:#fff}
 .pill{padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;background:#dff1ff;color:#0b5ea8}
 .pill.st-confirmed{background:#d6f5e6;color:#0a7a4a}.pill.st-declined,.pill.st-cancelled{background:#fde3e3;color:#b42318}
+
+/* v30 vet dashboard in the site's blue style */
+.side{background:radial-gradient(90% 35% at 100% 100%,rgba(42,168,224,.55) 0%,transparent 70%),linear-gradient(180deg,#0a3f8f,#0b6fd0 60%,#12a0e6)!important}
+.side button.nav{border-radius:14px}
+.side button.nav[aria-current="page"]{background:#fff!important;color:#0b5ea8!important}
+.side .who{color:#d6f1ff}
+.stat{background:rgba(255,255,255,.92)!important;border:0!important;box-shadow:0 14px 30px -18px rgba(11,94,168,.45)}
+.stat .ico,.stat:nth-child(n) .ico{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#e3f6ff,#bfe9fb)!important}
+.stat b{color:#0b3a73}
+.vetcard,.vetcard:nth-child(n){background:linear-gradient(160deg,#0b5ea8,#2aa8e0)!important;box-shadow:0 18px 30px -20px rgba(11,94,168,.7)}
+.panel{border:0!important;background:rgba(255,255,255,.92)!important;box-shadow:0 12px 28px -20px rgba(11,94,168,.4)}
+.menu-list{border-top:0}
+.menu-list button{background:rgba(255,255,255,.9);border-radius:14px;padding:16px 16px;margin-bottom:8px}
+.fab{background:linear-gradient(135deg,#0b5ea8,#2aa8e0)!important}
