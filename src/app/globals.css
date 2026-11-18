@@ -471,3 +471,44 @@ main.narrow > nav[aria-label="breadcrumb"] a { color: #0a38d6; }
 body > main, main.wrap { width: 100%; }
 .btn.btn-quiet { background: transparent; color: #0a38d6; box-shadow: none; padding-left: 8px; padding-right: 8px; text-decoration: underline; text-underline-offset: 3px; }
 .btn.btn-quiet:hover { background: rgba(10,56,214,.08); color: #030c63; }
+
+/* v14 — owner home & search */
+.search-card { margin-top: 24px; max-width: 640px; background: #fff; color: #0b1b4d; border-radius: 20px; padding: 14px; box-shadow: 0 18px 50px rgba(3,12,99,.35); }
+.search-card .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.search-card .tabs label { cursor: pointer; }
+.search-card .tabs input { position: absolute; opacity: 0; pointer-events: none; }
+.search-card .tabs span { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; font-weight: 700; font-size: .92rem; color: #0a38d6; background: #eaf3ff; }
+.search-card .tabs svg { width: 16px; height: 16px; }
+.search-card .tabs input:checked + span { background: var(--g-btn); color: #fff; }
+.search-card .tabs input:focus-visible + span { outline: 3px solid #35e0ff; outline-offset: 2px; }
+.search-card .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.search-card .row input { flex: 1; min-width: 180px; padding: 13px 16px; border-radius: 14px; border: 1.5px solid #b9d3ff; font: inherit; color: #0b1b4d; background: #fff; }
+.search-card .row .btn { display: inline-flex; align-items: center; gap: 8px; }
+.search-card .row .btn svg { width: 18px; height: 18px; }
+main.narrow .search-card { box-shadow: 0 8px 28px rgba(10,56,214,.15); margin-bottom: 24px; max-width: none; }
+.trust { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.trust li { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #05197a; background: rgba(255,255,255,.7); border-radius: 14px; padding: 12px 14px; }
+.trust svg { width: 22px; height: 22px; color: #0a38d6; flex: none; }
+.block { margin-top: 44px; } .block h2 { color: #05197a; }
+.muted { color: #3b5088; }
+.vet-list { list-style: none; padding: 0; margin: 16px 0; display: grid; gap: 12px; }
+.vet-list li { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: #fff; border-radius: 18px; padding: 16px 18px; box-shadow: 0 6px 22px rgba(10,56,214,.1); }
+.vet-list li > div { flex: 1; min-width: 200px; } .vet-list h3 { margin: 0; } .vet-list h3 a { text-decoration: none; color: #05197a; } .vet-list p { margin: 4px 0 0; color: #3b5088; }
+.vet-list .ico, .steps .ico { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--g-btn); color: #fff; flex: none; }
+.vet-list .ico svg, .steps .ico svg { width: 24px; height: 24px; }
+.animals { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.animals li { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #fff; font-weight: 700; color: #0a38d6; box-shadow: 0 4px 14px rgba(10,56,214,.1); }
+.animals svg { width: 20px; height: 20px; }
+.steps { list-style: none; padding: 0; margin: 14px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.steps li { background: #fff; border-radius: 18px; padding: 20px; box-shadow: 0 6px 22px rgba(10,56,214,.1); }
+.steps h3 { margin: 12px 0 4px; } .steps p { margin: 0; color: #3b5088; }
+
+/* v14b fixes */
+.hero-panel .hero { display: block; max-width: 760px; }
+.hero-panel .hero h1 { max-width: 16ch; margin: 0 0 12px; }
+.hero-panel .hero p.lead { max-width: 52ch; margin: 0; }
+ol.steps > li { counter-increment: none; position: static; padding: 20px; }
+ol.steps > li::before, ol.steps > li::after { content: none !important; display: none !important; }
+ol.steps { counter-reset: none; }
+.band h2 { max-width: 30ch; }
+ol.steps { max-width: none !important; width: 100%; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important; }

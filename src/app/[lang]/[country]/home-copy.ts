@@ -1,0 +1,31 @@
+export type HomeTxt = {
+  title: string; desc: string; h1: string; lead: string; tabs: { home: string; video: string; clinic: string }; ph: string; go: string;
+  trust: string[]; vets: string; all: string; book: string; none: string; animals: string; animalsList: string[];
+  how: string; steps: { t: string; d: string }[]; pro: string; proBtn: string; results: string; noRes: string; kind: Record<string, string>; resFor: string;
+};
+export const HOME: Record<string, HomeTxt> = {
+  fr: { title: "Vétérinaire à domicile, en visio ou en clinique | Televet", desc: "Trouvez un vétérinaire près de chez vous et réservez en ligne : à domicile, en visio ou en clinique.", h1: "Un vétérinaire pour votre animal, quand vous en avez besoin", lead: "À domicile, en visio ou en clinique : choisissez et réservez en ligne en quelques clics.",
+    tabs: { home: "À domicile", video: "En visio", clinic: "En clinique" }, ph: "Ville ou code postal", go: "Rechercher",
+    trust: ["Vétérinaires diplômés", "Réservation en ligne", "Rappels par e-mail", "Compte-rendu après la consultation"], vets: "Vétérinaires sur Televet", all: "Voir tous les vétérinaires", book: "Prendre rendez-vous", none: "Les premiers vétérinaires arrivent bientôt.",
+    animals: "Pour tous les animaux", animalsList: ["Chiens", "Chats", "Lapins", "Oiseaux", "Reptiles", "Rongeurs"],
+    how: "Comment ça marche", steps: [{ t: "Cherchez", d: "Indiquez votre ville et le type de consultation." }, { t: "Choisissez un créneau", d: "Consultez les disponibilités du vétérinaire et réservez." }, { t: "Consultez", d: "À la maison, en visio ou en clinique, puis recevez votre compte-rendu." }],
+    pro: "Vous êtes vétérinaire ? Recevez des réservations en ligne.", proBtn: "Espace vétérinaires", results: "Vétérinaires", noRes: "Aucun vétérinaire ne correspond pour le moment. Essayez une autre ville ou un autre type de consultation.", kind: { clinic: "Clinique vétérinaire", vet: "Vétérinaire", home: "Vétérinaire à domicile" }, resFor: "Résultats pour" },
+  it: { title: "Veterinario a domicilio, in video o in clinica | Televet", desc: "Trova un veterinario vicino a te e prenota online: a domicilio, in video o in clinica.", h1: "Un veterinario per il tuo animale, quando ne hai bisogno", lead: "A domicilio, in video o in clinica: scegli e prenota online in pochi clic.",
+    tabs: { home: "A domicilio", video: "In video", clinic: "In clinica" }, ph: "Città o CAP", go: "Cerca",
+    trust: ["Veterinari abilitati", "Prenotazione online", "Promemoria via e-mail", "Referto dopo la visita"], vets: "Veterinari su Televet", all: "Vedi tutti i veterinari", book: "Prenota una visita", none: "I primi veterinari arrivano presto.",
+    animals: "Per tutti gli animali", animalsList: ["Cani", "Gatti", "Conigli", "Uccelli", "Rettili", "Roditori"],
+    how: "Come funziona", steps: [{ t: "Cerca", d: "Indica la città e il tipo di visita." }, { t: "Scegli un orario", d: "Guarda le disponibilità del veterinario e prenota." }, { t: "Fai la visita", d: "A casa, in video o in clinica, poi ricevi il referto." }],
+    pro: "Sei un veterinario? Ricevi prenotazioni online.", proBtn: "Area veterinari", results: "Veterinari", noRes: "Nessun veterinario corrisponde per ora. Prova un'altra città o un altro tipo di visita.", kind: { clinic: "Clinica veterinaria", vet: "Veterinario", home: "Veterinario a domicilio" }, resFor: "Risultati per" },
+  en: { title: "Home-visit, video or in-clinic vet | Televet", desc: "Find a vet near you and book online: at home, by video or at the clinic.", h1: "A vet for your pet, when you need one", lead: "At home, by video or at the clinic: choose and book online in a few clicks.",
+    tabs: { home: "At home", video: "By video", clinic: "At the clinic" }, ph: "City or postcode", go: "Search",
+    trust: ["Licensed vets", "Online booking", "Email reminders", "Report after the visit"], vets: "Vets on Televet", all: "See all vets", book: "Book a visit", none: "The first vets are joining soon.",
+    animals: "For every animal", animalsList: ["Dogs", "Cats", "Rabbits", "Birds", "Reptiles", "Rodents"],
+    how: "How it works", steps: [{ t: "Search", d: "Enter your city and the type of visit." }, { t: "Pick a time", d: "See the vet's availability and book." }, { t: "Have your visit", d: "At home, by video or at the clinic, then get your report." }],
+    pro: "Are you a vet? Get online bookings.", proBtn: "For vets", results: "Vets", noRes: "No vet matches yet. Try another city or type of visit.", kind: { clinic: "Vet clinic", vet: "Veterinarian", home: "Home-visit vet" }, resFor: "Results for" },
+  es: { title: "Veterinario a domicilio, por video o en clínica | Televet", desc: "Encuentra un veterinario cerca de ti y reserva en línea: a domicilio, por video o en clínica.", h1: "Un veterinario para tu mascota, cuando lo necesites", lead: "A domicilio, por video o en clínica: elige y reserva en línea en pocos clics.",
+    tabs: { home: "A domicilio", video: "Por video", clinic: "En clínica" }, ph: "Ciudad o código postal", go: "Buscar",
+    trust: ["Veterinarios colegiados", "Reserva en línea", "Recordatorios por correo", "Informe tras la consulta"], vets: "Veterinarios en Televet", all: "Ver todos", book: "Reservar cita", none: "Los primeros veterinarios llegan pronto.",
+    animals: "Para todos los animales", animalsList: ["Perros", "Gatos", "Conejos", "Aves", "Reptiles", "Roedores"],
+    how: "Cómo funciona", steps: [{ t: "Busca", d: "Indica tu ciudad y el tipo de consulta." }, { t: "Elige una hora", d: "Mira la disponibilidad y reserva." }, { t: "Consulta", d: "En casa, por video o en clínica, y recibe tu informe." }],
+    pro: "¿Eres veterinario? Recibe reservas en línea.", proBtn: "Espacio veterinarios", results: "Veterinarios", noRes: "Aún no hay veterinarios que coincidan. Prueba otra ciudad u otro tipo de consulta.", kind: { clinic: "Clínica veterinaria", vet: "Veterinario", home: "Veterinario a domicilio" }, resFor: "Resultados para" },
+};
