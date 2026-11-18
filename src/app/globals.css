@@ -579,3 +579,29 @@ body { background:
 .block.how .steps li .ico svg { color: #fff !important; stroke: #fff !important; }
 .block.how { padding-top: clamp(20px,3vw,32px); }
 .consult li:nth-child(3) img { object-position: 50% 62%; } .consult li:nth-child(2) img { object-position: 50% 35%; }
+
+/* v17 — richer gradients & icon accents */
+body { background:
+  radial-gradient(38% 26% at 8% 12%, rgba(31,155,255,.22), transparent 70%),
+  radial-gradient(34% 24% at 96% 28%, rgba(53,224,255,.26), transparent 70%),
+  radial-gradient(40% 26% at 85% 62%, rgba(124,108,255,.14), transparent 70%),
+  radial-gradient(36% 24% at 6% 78%, rgba(53,224,255,.2), transparent 70%),
+  linear-gradient(180deg, #f9fcff 0%, #eef6ff 50%, #e3f0ff 100%) !important; background-attachment: scroll !important; }
+h2 .h2i { display: inline-grid; place-items: center; width: 40px; height: 40px; margin-right: 12px; vertical-align: -9px; border-radius: 13px; color: #fff; background: linear-gradient(135deg,#0a38d6,#1f9bff 65%,#35e0ff); box-shadow: 0 6px 16px rgba(10,56,214,.3), inset 0 1px 0 rgba(255,255,255,.45); }
+h2 .h2i svg { width: 22px; height: 22px; stroke: #fff; }
+.ecg-div { display: block; width: 100%; height: 46px; margin: 36px 0 -10px; opacity: .9; filter: drop-shadow(0 0 6px rgba(31,155,255,.5)); }
+.collage .fb { position: absolute; z-index: 2; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; color: #0a38d6; background: linear-gradient(145deg,#fff,#d9efff); border: 2px solid rgba(255,255,255,.9); box-shadow: 0 12px 26px rgba(3,12,99,.4), 0 0 0 6px rgba(255,255,255,.14); }
+.collage .fb svg { width: 26px; height: 26px; stroke-width: 1.9; }
+.collage .b1 { left: 40%; top: 4%; } .collage .b2 { right: -8px; bottom: 6%; } .collage .b3 { left: -10px; top: 14%; width: 46px; height: 46px; } .collage .b4 { left: 44%; bottom: -14px; width: 44px; height: 44px; }
+.collage img:nth-child(1) { box-shadow: 0 24px 50px rgba(3,12,99,.45), 0 0 60px rgba(53,224,255,.45); }
+.trust li { position: relative; overflow: hidden; } .trust li::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg,#0a38d6,#35e0ff); }
+.consult a, .vet-list li, .animals li { background: linear-gradient(#fff,#fff) padding-box, linear-gradient(135deg,rgba(10,56,214,.25),rgba(53,224,255,.55)) border-box; border: 1.5px solid transparent; }
+.vet-list li { border-left-width: 5px; }
+.consult a::after { content: ""; display: block; height: 4px; background: linear-gradient(90deg,#0a38d6,#1f9bff,#35e0ff); }
+.animals .ico { background: radial-gradient(circle at 30% 25%, #6fd8ff, #1f6bff 55%, #0a38d6) !important; }
+.block.how { background: linear-gradient(180deg,#fff,#f0f7ff); position: relative; overflow: hidden; }
+.block.how::before { content: ""; position: absolute; right: -80px; top: -80px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(53,224,255,.45), transparent 70%); }
+.block.how::after { content: ""; position: absolute; left: -60px; bottom: -90px; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, rgba(124,108,255,.22), transparent 70%); }
+.block.how > * { position: relative; z-index: 1; }
+.med-strip svg { background: linear-gradient(145deg,#fff,#dff1ff); }
+@media (max-width: 900px) { .collage .b1 { left: 30%; } .collage .b3 { left: 2px; } }
