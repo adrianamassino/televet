@@ -4,7 +4,7 @@ import { Bird, Cat, CalendarCheck, ClipboardList, Dog, FileText, Fish, Hospital,
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
 import { breadcrumbLd, ldJson, organizationLd, pageMetadata, SITE } from "@/lib/seo";
-import { HOME } from "./home-copy";
+import { CONSULT, HOME } from "./home-copy";
 
 export const dynamic = "force-dynamic";
 type P = { params: Promise<{ lang: string; country: string }> };
@@ -20,6 +20,7 @@ export default async function OwnerHome({ params }: P) {
   const base = `/${lang}/${country}`;
   let vets: { id: string; name: string; slug: string; kind: string; headline: string | null; address: string | null }[] = [];
   try { const { data } = await adminClient().from("practices").select("id, name, slug, kind, headline, address").eq("country", cc).eq("published", true).order("created_at", { ascending: false }).limit(6); vets = data ?? []; } catch { /* no data yet */ }
+  const C = CONSULT[lang] ?? CONSULT.en, CP = { home: "vet-family", video: "girl-cat", clinic: "vet-dachshund" } as const;
   const AI = [Dog, Cat, Rabbit, Bird, Turtle, Rat], MI = [Stethoscope, Syringe, Pill, Microscope, HeartPulse, Bone], TI = [ShieldCheck, CalendarCheck, BellRing, FileText], SI = [Search, CalendarCheck, Stethoscope];
   return (
     <main className="wrap">
@@ -35,6 +36,7 @@ export default async function OwnerHome({ params }: P) {
             <div className="row"><input name="q" type="search" placeholder={t.ph} aria-label={t.ph} autoComplete="address-level2" /><button className="btn" type="submit"><Search aria-hidden />{t.go}</button></div>
           </form>
         </div>
+        <div className="collage" aria-hidden><img src="/photos/vet-pomeranian.jpg" alt="" /><img src="/photos/nurse-cat.jpg" alt="" /></div>
       </section>
       <ul className="trust">{t.trust.map((x, i) => { const Ic = TI[i]; return <li key={i}><span className="ico" aria-hidden><Ic /></span>{x}</li>; })}</ul>
       <section className="block"><h2>{t.vets}</h2>
@@ -44,8 +46,10 @@ export default async function OwnerHome({ params }: P) {
             <a className="btn btn-ghost" href={`${base}/reserver/${v.slug}`}>{t.book}</a></li>))}</ul> : <p className="muted">{t.none}</p>}
         {vets.length > 0 && <p><a href={`${base}/recherche`}>{t.all}</a></p>}
       </section>
+      <section className="block"><h2>{C.title}</h2><ul className="consult">{C.items.map((c) => (
+        <li key={c.k}><a href={`${base}/recherche?type=${c.k}`}><img src={`/photos/${CP[c.k]}.jpg`} alt="" loading="lazy" /><div><h3>{c.t}</h3><p>{c.d}</p></div></a></li>))}</ul></section>
       <section className="block"><h2>{t.animals}</h2><ul className="animals">{t.animalsList.map((a, i) => { const Ic = AI[i]; return <li key={a}><span className="ico" aria-hidden><Ic /></span>{a}</li>; })}</ul></section>
-      <section className="block dark-band"><h2>{t.how}</h2><ol className="steps">{t.steps.map((s, i) => { const Ic = SI[i]; return <li key={i}><span className="ico" aria-hidden><Ic /></span><h3>{s.t}</h3><p>{s.d}</p></li>; })}</ol></section>
+      <section className="block how"><h2>{t.how}</h2><ol className="steps">{t.steps.map((s, i) => { const Ic = SI[i]; return <li key={i}><span className="ico" aria-hidden><Ic /></span><h3>{s.t}</h3><p>{s.d}</p></li>; })}</ol></section>
       <div className="med-strip" aria-hidden>{MI.map((Ic, i) => <Ic key={i} />)}<PawPrint /><Fish /></div>
       <div className="band"><h2>{t.pro}</h2><a className="btn btn-sun" href={`${base}/pro`}><ClipboardList aria-hidden />{t.proBtn}</a></div>
     </main>
