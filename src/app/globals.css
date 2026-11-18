@@ -710,3 +710,11 @@ body { background: linear-gradient(180deg,#0a4fe0,#1b8dff 60%,#22dcff) !importan
 body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: url(/decor/bg2.svg) center / cover no-repeat; }
 html { background: linear-gradient(180deg,#0a4fe0,#1b8dff 60%,#22dcff) fixed; }
 body { background: transparent !important; }
+
+/* v23 — hero stands out from the background */
+.hero-panel { background:
+  radial-gradient(45% 60% at 100% 100%, rgba(90,235,255,.55), transparent 70%),
+  radial-gradient(40% 55% at 0% 0%, rgba(1,6,60,.7), transparent 70%),
+  linear-gradient(125deg,#02084a 0%,#06278f 38%,#0d56d8 70%,#1aa3ff 100%) !important;
+  border: 2px solid rgba(255,255,255,.75); box-shadow: 0 0 0 8px rgba(255,255,255,.18), 0 30px 80px rgba(1,10,80,.6), 0 0 90px rgba(120,235,255,.35) !important; }
+.site-header { box-shadow: 0 6px 24px rgba(2,20,120,.25); }
