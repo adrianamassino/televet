@@ -880,3 +880,9 @@ html{background:radial-gradient(60% 40% at 100% 0%,#46ebff 0%,transparent 70%),r
 .band{background:url(/decor/glow.svg) 30% 40% / 130% auto no-repeat,linear-gradient(120deg,#0a63ee,#14a0ff 60%,#3fe0ff)!important}
 body::before{background:url(/decor/glow.svg) center / cover no-repeat,url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.50),rgba(255,255,255,.30)),url(/decor/bg2.svg) center / cover no-repeat!important}
 .profile-head,.vet-hero{background-image:url(/decor/glow.svg),linear-gradient(135deg,#0a63ee,#14a0ff 55%,#3fe0ff)!important;background-size:cover!important}
+
+/* v35 refined: one composed molecule behind the hero photos, calm gradients, no scattered dots */
+.hero-panel{background:url(/decor/glow2.svg) right center / auto 100% no-repeat,radial-gradient(60% 75% at 100% 100%,rgba(80,225,255,.55),transparent 72%),linear-gradient(125deg,#0b5fe0 0%,#1a8cf5 55%,#3cc4f5 100%)!important;box-shadow:0 26px 60px -30px rgba(10,100,220,.6)!important}
+.band{background:linear-gradient(120deg,#0b5fe0,#1a8cf5 60%,#3cc4f5)!important}
+body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.38)),url(/decor/bg2.svg) center / cover no-repeat!important}
+.profile-head,.vet-hero{background-image:radial-gradient(60% 90% at 100% 100%,rgba(80,225,255,.5),transparent 70%),linear-gradient(135deg,#0b5fe0,#1a8cf5 60%,#3cc4f5)!important}

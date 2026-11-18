@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900" preserveAspectRatio="xMaxYMid slice">
+<defs><radialGradient id="h"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".35" stop-color="#9ff0ff" stop-opacity=".35"/><stop offset="1" stop-color="#9ff0ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="n"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#bff6ff"/><stop offset="1" stop-color="#5cd6ff"/></radialGradient>
+<linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".10"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+<polygon points="0,0 550.0,0 1000,540.0 1000,900 300.0,900" fill="url(#s)"/>
+<line x1="440" y1="780" x2="520" y2="830" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="887" y1="395" x2="887" y2="490" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="722" y1="490" x2="805" y2="538" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="722" y1="205" x2="805" y2="252" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="887" y1="110" x2="887" y2="205" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="805" y1="538" x2="887" y2="490" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="440" y1="690" x2="520" y2="640" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="558" y1="252" x2="640" y2="205" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="722" y1="395" x2="722" y2="490" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="805" y1="252" x2="887" y2="205" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="640" y1="395" x2="722" y2="348" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="722" y1="395" x2="805" y2="348" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="600" y1="690" x2="600" y2="780" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="805" y1="348" x2="887" y2="395" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="640" y1="115" x2="640" y2="205" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="488" y1="398" x2="558" y2="348" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="722" y1="252" x2="722" y2="348" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="558" y1="348" x2="640" y2="395" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="722" y1="110" x2="805" y2="62" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="520" y1="830" x2="600" y2="780" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="440" y1="690" x2="440" y2="780" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="722" y1="110" x2="722" y2="205" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="640" y1="205" x2="722" y2="252" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="520" y1="640" x2="600" y2="690" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="558" y1="252" x2="558" y2="348" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<line x1="805" y1="62" x2="887" y2="110" stroke="#d9faff" stroke-opacity=".55" stroke-width="2"/>
+<circle cx="440" cy="690" r="24" fill="url(#h)" opacity=".55"/><circle cx="440" cy="690" r="7" fill="url(#n)"/>
+<circle cx="440" cy="780" r="24" fill="url(#h)" opacity=".55"/><circle cx="440" cy="780" r="7" fill="url(#n)"/>
+<circle cx="488" cy="398" r="37" fill="url(#h)" opacity=".55"/><circle cx="488" cy="398" r="11" fill="url(#n)"/>
+<circle cx="520" cy="640" r="37" fill="url(#h)" opacity=".55"/><circle cx="520" cy="640" r="11" fill="url(#n)"/>
+<circle cx="520" cy="830" r="37" fill="url(#h)" opacity=".55"/><circle cx="520" cy="830" r="11" fill="url(#n)"/>
+<circle cx="558" cy="252" r="24" fill="url(#h)" opacity=".55"/><circle cx="558" cy="252" r="7" fill="url(#n)"/>
+<circle cx="558" cy="348" r="24" fill="url(#h)" opacity=".55"/><circle cx="558" cy="348" r="7" fill="url(#n)"/>
+<circle cx="600" cy="690" r="24" fill="url(#h)" opacity=".55"/><circle cx="600" cy="690" r="7" fill="url(#n)"/>
+<circle cx="600" cy="780" r="24" fill="url(#h)" opacity=".55"/><circle cx="600" cy="780" r="7" fill="url(#n)"/>
+<circle cx="640" cy="115" r="37" fill="url(#h)" opacity=".55"/><circle cx="640" cy="115" r="11" fill="url(#n)"/>
+<circle cx="640" cy="205" r="24" fill="url(#h)" opacity=".55"/><circle cx="640" cy="205" r="7" fill="url(#n)"/>
+<circle cx="640" cy="395" r="24" fill="url(#h)" opacity=".55"/><circle cx="640" cy="395" r="7" fill="url(#n)"/>
+<circle cx="722" cy="110" r="24" fill="url(#h)" opacity=".55"/><circle cx="722" cy="110" r="7" fill="url(#n)"/>
+<circle cx="722" cy="205" r="24" fill="url(#h)" opacity=".55"/><circle cx="722" cy="205" r="7" fill="url(#n)"/>
+<circle cx="722" cy="252" r="24" fill="url(#h)" opacity=".55"/><circle cx="722" cy="252" r="7" fill="url(#n)"/>
+<circle cx="722" cy="348" r="37" fill="url(#h)" opacity=".55"/><circle cx="722" cy="348" r="11" fill="url(#n)"/>
+<circle cx="722" cy="395" r="24" fill="url(#h)" opacity=".55"/><circle cx="722" cy="395" r="7" fill="url(#n)"/>
+<circle cx="722" cy="490" r="24" fill="url(#h)" opacity=".55"/><circle cx="722" cy="490" r="7" fill="url(#n)"/>
+<circle cx="805" cy="62" r="24" fill="url(#h)" opacity=".55"/><circle cx="805" cy="62" r="7" fill="url(#n)"/>
+<circle cx="805" cy="252" r="24" fill="url(#h)" opacity=".55"/><circle cx="805" cy="252" r="7" fill="url(#n)"/>
+<circle cx="805" cy="348" r="24" fill="url(#h)" opacity=".55"/><circle cx="805" cy="348" r="7" fill="url(#n)"/>
+<circle cx="805" cy="538" r="24" fill="url(#h)" opacity=".55"/><circle cx="805" cy="538" r="7" fill="url(#n)"/>
+<circle cx="887" cy="110" r="24" fill="url(#h)" opacity=".55"/><circle cx="887" cy="110" r="7" fill="url(#n)"/>
+<circle cx="887" cy="205" r="24" fill="url(#h)" opacity=".55"/><circle cx="887" cy="205" r="7" fill="url(#n)"/>
+<circle cx="887" cy="395" r="24" fill="url(#h)" opacity=".55"/><circle cx="887" cy="395" r="7" fill="url(#n)"/>
+<circle cx="887" cy="490" r="24" fill="url(#h)" opacity=".55"/><circle cx="887" cy="490" r="7" fill="url(#n)"/>
+</svg>
