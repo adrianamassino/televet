@@ -874,3 +874,9 @@ body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gr
 body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.50),rgba(255,255,255,.30)),url(/decor/bg2.svg) center / cover no-repeat!important}
 html{background:radial-gradient(60% 40% at 100% 0%,#46ebff 0%,transparent 70%),radial-gradient(60% 40% at 0% 100%,#2d8cff 0%,transparent 70%),linear-gradient(160deg,#1f8bff,#4fd8ff 60%,#8be9ff)!important}
 .stat,.block{background:rgba(255,255,255,.86)}
+
+/* v34 glowing molecules, bokeh and sparkles (bright tones) on hero, band and page background */
+.hero-panel{background:url(/decor/glow.svg) center / cover no-repeat,radial-gradient(55% 70% at 100% 100%,rgba(70,235,255,.75),transparent 70%),radial-gradient(40% 50% at 0% 0%,rgba(40,120,255,.55),transparent 70%),linear-gradient(125deg,#0a63ee 0%,#14a0ff 52%,#3fe0ff 100%)!important}
+.band{background:url(/decor/glow.svg) 30% 40% / 130% auto no-repeat,linear-gradient(120deg,#0a63ee,#14a0ff 60%,#3fe0ff)!important}
+body::before{background:url(/decor/glow.svg) center / cover no-repeat,url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.50),rgba(255,255,255,.30)),url(/decor/bg2.svg) center / cover no-repeat!important}
+.profile-head,.vet-hero{background-image:url(/decor/glow.svg),linear-gradient(135deg,#0a63ee,#14a0ff 55%,#3fe0ff)!important;background-size:cover!important}
