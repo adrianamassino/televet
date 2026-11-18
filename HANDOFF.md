@@ -1,6 +1,6 @@
 # Televet — stato del progetto (passaggio di consegne)
 
-Ultimo aggiornamento: 15 novembre 2026. Repository: `adrianamassino/televet` (ramo `main`).
+Ultimo aggiornamento: 18 novembre 2026. Repository: `adrianamassino/televet` (ramo `main`).
 
 ## Cos'è
 Nuova piattaforma Televet (Next.js 15 + Supabase) che sostituirà il sito Wix televet.co e, col tempo, il vecchio app.televet.co (AWS). Fondatrice: Adriana (scrive in italiano). Mercati: Francia, Italia, Spagna, Portogallo, Germania, ecc. (17 paesi in `src/lib/countries.ts`), 8 lingue di interfaccia (fr, it, en, es, pt, de, pl, nl).
@@ -19,6 +19,17 @@ Blog (strumenti di importazione da Wix + redirect 301), FAQ, pagine paese/serviz
 ## Regole di business decise
 - Le prenotazioni si confermano automaticamente (`practices.auto_confirm`, default vero) quando il pagamento è autorizzato/incassato o non è online; il veterinario può disattivarlo nel profilo e confermare/rifiutare a mano. Con Stripe l'addebito parte alla conferma.
 - Il veterinario non può pubblicare da solo il profilo né cambiare commissioni o stato pagamenti: lo impedisce un trigger nel database (migrazione `0007`). Per pubblicare: `practices.published = true` su Supabase.
+
+## Design (stato al 18 novembre 2026) — leggere prima di toccare la grafica
+Adriana ha bocciato in ordine: troppo semplice → troppo colorato/arlecchino → blu puro → verde acqua ("brutto") → bottone giallo. Direzione scelta: **stile "medical background" blu**, mix navy + blu cielo/ciano, con più contrasto tra blu scuro e blu chiaro, un po' vibrante. Ha mandato come riferimento immagini di sfondi medicali (blu elettrico→ciano, esagoni/molecole, croci di vetro trasparenti, cuore, scudi, goccia, linea del battito luminosa, low-poly, onde con icone tonde).
+Regole che ha dato:
+- Niente "8000 card colorate": le card restano bianche e sobrie, il colore sta in sfondo, testate, fasce e piccoli quadratini icona (blu).
+- Gradienti soprattutto nello sfondo e nelle testate; niente arcobaleno, niente verde acqua, niente giallo/viola come accenti.
+- Bottone principale sulla testata: **bianco** con testo blu scuro (`.btn-sun`); gli altri bottoni gradiente blu→ciano.
+- Immagini dietro la testata: "troppo pesanti" → tenerle leggere (opacità ~0.55, sfumate a sinistra dove c'è il testo). Mai icone dietro i paragrafi.
+- Serve anche tema animali/veterinario (cani, gatti, conigli, uccelli, pesci, zampe, ossa, stetoscopio, siringa), non solo croci: ora ci sono come disegni al tratto (lucide-react) nei file `public/decor/`.
+Dove sta il codice: `src/app/globals.css` è a strati (v1…v12; i blocchi in fondo vincono). Decorazioni SVG in `public/decor/` (`hero.svg`, `facets.svg`, `waves.svg`, `page.svg`, `hex.svg`, `crosses.svg`, `ecg.svg`) usate da `.hero-panel::before`, `.band::before`, `.site-footer::before`, `body`. Possibile ripulire il CSS unificando gli strati.
+Ancora da fare sul design: applicare lo stesso stile a registrazione, prenotazione, profilo veterinario, FAQ/blog/elenco città e verificare la dashboard con dati reali (finora solo la pagina `/pro` è stata vista in screenshot; la dashboard richiede Supabase). Screenshot: Playwright contro `next start -p 3100` con variabili Supabase finte.
 
 ## Da fare (in ordine)
 1. ~~Registrazione del veterinario~~ FATTA (prima versione): `/{lingua}/{paese}/pro/inscription` (account, attività, servizi e prezzi, orari, collegamento pagamenti). Il profilo nasce NON pubblicato (`practices.published = false`): va attivato a mano su Supabase finché non c'è un pannello di approvazione. Testi in fr/it/en/es/pl (le altre lingue mostrano l'inglese). Da fare ancora: dashboard del veterinario per modificare profilo, ferie e agenda; collegamento Google Calendar; non provata con un Supabase reale.

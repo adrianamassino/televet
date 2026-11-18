@@ -448,3 +448,8 @@ body { background:
 /* ---- v11: decorazione più leggera nella testata ---- */
 .hero-panel::before { opacity: .55; -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.18) 38%, #000 72%); mask-image: linear-gradient(90deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.18) 38%, #000 72%); }
 @media (max-width: 760px) { .hero-panel::before { opacity: .35; -webkit-mask-image: none; mask-image: none; } }
+
+/* ---- v12: sfaccettature low-poly + battito luminoso + onde con icone ---- */
+.hero-panel::before { background: url(/decor/hero.svg) center / cover no-repeat, url(/decor/facets.svg) center / cover no-repeat, url(/decor/hex.svg) center / 60px auto repeat; opacity: .7; }
+.band::before { background: url(/decor/waves.svg) center bottom / cover no-repeat, url(/decor/facets.svg) center / cover no-repeat; opacity: .85; }
+.site-footer::before { background: url(/decor/waves.svg) center bottom / cover no-repeat; opacity: .5; }
