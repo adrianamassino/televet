@@ -867,3 +867,10 @@ table.hours tr+tr{border-top:1px solid #e3eef8}table.hours tr.today{color:#0b5ea
 .hero-panel{background:radial-gradient(50% 60% at 100% 100%,rgba(120,210,245,.40),transparent 70%),linear-gradient(125deg,#1a5fb4 0%,#2478cf 50%,#3b95dd 100%)!important;box-shadow:0 22px 50px -26px rgba(20,90,170,.5)!important}
 .band{background:linear-gradient(120deg,#1a5fb4,#2478cf 60%,#3b95dd)!important}
 body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.58)),url(/decor/bg2.svg) center / cover no-repeat!important}
+
+/* v33 luminous: bright electric-blue to cyan, lighter veil so the background gradient shows */
+.hero-panel{background:radial-gradient(55% 70% at 100% 100%,rgba(70,235,255,.75),transparent 70%),radial-gradient(40% 50% at 0% 0%,rgba(40,120,255,.55),transparent 70%),linear-gradient(125deg,#0a63ee 0%,#14a0ff 52%,#3fe0ff 100%)!important;box-shadow:0 26px 60px -26px rgba(10,120,240,.65)!important}
+.band{background:linear-gradient(120deg,#0a63ee,#14a0ff 60%,#3fe0ff)!important}
+body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.50),rgba(255,255,255,.30)),url(/decor/bg2.svg) center / cover no-repeat!important}
+html{background:radial-gradient(60% 40% at 100% 0%,#46ebff 0%,transparent 70%),radial-gradient(60% 40% at 0% 100%,#2d8cff 0%,transparent 70%),linear-gradient(160deg,#1f8bff,#4fd8ff 60%,#8be9ff)!important}
+.stat,.block{background:rgba(255,255,255,.86)}
