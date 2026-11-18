@@ -718,3 +718,13 @@ body { background: transparent !important; }
   linear-gradient(125deg,#02084a 0%,#06278f 38%,#0d56d8 70%,#1aa3ff 100%) !important;
   border: 2px solid rgba(255,255,255,.75); box-shadow: 0 0 0 8px rgba(255,255,255,.18), 0 30px 80px rgba(1,10,80,.6), 0 0 90px rgba(120,235,255,.35) !important; }
 .site-header { box-shadow: 0 6px 24px rgba(2,20,120,.25); }
+
+/* v24 — contrast by colour, not borders: light sky background, vivid (not heavy) blue hero */
+body::before { background: linear-gradient(180deg, rgba(255,255,255,.52), rgba(255,255,255,.30)), url(/decor/bg2.svg) center / cover no-repeat !important; }
+html { background: linear-gradient(180deg,#bfe6ff,#8fd3ff 60%,#7fe0ff) fixed !important; }
+.hero-panel { border: 0 !important; background:
+  radial-gradient(45% 60% at 100% 100%, rgba(60,200,255,.55), transparent 70%),
+  linear-gradient(125deg,#0a38c8 0%,#0f5af0 45%,#1f86ff 100%) !important;
+  box-shadow: 0 24px 60px rgba(10,60,200,.35) !important; }
+.band { background: linear-gradient(120deg,#0a38c8,#0f5af0 60%,#1f86ff) !important; }
+.block { background: rgba(255,255,255,.72); }
