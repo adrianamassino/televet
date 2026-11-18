@@ -668,3 +668,16 @@ body { background:
 .consult li:nth-child(2) a::after { background: linear-gradient(90deg,#7a4dff,#ff6aa8); } .consult li:nth-child(3) a::after { background: linear-gradient(90deg,#ff6aa8,#ffa86a); }
 .med-strip svg:nth-child(3n+2) { color: #7a4dff; } .med-strip svg:nth-child(3n) { color: #e2468f; }
 .bg-icons svg { stroke: rgba(255,255,255,.85); }
+
+/* v20 — reference-style background (cyan→blue, waves, network, round icon badges); icons back to blue */
+body { background:
+  url(/decor/bg.svg) center top / 100% 100% no-repeat,
+  linear-gradient(180deg, #7fe6ff 0%, #4fc3ff 22%, #2f9bff 55%, #2672f0 100%) !important; background-attachment: scroll, scroll !important; }
+.hero-panel { background: linear-gradient(125deg,#020a55 0%,#0a38d6 42%,#1f7bff 74%,#35e0ff 100%) !important; }
+.band { background: linear-gradient(120deg,#0a1f9c,#1f6bff 60%,#35b7ff) !important; }
+.block.how { background: linear-gradient(160deg,#fff 0%,#eaf3ff 100%); }
+.trust li:nth-child(n) .ico, .animals li:nth-child(n) .ico { background: radial-gradient(circle at 30% 25%,#6fd8ff,#1f6bff 55%,#0a38d6) !important; }
+.trust li::after, .consult a::after, .consult li:nth-child(n) a::after { background: linear-gradient(90deg,#0a38d6,#35e0ff) !important; }
+.med-strip svg, .med-strip svg:nth-child(n) { color: #0a38d6 !important; }
+.block h2 { color: #021a6e; } .muted { color: #04257f; }
+.bg-icons { display: none; }
