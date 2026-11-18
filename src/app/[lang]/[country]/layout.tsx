@@ -19,7 +19,7 @@ export default async function Layout({ children, params }: { children: ReactNode
       <header className="site-header"><div className="in">
         <a className="brand" href={`${base}/`} aria-label="Televet"><img src="/logo.svg" alt="Televet" height={34} style={{ height: 34, width: "auto" }} /></a>
         <nav className="site-nav" aria-label="Main">
-          <a href={`${base}/annuaire`}>{t.dir}</a><a href={`${base}/blog`}>{t.blog}</a><a href={`${base}/faq`}>{t.faq}</a><a className="pill" href={`${base}/pro`}>{t.vets}</a>
+          <a href={`${base}/annuaire`}>{t.dir}</a><a href={`${base}/blog`}>{t.blog}</a><a href={`${base}/faq`}>{t.faq}</a><a href={`${base}/compte`}>{({ fr: "Mon compte", it: "Account", es: "Mi cuenta" } as Record<string, string>)[lang] ?? "Account"}</a><a className="pill" href={`${base}/pro`}>{t.vets}</a>
         </nav></div></header>
       {children}
       <footer className="site-footer"><div className="in"><span><img src="/logo-white.svg" alt="" height={26} style={{ height: 26, width: "auto", display: "block", marginBottom: 6 }} />{t.rights}</span><span><a href="mailto:contact@televet.co">{t.contact}</a> · televet.co</span></div></footer>

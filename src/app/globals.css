@@ -798,3 +798,11 @@ main.narrow .vet-hero h1::before, main.narrow .vet-hero h1::after { display: non
 .oauth-or{display:flex;align-items:center;gap:12px;margin:16px 0 4px;color:#4a6a8a;font-size:14px}
 .oauth-or::before,.oauth-or::after{content:"";flex:1;height:1px;background:rgba(11,94,168,.2)}
 .choice .ico.sm{background:linear-gradient(135deg,#e3f6ff,#bfe9fb)!important;width:48px;height:48px;border-radius:14px;display:inline-grid;place-items:center}
+
+/* v29 account */
+.acct-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.acct-list li{display:flex;align-items:center;gap:14px;padding:10px 14px;border-radius:16px;background:linear-gradient(135deg,#f2fbff,#e3f4ff)}
+.acct-list li>span:nth-child(2){flex:1}
+.acct-list .ico.sm{width:48px;height:48px;border-radius:14px;display:inline-grid;place-items:center;background:#fff}
+.pill{padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;background:#dff1ff;color:#0b5ea8}
+.pill.st-confirmed{background:#d6f5e6;color:#0a7a4a}.pill.st-declined,.pill.st-cancelled{background:#fde3e3;color:#b42318}
