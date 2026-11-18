@@ -681,3 +681,32 @@ body { background:
 .med-strip svg, .med-strip svg:nth-child(n) { color: #0a38d6 !important; }
 .block h2 { color: #021a6e; } .muted { color: #04257f; }
 .bg-icons { display: none; }
+
+/* v21 — lighter background (back to the airy light-blue look) */
+body { background:
+  radial-gradient(55% 28% at 100% 0%, rgba(60,230,255,.45), transparent 70%),
+  radial-gradient(45% 26% at 0% 30%, rgba(31,155,255,.22), transparent 70%),
+  url(/decor/bg.svg) center top / 100% 100% no-repeat,
+  url(/decor/page.svg) right top / 1400px auto no-repeat,
+  linear-gradient(180deg, #eaf6ff 0%, #cfe7ff 40%, #b3d6ff 100%) !important; }
+.block h2 { color: #031a7a; } .muted { color: #2b4688; }
+
+/* v22 — vivid electric-blue → cyan medical background (grid, glass crosses, hexagons, molecules, bokeh) + frosted sections */
+body { background: url(/decor/bg2.svg) center / cover no-repeat fixed, linear-gradient(135deg,#0a4fe0,#1b8dff 50%,#22dcff) !important; }
+.block { background: rgba(255,255,255,.66); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); border: 1px solid rgba(255,255,255,.75); border-radius: 28px; padding: clamp(20px,3.5vw,36px); box-shadow: 0 18px 50px rgba(3,30,140,.22), inset 0 1px 0 rgba(255,255,255,.8); margin-top: 28px; }
+.block h2 { margin-top: 0; }
+.block.how { background: rgba(255,255,255,.78); }
+.trust li { background: rgba(255,255,255,.82); backdrop-filter: blur(10px); }
+.hero-panel { background:
+  radial-gradient(45% 60% at 100% 100%, rgba(120,250,255,.55), transparent 70%),
+  radial-gradient(40% 55% at 0% 0%, rgba(2,10,85,.55), transparent 70%),
+  linear-gradient(125deg,#041a9a 0%,#0a4fe0 40%,#1b8dff 72%,#22dcff 100%) !important; box-shadow: 0 30px 70px rgba(2,20,120,.45), inset 0 1px 0 rgba(255,255,255,.35); }
+.band { background: radial-gradient(40% 90% at 100% 100%, rgba(120,250,255,.5), transparent 70%), linear-gradient(120deg,#041a9a,#0a4fe0 55%,#1b8dff) !important; box-shadow: 0 20px 50px rgba(2,20,120,.4); }
+.med-strip svg { background: rgba(255,255,255,.9); }
+.muted { color: #1c3578; }
+
+/* v22b — decorative background as a fixed layer (works on iOS too) */
+body { background: linear-gradient(180deg,#0a4fe0,#1b8dff 60%,#22dcff) !important; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: url(/decor/bg2.svg) center / cover no-repeat; }
+html { background: linear-gradient(180deg,#0a4fe0,#1b8dff 60%,#22dcff) fixed; }
+body { background: transparent !important; }
