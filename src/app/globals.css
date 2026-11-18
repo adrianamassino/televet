@@ -512,3 +512,11 @@ ol.steps > li::before, ol.steps > li::after { content: none !important; display:
 ol.steps { counter-reset: none; }
 .band h2 { max-width: 30ch; }
 ol.steps { max-width: none !important; width: 100%; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important; }
+
+/* v14c */
+.next-slot { color: #0a38d6 !important; font-size: .92rem; } .next-slot b { font-weight: 800; }
+.choose { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 24px; }
+.choose a { display: block; text-decoration: none; background: #fff; border-radius: 22px; padding: 28px; box-shadow: 0 10px 30px rgba(10,56,214,.14); color: #05197a; }
+.choose a:hover, .choose a:focus-visible { box-shadow: 0 0 0 3px #35e0ff, 0 10px 30px rgba(10,56,214,.2); }
+.choose .ico { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: var(--g-btn); color: #fff; }
+.choose .ico svg { width: 28px; height: 28px; } .choose h2 { margin: 16px 0 6px; font-size: 1.25rem; } .choose p { margin: 0; color: #3b5088; }
