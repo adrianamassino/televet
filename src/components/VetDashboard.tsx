@@ -4,6 +4,7 @@ import { BellRing, CalendarCheck, CalendarDays, Clock, Hospital, Settings, Steth
 import { signInWithEmail, signInWithProvider, signOut, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
 import { VI } from "@/components/VI";
+import { pc } from "@/lib/profile-copy";
 import { zonedToUtc, addDays } from "@/lib/time";
 
 /**
@@ -28,6 +29,13 @@ const S: Record<string, [string, string, string, string, string]> = {
   s_pending: ["À confirmer", "Da confermare", "To confirm", "Por confirmar", "Do potwierdzenia"], s_confirmed: ["Confirmé", "Confermato", "Confirmed", "Confirmada", "Potwierdzona"], s_declined: ["Refusé", "Rifiutato", "Declined", "Rechazada", "Odrzucona"], s_cancelled: ["Annulé", "Annullato", "Cancelled", "Cancelada", "Anulowana"],
   t_video: ["Télémédecine", "Telemedicina", "Telemedicine", "Telemedicina", "Telemedycyna"], t_home: ["À domicile", "A domicilio", "Home visit", "A domicilio", "Wizyta domowa"], t_clinic: ["À la clinique", "In clinica", "At the clinic", "En la clínica", "W klinice"], t_expertise: ["Télé-expertise (vétérinaire à vétérinaire)", "Tele-expertise (da veterinario a veterinario)", "Tele-expertise (vet to vet)", "Teleexperticia (veterinario a veterinario)", "Teleekspertyza (weterynarz–weterynarz)"],
   live: ["Votre profil est en ligne.", "Il tuo profilo è online.", "Your profile is online.", "Tu perfil está en línea.", "Twój profil jest online."], review: ["Votre profil est en cours de vérification par l'équipe Televet.", "Il tuo profilo è in verifica da parte del team Televet.", "Your profile is being checked by the Televet team.", "Tu perfil está siendo revisado por el equipo de Televet.", "Zespół Televet sprawdza Twój profil."],
+  city: ["Ville", "Città", "City", "Ciudad", "Miasto"], website: ["Site web", "Sito web", "Website", "Sitio web", "Strona www"],
+  accessInfo: ["Comment venir (métro, bus, parking)", "Come arrivare (metro, bus, parcheggio)", "How to get there (metro, bus, parking)", "Cómo llegar (metro, bus, estacionamiento)", "Dojazd (metro, autobus, parking)"],
+  facL: ["Équipements sur place", "Servizi in sede", "On-site facilities", "Servicios en el centro", "Udogodnienia na miejscu"], payL: ["Moyens de paiement", "Metodi di pagamento", "Payment methods", "Medios de pago", "Metody płatności"],
+  animalsL: ["Animaux soignés", "Animali curati", "Animals treated", "Animales atendidos", "Leczone zwierzęta"], founded: ["Année de création", "Anno di fondazione", "Year founded", "Año de creación", "Rok założenia"],
+  vTitle: ["Titre (Dr, Dre…)", "Titolo (Dott., Dott.ssa…)", "Title (Dr…)", "Título (Dr., Dra.…)", "Tytuł (dr…)"], vSpec: ["Spécialités (séparées par des virgules)", "Specialità (separate da virgole)", "Specialties (comma-separated)", "Especialidades (separadas por comas)", "Specjalizacje (po przecinku)"],
+  vBio: ["Présentation", "Presentazione", "About you", "Presentación", "O Tobie"], vSchool: ["Formation (école, diplôme)", "Formazione (università, titolo)", "Training (school, degree)", "Formación (universidad, título)", "Wykształcenie"], vYears: ["Années d'expérience", "Anni di esperienza", "Years of experience", "Años de experiencia", "Lata doświadczenia"],
+  pageLink: ["Voir ma page publique", "Vedi la mia pagina pubblica", "See my public page", "Ver mi página pública", "Zobacz moją stronę"],
   clinicProfile: ["Profil de la clinique", "Profilo della clinica", "Clinic profile", "Perfil de la clínica", "Profil kliniki"], photoHint: ["Cliquer pour changer", "Clicca per cambiare", "Click to change", "Clic para cambiar", "Kliknij, aby zmienić"],
   name: ["Nom affiché", "Nome visualizzato", "Display name", "Nombre visible", "Wyświetlana nazwa"], phone: ["Téléphone", "Telefono", "Phone", "Teléfono", "Telefon"], address: ["Adresse", "Indirizzo", "Address", "Dirección", "Adres"], postal: ["Code postal", "CAP", "Postal code", "Código postal", "Kod pocztowy"],
   tz: ["Fuseau horaire", "Fuso orario", "Time zone", "Zona horaria", "Strefa czasowa"], langs: ["Langues parlées", "Lingue parlate", "Languages spoken", "Idiomas", "Języki"], headline: ["Phrase de présentation", "Frase di presentazione", "Introduction", "Frase de presentación", "Jedno zdanie o Tobie"], about: ["À propos", "Chi siamo", "About", "Sobre nosotros", "O nas"],
@@ -56,8 +64,8 @@ const S: Record<string, [string, string, string, string, string]> = {
 type Tab = "agenda" | "clinic" | "vets" | "settings" | "reminders";
 type Sub = "menu" | "info" | "hours" | "services" | "holidays" | "video" | "cal";
 type Booking = { id: string; starts_at: string; ends_at: string; type: string; status: string; address: string | null; motive: string | null; access_notes: string | null; price_cents: number; currency: string; video_room: string | null; owners: { full_name: string; phone: string | null } | null; pets: { name: string; species: string } | null };
-type Practice = { id: string; slug: string; name: string; headline: string | null; about: string | null; address: string | null; postal_code: string | null; phone: string | null; email: string | null; languages: string[]; auto_confirm: boolean; published: boolean; stripe_status: string; mp_status: string; timezone: string; logo_url: string | null; booking_enabled: boolean; widget_title: string | null; email_language: string | null; reminders: { e24: boolean; e2: boolean } };
-type Vet = { id: string; display_name: string; photo_url: string | null; lead_time_min: number; video_link: string | null; active: boolean };
+type Practice = { id: string; slug: string; name: string; headline: string | null; about: string | null; address: string | null; postal_code: string | null; phone: string | null; email: string | null; languages: string[]; auto_confirm: boolean; published: boolean; stripe_status: string; mp_status: string; timezone: string; logo_url: string | null; booking_enabled: boolean; widget_title: string | null; email_language: string | null; reminders: { e24: boolean; e2: boolean }; city: string | null; website: string | null; founded_year: number | null; facilities: string[]; payment_methods: string[]; access_info: string | null; species: string[] };
+type Vet = { id: string; display_name: string; photo_url: string | null; lead_time_min: number; video_link: string | null; active: boolean; slug: string | null; title: string | null; specialties: string[]; bio: string | null; languages: string[]; species: string[]; school: string | null; experience_years: number | null };
 type Svc = { id: string; practitioner_id: string | null; type: string; custom_name: string | null; description: string | null; duration_min: number; price_cents: number; currency: string; active: boolean; online_payment: boolean; weekdays: number[]; confirmation_note: string | null; reminder_note: string | null; catalog_code: string };
 type Rule = { weekday: number; start_time: string; end_time: string };
 type Block = { id: string; starts_at: string; ends_at: string; reason: string | null };
@@ -70,6 +78,10 @@ export default function VetDashboard({ lang, country, currency, languages, provi
   const li = Math.max(0, (LANGS as readonly string[]).indexOf(lang)), en = LANGS.indexOf("en");
   const t = (k: string) => (S[k]?.[(LANGS as readonly string[]).includes(lang) ? li : en]) ?? k;
   const sb = useMemo(() => supabaseBrowser(), []);
+  const PCt = pc(lang);
+  const toggle = (arr: string[], k: string, on: boolean) => (on ? [...arr, k] : arr.filter((x) => x !== k));
+  const Checks = ({ keys, labels, value, onChange }: { keys: string[]; labels: Record<string, string>; value: string[]; onChange: (v: string[]) => void }) => <div className="days">{keys.map((k) => <label key={k}><input type="checkbox" checked={value.includes(k)} onChange={(e) => onChange(toggle(value, k, e.target.checked))} />{labels[k] ?? k}</label>)}</div>;
+  const slugOf = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const [ready, setReady] = useState(false), [signed, setSigned] = useState(false), [uid, setUid] = useState(""), [tab, setTab] = useState<Tab>("agenda"), [sub, setSub] = useState<Sub>("menu");
   const [toast, setToast] = useState<{ m: string; bad?: boolean } | null>(null), [email, setEmail] = useState(""), [pass, setPass] = useState("");
   const [p, setP] = useState<Practice | null>(null), [vets, setVets] = useState<Vet[]>([]), [vetId, setVetId] = useState<string>(""), [svcs, setSvcs] = useState<Svc[]>([]), [rules, setRules] = useState<Rule[]>([]), [blocks, setBlocks] = useState<Block[]>([]), [conns, setConns] = useState<Conn[]>([]), [feed, setFeed] = useState("");
@@ -87,10 +99,10 @@ export default function VetDashboard({ lang, country, currency, languages, provi
     const { data: s } = await sb.auth.getSession();
     setSigned(!!s.session); if (!s.session) return setReady(true);
     setUid(s.session.user.id);
-    const { data: pr } = await sb.from("practices").select("id, slug, name, headline, about, address, postal_code, phone, email, languages, auto_confirm, published, stripe_status, mp_status, timezone, logo_url, booking_enabled, widget_title, email_language, reminders").eq("owner_user_id", s.session.user.id).maybeSingle();
+    const { data: pr } = await sb.from("practices").select("id, slug, name, headline, about, address, postal_code, phone, email, languages, auto_confirm, published, stripe_status, mp_status, timezone, logo_url, booking_enabled, widget_title, email_language, reminders, city, website, founded_year, facilities, payment_methods, access_info, species").eq("owner_user_id", s.session.user.id).maybeSingle();
     setP(pr as Practice | null);
     if (pr) {
-      const { data: vs } = await sb.from("practitioners").select("id, display_name, photo_url, lead_time_min, video_link, active").eq("practice_id", pr.id).eq("active", true).order("display_name");
+      const { data: vs } = await sb.from("practitioners").select("id, display_name, photo_url, lead_time_min, video_link, active, slug, title, specialties, bio, languages, species, school, experience_years").eq("practice_id", pr.id).eq("active", true).order("display_name");
       setVets((vs as Vet[]) ?? []);
       const { data: sv } = await sb.from("services").select("id, practitioner_id, type, custom_name, description, duration_min, price_cents, currency, active, online_payment, weekdays, confirmation_note, reminder_note, catalog_code").eq("practice_id", pr.id);
       setSvcs((sv as Svc[]) ?? []);
@@ -208,9 +220,18 @@ export default function VetDashboard({ lang, country, currency, languages, provi
             <div><label className="label">{t("address")}</label><input className="field" value={p.address ?? ""} onChange={(e) => setP({ ...p, address: e.target.value })} /></div>
             <div><label className="label">{t("postal")}</label><input className="field" value={p.postal_code ?? ""} onChange={(e) => setP({ ...p, postal_code: e.target.value })} /></div>
             <div><label className="label">{t("tz")}</label><select className="field" value={p.timezone} onChange={(e) => setP({ ...p, timezone: e.target.value })}>{tzList.map((z) => <option key={z}>{z}</option>)}</select></div></div>
+          <div className="grid2">
+            <div><label className="label">{t("city")}</label><input className="field" value={p.city ?? ""} onChange={(e) => setP({ ...p, city: e.target.value })} /></div>
+            <div><label className="label">{t("website")}</label><input className="field" type="url" placeholder="https://" value={p.website ?? ""} onChange={(e) => setP({ ...p, website: e.target.value })} /></div>
+            <div><label className="label">{t("founded")}</label><input className="field" inputMode="numeric" value={p.founded_year ?? ""} onChange={(e) => setP({ ...p, founded_year: Number(e.target.value) || null })} /></div></div>
           <label className="label">{t("headline")}</label><input className="field" maxLength={140} value={p.headline ?? ""} onChange={(e) => setP({ ...p, headline: e.target.value })} />
           <label className="label">{t("about")}</label><textarea className="field" value={p.about ?? ""} onChange={(e) => setP({ ...p, about: e.target.value })} />
           <label className="label">{t("langs")}</label><div className="days">{languages.map((l) => <label key={l}><input type="checkbox" checked={p.languages.includes(l)} onChange={(e) => setP({ ...p, languages: e.target.checked ? [...p.languages, l] : p.languages.filter((x) => x !== l) })} />{new Intl.DisplayNames([lang], { type: "language" }).of(l)}</label>)}</div>
+          <label className="label">{t("accessInfo")}</label><textarea className="field" style={{ minHeight: 70 }} value={p.access_info ?? ""} onChange={(e) => setP({ ...p, access_info: e.target.value })} />
+          <label className="label">{t("facL")}</label><Checks keys={Object.keys(PCt.fac)} labels={PCt.fac} value={p.facilities ?? []} onChange={(v) => setP({ ...p, facilities: v })} />
+          <label className="label">{t("payL")}</label><Checks keys={Object.keys(PCt.pay)} labels={PCt.pay} value={p.payment_methods ?? []} onChange={(v) => setP({ ...p, payment_methods: v })} />
+          <label className="label">{t("animalsL")}</label><Checks keys={Object.keys(PCt.sp)} labels={PCt.sp} value={p.species ?? []} onChange={(v) => setP({ ...p, species: v })} />
+          <p><a href={`/${lang}/${country.toLowerCase()}/veterinaire/${p.slug}`} target="_blank" rel="noopener noreferrer">{t("pageLink")}</a></p>
           <label className="panel" style={{ display: "block", marginTop: 22 }}><input type="checkbox" checked={p.auto_confirm} onChange={(e) => setP({ ...p, auto_confirm: e.target.checked })} /> <strong>{t("auto")}</strong><br /><small>{t("autoHelp")}</small></label>
           <p><button className="btn" onClick={() => saveP({})}>{t("confirm")}</button></p></section>}
 
@@ -225,8 +246,15 @@ export default function VetDashboard({ lang, country, currency, languages, provi
           {sub === "menu" && <ul className="menu-list">{([["info", "mInfo"], ["hours", "mHours"], ["services", "mServices"], ["holidays", "mHolidays"], ["video", "mVideo"], ["cal", "mCal"]] as const).map(([k, l]) => <li key={k}><button onClick={() => setSub(k)}>{t(l)}<span aria-hidden>›</span></button></li>)}</ul>}
           {sub === "info" && <div><h2>{t("mInfo")}</h2><PhotoPick src={vet.photo_url} name={vet.display_name} onFile={(u) => saveVet({ photo_url: u })} />
             <label className="label">{t("name")}</label><input className="field" value={vet.display_name} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, display_name: e.target.value } : v)))} />
+            <label className="label">{t("vTitle")}</label><input className="field" maxLength={12} value={vet.title ?? ""} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, title: e.target.value } : v)))} />
+            <label className="label">{t("vSpec")}</label><input className="field" value={(vet.specialties ?? []).join(", ")} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, specialties: e.target.value.split(",").map((x) => x.trimStart()) } : v)))} />
+            <label className="label">{t("vBio")}</label><textarea className="field" style={{ minHeight: 90 }} value={vet.bio ?? ""} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, bio: e.target.value } : v)))} />
+            <label className="label">{t("vSchool")}</label><input className="field" value={vet.school ?? ""} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, school: e.target.value } : v)))} />
+            <label className="label">{t("vYears")}</label><input className="field" inputMode="numeric" value={vet.experience_years ?? ""} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, experience_years: e.target.value === "" ? null : Math.min(70, Number(e.target.value) || 0) } : v)))} />
+            <label className="label">{t("langs")}</label><Checks keys={languages} labels={Object.fromEntries(languages.map((l) => [l, new Intl.DisplayNames([lang], { type: "language" }).of(l) ?? l]))} value={vet.languages ?? []} onChange={(l) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, languages: l } : v)))} />
+            <label className="label">{t("animalsL")}</label><Checks keys={Object.keys(PCt.sp)} labels={PCt.sp} value={vet.species ?? []} onChange={(l) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, species: l } : v)))} />
             <label className="label">{t("lead")}</label><input className="field" inputMode="numeric" value={vet.lead_time_min} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, lead_time_min: Number(e.target.value) || 0 } : v)))} />
-            <p style={{ marginTop: 18 }}><button className="btn" onClick={() => saveVet({ display_name: vet.display_name, lead_time_min: vet.lead_time_min })}>{t("confirm")}</button></p></div>}
+            <p style={{ marginTop: 18 }}><button className="btn" onClick={() => saveVet({ display_name: vet.display_name, lead_time_min: vet.lead_time_min, title: vet.title?.trim() || null, specialties: (vet.specialties ?? []).map((x) => x.trim()).filter(Boolean), bio: vet.bio?.trim() || null, school: vet.school?.trim() || null, experience_years: vet.experience_years, languages: vet.languages ?? [], species: vet.species ?? [], slug: vet.slug || slugOf(vet.display_name) || null })}>{t("confirm")}</button></p></div>}
           {sub === "hours" && <div><h2>{t("mHours")}</h2>{[1, 2, 3, 4, 5, 6, 0].map((d) => { const r = rules.find((x) => x.weekday === d); return <div key={d} className="row" style={{ margin: "8px 0" }}>
             <label style={{ width: 80 }}><input type="checkbox" checked={!!r} onChange={(e) => setRules(e.target.checked ? [...rules, { weekday: d, start_time: "09:00", end_time: "18:00" }] : rules.filter((x) => x.weekday !== d))} /> {dayNames[d]}</label>
             {r && <>{t("from")} <input className="field" style={{ width: 130 }} type="time" value={r.start_time.slice(0, 5)} onChange={(e) => setRules(rules.map((x) => (x.weekday === d ? { ...x, start_time: e.target.value } : x)))} /> {t("to")} <input className="field" style={{ width: 130 }} type="time" value={r.end_time.slice(0, 5)} onChange={(e) => setRules(rules.map((x) => (x.weekday === d ? { ...x, end_time: e.target.value } : x)))} /></>}</div>; })}
