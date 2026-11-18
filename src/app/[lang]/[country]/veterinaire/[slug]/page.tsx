@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
-import { Hospital, House, PawPrint, Stethoscope, Video } from "lucide-react";
+import { PawPrint } from "lucide-react";
+import { VI } from "@/components/VI";
 import { COUNTRIES, ZERO_DECIMAL } from "@/lib/countries";
 import { breadcrumbLd, ldJson, pageMetadata, SITE, veterinaryCareLd } from "@/lib/seo";
 
@@ -47,7 +48,7 @@ export default async function VetProfile({ params }: P) {
   const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(lang, { style: "currency", currency: cur }).format(ZERO_DECIMAL.has(cur) ? c : c / 100); } catch { return `${c} ${cur}`; } };
   const names = (l: string[]) => l.map((x) => { try { return new Intl.DisplayNames([lang], { type: "language" }).of(x) ?? x; } catch { return x; } }).join(", ");
   const base = `${SITE}/${lang}/${country}`;
-  const SI = { video: Video, home: House, clinic: Hospital, expertise: Stethoscope } as const; const TC = { video: "t-coral", home: "t-mint", clinic: "t-sky", expertise: "t-lilac" } as const;
+  const SI = { video: "monitor", home: "housePaw", clinic: "clinic", expertise: "stethoscope" } as const; const TC = { video: "t-coral", home: "t-mint", clinic: "t-sky", expertise: "t-lilac" } as const;
   const book = `/${lang}/${country}/reserver/${p.slug}`;
   const ld = [veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }),
     breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: p.name, url: `${base}/veterinaire/${p.slug}` }])];
@@ -56,7 +57,7 @@ export default async function VetProfile({ params }: P) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       <nav><a href={`/${lang}/${country}/`}>{t.home}</a></nav>
       <header className="vet-hero">
-        <span className="ico" style={{ width: 76, height: 76, borderRadius: 24, background: "rgba(255,255,255,.16)", color: "#fff" }} aria-hidden><Stethoscope style={{ width: 38, height: 38 }} /></span>
+        <span className="ico" style={{ width: 76, height: 76, borderRadius: 24, background: "rgba(255,255,255,.16)", color: "#fff" }} aria-hidden><VI n="vet" size={46} /></span>
         <div style={{ flex: 1, minWidth: 220 }}>
           <span className="chip">{t.kind[p.kind] ?? t.kind.vet}</span>
           <h1 style={{ marginTop: 10 }}>{p.name}</h1>
@@ -68,7 +69,7 @@ export default async function VetProfile({ params }: P) {
       {p.about && <section><h2>{t.about}</h2><p style={{ whiteSpace: "pre-line" }}>{p.about}</p></section>}
       {services.length > 0 && <section><h2>{t.services}</h2>
         <ul style={{ listStyle: "none", padding: 0 }}>{services.map((s, i) => (
-          <li key={i} className="panel svc-ico"><span className={`ico ${TC[s.type as keyof typeof TC] ?? "t-sky"}`} aria-hidden>{(() => { const I = SI[s.type as keyof typeof SI] ?? Stethoscope; return <I />; })()}</span><div style={{ flex: 1 }}>
+          <li key={i} className="panel svc-ico"><span className={`ico ${TC[s.type as keyof typeof TC] ?? "t-sky"}`} aria-hidden><VI n={SI[s.type as keyof typeof SI] ?? "stethoscope"} size={38} /></span><div style={{ flex: 1 }}>
             <strong>{s.custom_name ?? t.types[s.type]}</strong> <span style={{ color: "var(--ink-soft)" }}>· {t.types[s.type]} · {s.duration_min} {t.min}</span>
             <div className="price">{money(s.price_cents, s.currency)}</div>
             {s.description && <p style={{ margin: "6px 0 0" }}>{s.description}</p>}

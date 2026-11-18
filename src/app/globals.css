@@ -759,3 +759,13 @@ body::before { background: url(/decor/icons.svg) center / cover no-repeat, linea
 .trust li .ico svg, .animals li .ico svg, .steps li .ico svg, .block.how .steps li .ico svg, .vet-list li .ico svg, .med-strip > span svg, .collage .fb svg, .consult .tag svg { stroke: #0b5ea8 !important; color: #0b5ea8 !important; opacity: 1 !important; }
 .med-strip > span svg { padding: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; width: 40px !important; height: 40px !important; }
 .med-strip > span { width: 64px; height: 64px; }
+
+/* v26 — inner pages: frosted panel for legibility on the vivid background, duotone icons in profile */
+main.narrow, main.wrap:not(:has(.hero-panel)):not(:has(.block)):not(.narrow) { background: rgba(255,255,255,.74); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); border: 1px solid rgba(255,255,255,.75); border-radius: 28px; padding: clamp(20px,3.5vw,40px); margin-top: 32px; margin-bottom: 32px; box-shadow: 0 18px 50px rgba(3,30,140,.2), inset 0 1px 0 rgba(255,255,255,.8); }
+main.narrow > nav a { color: #0a38d6; }
+.svc-ico .ico { display: grid; place-items: center; flex: none; width: 60px; height: 60px; border-radius: 18px; background: radial-gradient(circle at 30% 25%, #fff, #d6f3ff 70%) !important; border: 1.5px solid #bfe6ff; box-shadow: 0 6px 16px rgba(10,90,200,.18); }
+.svc-ico .ico svg { width: 40px !important; height: 40px !important; stroke: #0b5ea8 !important; }
+.vet-hero .ico { background: radial-gradient(circle at 30% 25%, #fff, #d6f3ff 70%) !important; } .vet-hero .ico svg { width: 52px !important; height: 52px !important; stroke: #0b5ea8 !important; }
+.vet-hero { background: linear-gradient(125deg,#0a38c8,#0f5af0 55%,#1f86ff) !important; }
+main.narrow .vet-hero h1 { background: none !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; margin: 8px 0 6px !important; min-height: 0 !important; overflow: visible; }
+main.narrow .vet-hero h1::before, main.narrow .vet-hero h1::after { display: none !important; }
