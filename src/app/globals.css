@@ -862,3 +862,8 @@ table.hours tr+tr{border-top:1px solid #e3eef8}table.hours tr.today{color:#0b5ea
 .animal-tiles li{display:grid;justify-items:center;gap:6px;padding:12px;border-radius:16px;background:linear-gradient(135deg,#f2fbff,#e3f4ff);font-weight:600}
 .facts{list-style:none;margin:0;padding:0;display:grid;gap:8px}.facts li{display:flex;gap:10px;align-items:center}
 @media(max-width:860px){.profile-cols{grid-template-columns:1fr}.book-card{position:static;order:-1}.profile-head{flex-direction:column;align-items:flex-start;padding:22px}}
+
+/* v32 calmer home: softer hero and band, lighter background veil */
+.hero-panel{background:radial-gradient(50% 60% at 100% 100%,rgba(120,210,245,.40),transparent 70%),linear-gradient(125deg,#1a5fb4 0%,#2478cf 50%,#3b95dd 100%)!important;box-shadow:0 22px 50px -26px rgba(20,90,170,.5)!important}
+.band{background:linear-gradient(120deg,#1a5fb4,#2478cf 60%,#3b95dd)!important}
+body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.58)),url(/decor/bg2.svg) center / cover no-repeat!important}
