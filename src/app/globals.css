@@ -633,3 +633,38 @@ main.wrap > *:not(.bg-icons) { position: relative; z-index: 1; }
 .block h2 { color: #021a6e; }
 .trust li::after { background: linear-gradient(90deg,#0a38d6,#35e0ff,#7c6cff); }
 .consult a::after { background: linear-gradient(90deg,#0a38d6,#35e0ff,#7c6cff); }
+
+/* v19 — multi-colour mesh background (violet, pink, peach alongside blue) */
+body { background:
+  radial-gradient(38% 22% at 4% 6%, rgba(10,56,214,.34), transparent 70%),
+  radial-gradient(34% 20% at 100% 12%, rgba(53,224,255,.55), transparent 70%),
+  radial-gradient(36% 20% at 96% 34%, rgba(255,120,170,.38), transparent 72%),
+  radial-gradient(38% 22% at 2% 42%, rgba(150,110,255,.40), transparent 72%),
+  radial-gradient(36% 20% at 98% 58%, rgba(255,170,110,.34), transparent 72%),
+  radial-gradient(40% 22% at 0% 72%, rgba(31,155,255,.45), transparent 70%),
+  radial-gradient(36% 20% at 100% 86%, rgba(170,120,255,.38), transparent 72%),
+  radial-gradient(40% 18% at 20% 100%, rgba(255,120,170,.30), transparent 72%),
+  url(/decor/page.svg) right top / 1400px auto no-repeat,
+  linear-gradient(180deg, #dcecff 0%, #b7d6ff 35%, #a9c4ff 65%, #9bb4ff 100%) !important; }
+.hero-panel { background:
+  radial-gradient(40% 55% at 0% 100%, rgba(150,90,255,.55), transparent 70%),
+  radial-gradient(30% 40% at 62% 0%, rgba(255,110,190,.28), transparent 70%),
+  linear-gradient(125deg,#020a55 0%,#0a38d6 40%,#1f7bff 72%,#35e0ff 100%) !important; }
+.band { background:
+  radial-gradient(40% 80% at 100% 100%, rgba(255,120,170,.5), transparent 70%),
+  linear-gradient(120deg,#0a1f9c,#4a5cff 55%,#9a6bff) !important; }
+.block.how { background:
+  radial-gradient(45% 60% at 100% 0%, rgba(255,150,190,.28), transparent 70%),
+  radial-gradient(45% 60% at 0% 100%, rgba(150,110,255,.22), transparent 70%),
+  linear-gradient(160deg,#fff 0%,#eaf3ff 100%); }
+.block.how::before, .block.how::after { display: none; }
+/* icon badges: a few warm/violet tones for variety */
+.trust li:nth-child(2) .ico { background: linear-gradient(135deg,#7a4dff,#b07cff) !important; }
+.trust li:nth-child(3) .ico { background: linear-gradient(135deg,#ff6aa8,#ff9a7a) !important; }
+.trust li:nth-child(4) .ico { background: linear-gradient(135deg,#0a38d6,#35e0ff) !important; }
+.animals li:nth-child(2n) .ico { background: radial-gradient(circle at 30% 25%,#d2b3ff,#8a5cff 55%,#5b2fd6) !important; }
+.animals li:nth-child(3n) .ico { background: radial-gradient(circle at 30% 25%,#ffc0d6,#ff6aa8 55%,#d63a82) !important; }
+.block h2:nth-of-type(1) .h2i { background: linear-gradient(135deg,#0a38d6,#35e0ff); }
+.consult li:nth-child(2) a::after { background: linear-gradient(90deg,#7a4dff,#ff6aa8); } .consult li:nth-child(3) a::after { background: linear-gradient(90deg,#ff6aa8,#ffa86a); }
+.med-strip svg:nth-child(3n+2) { color: #7a4dff; } .med-strip svg:nth-child(3n) { color: #e2468f; }
+.bg-icons svg { stroke: rgba(255,255,255,.85); }
