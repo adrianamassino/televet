@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 
-const NAV: Record<string, { vets: string; faq: string; blog: string; contact: string; rights: string }> = {
-  fr: { vets: "Espace vétérinaires", faq: "Questions fréquentes", blog: "Blog", contact: "Nous écrire", rights: "Des vétérinaires, à portée de visio." },
-  it: { vets: "Area veterinari", faq: "Domande frequenti", blog: "Blog", contact: "Scrivici", rights: "Veterinari a portata di video." },
-  en: { vets: "For vets", faq: "FAQ", blog: "Blog", contact: "Contact us", rights: "Vets, one video call away." },
-  es: { vets: "Espacio veterinarios", faq: "Preguntas frecuentes", blog: "Blog", contact: "Escríbenos", rights: "Veterinarios a una videollamada." },
-  pt: { vets: "Área veterinários", faq: "Perguntas frequentes", blog: "Blog", contact: "Escreva-nos", rights: "Veterinários a uma videochamada." },
-  de: { vets: "Für Tierärzte", faq: "Häufige Fragen", blog: "Blog", contact: "Kontakt", rights: "Tierärzte, ein Videoanruf entfernt." },
-  pl: { vets: "Strefa weterynarza", faq: "Pytania i odpowiedzi", blog: "Blog", contact: "Napisz do nas", rights: "Weterynarz na wyciągnięcie wideorozmowy." },
-  nl: { vets: "Voor dierenartsen", faq: "Veelgestelde vragen", blog: "Blog", contact: "Contact", rights: "Dierenartsen, een videogesprek verderop." },
+const NAV: Record<string, { vets: string; faq: string; blog: string; contact: string; rights: string; dir: string }> = {
+  fr: { dir: "Annuaire", vets: "Espace vétérinaires", faq: "Questions fréquentes", blog: "Blog", contact: "Nous écrire", rights: "Des vétérinaires, à portée de visio." },
+  it: { dir: "Elenco", vets: "Area veterinari", faq: "Domande frequenti", blog: "Blog", contact: "Scrivici", rights: "Veterinari a portata di video." },
+  en: { dir: "Directory", vets: "For vets", faq: "FAQ", blog: "Blog", contact: "Contact us", rights: "Vets, one video call away." },
+  es: { dir: "Directorio", vets: "Espacio veterinarios", faq: "Preguntas frecuentes", blog: "Blog", contact: "Escríbenos", rights: "Veterinarios a una videollamada." },
+  pt: { dir: "Diretório", vets: "Área veterinários", faq: "Perguntas frequentes", blog: "Blog", contact: "Escreva-nos", rights: "Veterinários a uma videochamada." },
+  de: { dir: "Verzeichnis", vets: "Für Tierärzte", faq: "Häufige Fragen", blog: "Blog", contact: "Kontakt", rights: "Tierärzte, ein Videoanruf entfernt." },
+  pl: { dir: "Katalog", vets: "Strefa weterynarza", faq: "Pytania i odpowiedzi", blog: "Blog", contact: "Napisz do nas", rights: "Weterynarz na wyciągnięcie wideorozmowy." },
+  nl: { dir: "Gids", vets: "Voor dierenartsen", faq: "Veelgestelde vragen", blog: "Blog", contact: "Contact", rights: "Dierenartsen, een videogesprek verderop." },
 };
 
 export default async function Layout({ children, params }: { children: ReactNode; params: Promise<{ lang: string; country: string }> }) {
@@ -19,7 +19,7 @@ export default async function Layout({ children, params }: { children: ReactNode
       <header className="site-header"><div className="in">
         <a className="brand" href={`${base}/`} aria-label="Televet"><img src="/logo.svg" alt="Televet" height={34} style={{ height: 34, width: "auto" }} /></a>
         <nav className="site-nav" aria-label="Main">
-          <a href={`${base}/blog`}>{t.blog}</a><a href={`${base}/faq`}>{t.faq}</a><a className="pill" href={`${base}/pro`}>{t.vets}</a>
+          <a href={`${base}/annuaire`}>{t.dir}</a><a href={`${base}/blog`}>{t.blog}</a><a href={`${base}/faq`}>{t.faq}</a><a className="pill" href={`${base}/pro`}>{t.vets}</a>
         </nav></div></header>
       {children}
       <footer className="site-footer"><div className="in"><span><img src="/logo-white.svg" alt="" height={26} style={{ height: 26, width: "auto", display: "block", marginBottom: 6 }} />{t.rights}</span><span><a href="mailto:contact@televet.co">{t.contact}</a> · televet.co</span></div></footer>

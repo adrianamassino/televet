@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
 import { PawPrint } from "lucide-react";
 import { VI } from "@/components/VI";
+import { PhotoStrip } from "@/components/PhotoStrip";
 import { COUNTRIES, ZERO_DECIMAL } from "@/lib/countries";
 import { breadcrumbLd, ldJson, pageMetadata, SITE, veterinaryCareLd } from "@/lib/seo";
 
@@ -66,6 +67,7 @@ export default async function VetProfile({ params }: P) {
         </div>
         {services.length > 0 && <a className="btn btn-sun btn-lg" href={book}><PawPrint aria-hidden size={20} />{t.book}</a>}
       </header>
+      <PhotoStrip set="c" />
       {p.about && <section><h2>{t.about}</h2><p style={{ whiteSpace: "pre-line" }}>{p.about}</p></section>}
       {services.length > 0 && <section><h2>{t.services}</h2>
         <ul style={{ listStyle: "none", padding: 0 }}>{services.map((s, i) => (
