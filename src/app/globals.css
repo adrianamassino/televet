@@ -605,3 +605,31 @@ h2 .h2i svg { width: 22px; height: 22px; stroke: #fff; }
 .block.how > * { position: relative; z-index: 1; }
 .med-strip svg { background: linear-gradient(145deg,#fff,#dff1ff); }
 @media (max-width: 900px) { .collage .b1 { left: 30%; } .collage .b3 { left: 2px; } }
+
+/* v18 — deeper blue back, more colour, no ECG */
+.ecg-div { display: none !important; }
+.hero-panel::after { background: none !important; }
+body { background:
+  radial-gradient(45% 28% at 0% 8%, rgba(10,56,214,.38), transparent 70%),
+  radial-gradient(40% 26% at 100% 22%, rgba(53,224,255,.55), transparent 70%),
+  radial-gradient(42% 28% at 90% 60%, rgba(124,108,255,.30), transparent 70%),
+  radial-gradient(40% 26% at 0% 75%, rgba(31,155,255,.45), transparent 70%),
+  url(/decor/page.svg) right top / 1400px auto no-repeat,
+  linear-gradient(180deg, #d8ecff 0%, #a9d2ff 40%, #7fb8ff 75%, #5fa2ff 100%) !important; }
+main.wrap { position: relative; }
+.bg-icons { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.bg-icons svg { position: absolute; width: 64px; height: 64px; stroke: rgba(255,255,255,.75); stroke-width: 1.4; fill: none; filter: drop-shadow(0 4px 10px rgba(10,56,214,.25)); }
+.bg-icons .i1 { left: -2%; top: 38%; rotate: -12deg; width: 84px; height: 84px; } .bg-icons .i2 { right: -2%; top: 46%; rotate: 10deg; width: 90px; height: 90px; }
+.bg-icons .i3 { left: 3%; top: 56%; rotate: 35deg; } .bg-icons .i4 { right: 4%; top: 33%; rotate: -25deg; }
+.bg-icons .i5 { left: 1%; top: 70%; rotate: 20deg; } .bg-icons .i6 { right: 1%; top: 64%; rotate: -8deg; width: 80px; height: 80px; }
+.bg-icons .i7 { left: 2%; top: 22%; rotate: 8deg; width: 76px; height: 76px; } .bg-icons .i8 { right: 3%; top: 78%; rotate: 12deg; }
+.bg-icons .i9 { left: 4%; top: 86%; rotate: -14deg; } .bg-icons .i10 { right: 2%; top: 90%; rotate: 30deg; }
+.bg-icons .i11 { left: 0%; top: 47%; rotate: 15deg; width: 56px; height: 56px; } .bg-icons .i12 { right: 5%; top: 55%; rotate: -10deg; width: 56px; height: 56px; }
+main.wrap > *:not(.bg-icons) { position: relative; z-index: 1; }
+@media (max-width: 900px) { .bg-icons { display: none; } }
+.hero-panel { background: linear-gradient(125deg,#020a55 0%,#0a38d6 40%,#1f7bff 72%,#35e0ff 100%) !important; }
+.band { background: linear-gradient(120deg,#0a1f9c,#1f6bff 60%,#7c6cff) !important; }
+.block.how { background: linear-gradient(160deg,#ffffff 0%,#e4f1ff 60%,#d3e8ff 100%); }
+.block h2 { color: #021a6e; }
+.trust li::after { background: linear-gradient(90deg,#0a38d6,#35e0ff,#7c6cff); }
+.consult a::after { background: linear-gradient(90deg,#0a38d6,#35e0ff,#7c6cff); }

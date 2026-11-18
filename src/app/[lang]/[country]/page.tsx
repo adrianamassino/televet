@@ -14,8 +14,6 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
   return pageMetadata({ title: t.title, description: t.desc, lang, country: country.toUpperCase(), path: (l, c) => `/${l}/${c.toLowerCase()}` });
 }
 
-const ECG = () => <svg className="ecg-div" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden><defs><linearGradient id="eg" x1="0" x2="1"><stop offset="0" stopColor="#0a38d6" stopOpacity="0"/><stop offset=".5" stopColor="#1f9bff"/><stop offset="1" stopColor="#35e0ff" stopOpacity="0"/></linearGradient></defs><path d="M0 30H470l14-6 12 6h20l12-24 16 48 14-24h30l10-8 10 8H1200" fill="none" stroke="url(#eg)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-
 export default async function OwnerHome({ params }: P) {
   const { lang, country } = await params; const cc = country.toUpperCase(), t = HOME[lang] ?? HOME.en;
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) notFound();
@@ -26,6 +24,7 @@ export default async function OwnerHome({ params }: P) {
   const AI = [Dog, Cat, Rabbit, Bird, Turtle, Rat], MI = [Stethoscope, Syringe, Pill, Microscope, HeartPulse, Bone], TI = [ShieldCheck, CalendarCheck, BellRing, FileText], SI = [Search, CalendarCheck, Stethoscope];
   return (
     <main className="wrap">
+      <div className="bg-icons" aria-hidden><Dog className="i1" /><Cat className="i2" /><Syringe className="i3" /><Pill className="i4" /><Bone className="i5" /><Stethoscope className="i6" /><Rabbit className="i7" /><Microscope className="i8" /><Bird className="i9" /><Thermometer className="i10" /><Fish className="i11" /><HeartPulse className="i12" /></div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }])]) }} />
       <section className="hero-panel">
         <div className="hero">
@@ -48,7 +47,7 @@ export default async function OwnerHome({ params }: P) {
             <a className="btn btn-ghost" href={`${base}/reserver/${v.slug}`}>{t.book}</a></li>))}</ul> : <p className="muted">{t.none}</p>}
         {vets.length > 0 && <p><a href={`${base}/recherche`}>{t.all}</a></p>}
       </section>
-      <ECG /><section className="block"><h2><span className="h2i"><HeartPulse /></span>{C.title}</h2><ul className="consult">{C.items.map((c) => (
+      <section className="block"><h2><span className="h2i"><HeartPulse /></span>{C.title}</h2><ul className="consult">{C.items.map((c) => (
         <li key={c.k}><a href={`${base}/recherche?type=${c.k}`}><img src={`/photos/${CP[c.k]}.jpg`} alt="" loading="lazy" /><div><h3>{c.t}</h3><p>{c.d}</p></div></a></li>))}</ul></section>
       <section className="block"><h2><span className="h2i"><PawPrint /></span>{t.animals}</h2><ul className="animals">{t.animalsList.map((a, i) => { const Ic = AI[i]; return <li key={a}><span className="ico" aria-hidden><Ic /></span>{a}</li>; })}</ul></section>
       <section className="block how"><h2><span className="h2i"><Sparkles /></span>{t.how}</h2><ol className="steps">{t.steps.map((s, i) => { const Ic = SI[i]; return <li key={i}><span className="ico" aria-hidden><Ic /></span><h3>{s.t}</h3><p>{s.d}</p></li>; })}</ol></section>
