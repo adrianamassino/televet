@@ -973,5 +973,10 @@ body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gr
 /* v40 pop images: smaller, bottom trimmed to the circle so the subject sits in the shape and the head breaks out */
 .pop>img,.collage .pop>img{height:100%!important;clip-path:polygon(-10% -60%,110% -60%,110% 50%,109.3% 57.8%,107.1% 65.5%,103.5% 72.7%,98.5% 79.4%,92.4% 85.4%,85.3% 90.5%,77.2% 94.6%,68.5% 97.6%,59.4% 99.4%,50.0% 100.0%,40.6% 99.4%,31.5% 97.6%,22.8% 94.6%,14.7% 90.5%,7.6% 85.4%,1.5% 79.4%,-3.5% 72.7%,-7.1% 65.5%,-9.3% 57.8%,-10% 50%)!important}
 .collage .pop-a>img{height:104%!important}
-.pop-a>img{-webkit-mask-image:linear-gradient(180deg,transparent,#000 16%);mask-image:linear-gradient(180deg,transparent,#000 16%)}
-.pop-b>img{-webkit-mask-image:linear-gradient(90deg,#000 78%,transparent);mask-image:linear-gradient(90deg,#000 78%,transparent)}
+.pop-a>img{-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent)}
+.pop-b>img{-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent)}
+
+/* v41 composition: subjects centred in their shape and larger, so heads are whole and the shape stays balanced */
+.pop>img,.collage .pop>img{height:108%!important}
+.collage .pop-a>img{height:116%!important}
+.pop-a>img,.pop-b>img{-webkit-mask-image:none!important;mask-image:none!important}
