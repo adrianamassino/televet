@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import { Bird, Cat, CalendarCheck, ClipboardList, Dog, FileText, Fish, Hospital, House, Rabbit, Rat, Search, ShieldCheck, Stethoscope, Turtle, Video, BellRing, HeartPulse, Syringe, Pill, Microscope, Bone, PawPrint, Sparkles, Heart, Cross, Thermometer, Activity } from "lucide-react";
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
-import { breadcrumbLd, ldJson, organizationLd, pageMetadata, SITE } from "@/lib/seo";
+import { breadcrumbLd, faqLd, ldJson, organizationLd, pageMetadata, SITE } from "@/lib/seo";
 import { VI } from "@/components/VI";
 import { PhotoStrip } from "@/components/PhotoStrip";
 import { DIR } from "./annuaire/copy";
 import { slugify } from "@/lib/seo";
 import { CONSULT, FOCUS, HOME } from "./home-copy";
+import { ABOUT } from "./about-copy";
 import { SERVICE_SLUGS } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -28,11 +29,12 @@ export default async function OwnerHome({ params }: P) {
   let cities: { slug: string; name: string; n: number }[] = [];
   try { const { data } = await adminClient().from("directory_listings").select("city").eq("country", cc).neq("status", "removed").limit(5000); const m = new Map<string, { name: string; n: number }>(); for (const r of data ?? []) { if (!r.city) continue; const k = slugify(r.city); const c = m.get(k) ?? { name: r.city, n: 0 }; c.n++; m.set(k, c); } cities = [...m.entries()].map(([slug, c]) => ({ slug, ...c })).sort((a, b) => b.n - a.n).slice(0, 12); } catch { /* none */ }
   const D = DIR[lang] ?? DIR.en, F = FOCUS[lang] ?? FOCUS.en;
+  const A = ABOUT[lang] ?? ABOUT.en;
   const C = CONSULT[lang] ?? CONSULT.en, CP = { home: "vet-family", video: "vet-white-cat", clinic: "vet-dachshund" } as const;
   const AI = ["dog", "cat", "rabbit", "bird", "turtle", "hamster"], MI = ["stethoscope", "syringe", "bottle", "pill", "thermometer", "bandage", "bone", "pawHeart"], TI = ["shield", "calendar", "chat", "clipboard"], SI = ["magnifier", "calendar", "vet"];
   return (
     <main className="wrap">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }]), ...(["home", "video"] as const).map((k) => ({ "@context": "https://schema.org", "@type": "Service", name: (FOCUS[lang] ?? FOCUS.en)[k].h, description: (FOCUS[lang] ?? FOCUS.en)[k].p, serviceType: k === "home" ? "Veterinary home visit" : "Veterinary telemedicine", provider: { "@type": "Organization", name: "Televet", url: SITE }, areaServed: { "@type": "Country", name: COUNTRIES[cc].code }, url: `${SITE}${base}/${SERVICE_SLUGS[k][lang] ?? SERVICE_SLUGS[k].en}` }))]) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }]), faqLd(A.faq), ...(["home", "video"] as const).map((k) => ({ "@context": "https://schema.org", "@type": "Service", name: (FOCUS[lang] ?? FOCUS.en)[k].h, description: (FOCUS[lang] ?? FOCUS.en)[k].p, serviceType: k === "home" ? "Veterinary home visit" : "Veterinary telemedicine", provider: { "@type": "Organization", name: "Televet", url: SITE }, areaServed: { "@type": "Country", name: COUNTRIES[cc].code }, url: `${SITE}${base}/${SERVICE_SLUGS[k][lang] ?? SERVICE_SLUGS[k].en}` }))]) }} />
       <section className="hero-panel">
         <div className="hero">
           <h1>{t.h1}</h1><p className="lead">{t.lead}</p>
@@ -70,6 +72,11 @@ export default async function OwnerHome({ params }: P) {
       <section className="block"><h2><span className="h2i"><PawPrint /></span>{t.animals}</h2><ul className="animals">{t.animalsList.map((a, i) => { return <li key={a}><span className="ico" aria-hidden><VI n={AI[i]} size={46} /></span>{a}</li>; })}</ul><PhotoStrip set="a" /></section>
       <section className="block"><h2><span className="h2i"><VI n="pin" size={26} /></span>{D.h1}</h2><p className="lead-p">{D.lead}</p>{cities.length > 0 && <ul className="city-chips">{cities.map((c) => <li key={c.slug}><a href={`${base}/annuaire/${c.slug}`}>{c.name} <small>{c.n}</small></a></li>)}</ul>}<p><a className="btn btn-ghost" href={`${base}/annuaire`}>{D.all}</a></p></section>
       <section className="block how"><h2><span className="h2i"><Sparkles /></span>{t.how}</h2><ol className="steps">{t.steps.map((s, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={SI[i]} size={34} /></span><h3>{s.t}</h3><p>{s.d}</p></li>; })}</ol></section>
+      <section className="block about"><h2><span className="h2i"><HeartPulse /></span>{A.aboutH}</h2><div className="about-cols">{A.about.map((x) => <p key={x}>{x}</p>)}</div></section>
+      <section className="block"><h2><span className="h2i"><Stethoscope /></span>{A.specH}</h2><p className="lead-p">{A.specLead}</p><ul className="spec-grid">{A.spec.map((x) => <li key={x.t}><h3>{x.t}</h3><p>{x.d}</p></li>)}</ul></section>
+      <section className="block"><h2><span className="h2i"><ShieldCheck /></span>{A.missionH}</h2>{A.mission.map((x) => <p key={x} className="lead-p">{x}</p>)}<ul className="mission-pts">{A.missionPts.map((x) => <li key={x}><VI n="check" size={20} />{x}</li>)}</ul></section>
+      <section className="block faq-home"><h2><span className="h2i"><Search /></span>{A.faqH}</h2>{A.faq.map((x) => <details key={x.q}><summary>{x.q}</summary><p>{x.a}</p></details>)}</section>
+      <section className="block contact-home"><h2><span className="h2i"><BellRing /></span>{A.contactH}</h2><p className="lead-p">{A.contactP}</p><p><a className="btn" href="mailto:contact@televet.co">{A.contactBtn} · contact@televet.co</a></p><p className="muted">{A.place}</p></section>
       <div className="med-strip" aria-hidden>{MI.map((n) => <span key={n}><VI n={n} size={34} /></span>)}</div>
       <div className="band"><h2>{t.pro}</h2><a className="btn btn-sun" href={`${base}/pro`}><ClipboardList aria-hidden />{t.proBtn}</a></div>
     </main>
