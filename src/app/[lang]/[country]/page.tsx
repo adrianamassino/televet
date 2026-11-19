@@ -44,6 +44,7 @@ export default async function OwnerHome({ params }: P) {
             <div className="row"><input name="q" type="search" placeholder={t.ph} aria-label={t.ph} autoComplete="address-level2" /><button className="btn" type="submit"><Search aria-hidden />{t.go}</button></div>
           </form>
         </div>
+        <div className="sparkles" aria-hidden>{["s1","s2","s3","s4","s5","s6","s7","s8"].map((k) => <i key={k} className={`spk ${k}`} />)}</div>
         <div className="hero-photo" aria-hidden><img src="/photos/girl-cat.jpg" alt="" /></div>
       </section>
       <ul className="trust">{t.trust.map((x, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={TI[i]} size={34} /></span>{x}</li>; })}</ul>

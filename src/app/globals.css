@@ -983,10 +983,8 @@ body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gr
 
 /* v42 professional redesign: calm navy/blue palette, clean surfaces, full photos in consistent frames. No glow, stars, blobs, cut-outs or wallpaper. */
 :root{--navy:#0a2540;--brand:#1556d6;--brand-d:#0e3fa8;--ink2:#51657f;--line:#e2eaf4;--bg:#f5f8fc}
-html{background:var(--bg)!important}
 body{background:transparent!important;color:var(--navy)}
-body::before{content:none!important;background:none!important}
-.sparkles,.collage,.float,.fb{display:none!important}
+.collage,.float,.fb{display:none!important}
 /* hero */
 .hero-panel{position:relative;overflow:hidden;border-radius:28px!important;padding:clamp(28px,5vw,64px)!important;background:linear-gradient(120deg,#0a2a63 0%,#0e3fa8 55%,#1556d6 100%)!important;box-shadow:0 30px 60px -36px rgba(10,37,64,.55)!important;min-height:520px;display:flex;align-items:center}
 .hero-panel .hero{position:relative;z-index:2;max-width:620px;display:block!important}
@@ -1027,3 +1025,9 @@ h2{color:var(--navy)}
 .photo-strip .ps,.photo-strip .ps img{border-radius:20px!important;clip-path:none!important;transform:none!important;margin:0!important}
 .photo-strip .ps{aspect-ratio:4/3}
 .focus-card .f-ico{display:none!important}
+
+/* v43 blue gradients: page background + hero card */
+html{background:radial-gradient(60% 40% at 100% 0%,#46ebff 0%,transparent 70%),radial-gradient(60% 40% at 0% 100%,#2d8cff 0%,transparent 70%),linear-gradient(160deg,#1f8bff,#4fd8ff 60%,#8be9ff)!important}
+body::before{content:""!important;position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.38)),url(/decor/bg2.svg) center / cover no-repeat!important}
+.hero-panel{background:radial-gradient(700px 380px at 90% 0%,rgba(90,170,255,.55),transparent 65%),radial-gradient(600px 400px at 0% 100%,rgba(6,30,100,.7),transparent 70%),linear-gradient(125deg,#071f55 0%,#0e3fa8 45%,#2a7bff 100%)!important}
+.band{background:radial-gradient(500px 300px at 90% 0%,rgba(90,170,255,.5),transparent 65%),linear-gradient(125deg,#071f55,#0e3fa8 50%,#2a7bff)!important}
