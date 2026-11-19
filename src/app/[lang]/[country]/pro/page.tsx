@@ -7,7 +7,7 @@ import { breadcrumbLd, faqLd, ldJson, organizationLd, pageMetadata, SITE } from 
 
 type P = { params: Promise<{ lang: string; country: string }> };
 const ok = (lang: string, cc: string) => !!COUNTRIES[cc] && COUNTRIES[cc].languages.includes(lang);
-const copy = (lang: string) => PRO[lang] ?? PRO.en;   // languages without a translation show English and are not indexed
+const copy = (lang: string, country = "") => PRO[`${lang}-${country.toUpperCase()}`] ?? PRO[lang] ?? PRO.en;   // languages without a translation show English and are not indexed
 
 /** Where "Create my profile" leads: the built-in sign-up page, unless PRO_SIGNUP_URL overrides it. */
 const signupUrl = (lang: string, cc: string) => process.env.PRO_SIGNUP_URL?.replace("{lang}", lang).replace("{country}", cc.toLowerCase()) || `/${lang}/${cc.toLowerCase()}/pro/inscription`;
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
   const { lang, country } = await params;
   const cc = country.toUpperCase();
   if (!ok(lang, cc)) return {};
-  const t = copy(lang);
+  const t = copy(lang, country);
   return pageMetadata({ title: t.title, description: t.description, lang, country: cc, path: (l, c) => `/${l}/${c.toLowerCase()}/pro`, index: !!PRO[lang] });
 }
 
@@ -24,7 +24,7 @@ export default async function ProPage({ params }: P) {
   const { lang, country } = await params;
   const cc = country.toUpperCase();
   if (!ok(lang, cc)) notFound();
-  const t = copy(lang);
+  const t = copy(lang, country);
   const base = `${SITE}/${lang}/${country}`;
   const ld = [organizationLd(), faqLd(t.faq.map(([q, a]) => ({ q, a }))), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: "Televet Pro", url: `${base}/pro` }])];
   const cta = signupUrl(lang, cc);

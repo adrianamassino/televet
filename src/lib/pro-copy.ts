@@ -153,3 +153,6 @@ export const PRO: Record<string, ProCopy> = {
       ["Wat gebeurt er met de gegevens van het consult?", "De opname van het gesprek wordt alleen gebruikt voor het conceptverslag, met toestemming van de eigenaar, en wordt verwijderd zodra het verslag is goedgekeurd."]],
     legal: "De regels voor veterinaire telegeneeskunde (diagnose, voorschrijven, eerste contact) verschillen per land: je blijft zelf verantwoordelijk voor naleving in je praktijk.", contact: "Vragen? Schrijf ons", home: "Terug naar home" },
 };
+
+import { voseo } from "@/lib/voseo";
+PRO["es-AR"] = voseo(PRO.es);

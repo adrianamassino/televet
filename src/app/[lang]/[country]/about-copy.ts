@@ -143,3 +143,43 @@ export const ABOUT: Record<string, AboutTxt> = {
     contactH: "¿Dudas? Escríbenos", contactP: "Nuestro equipo responde por correo lo antes posible.", contactBtn: "Escríbenos", place: "Station F, París",
   },
 };
+
+/* Polish */
+ABOUT.pl = {
+  aboutH: "Ich dobrostan, nasza pasja",
+  about: [
+    "Televet powstał z prostej obserwacji: zabranie zwierzaka do weterynarza bywa skomplikowane, stresujące, a czasem niemożliwe. Kot, który panikuje w transporterze, stary pies, który nie znosi już jazdy samochodem, dom z kilkoma zwierzętami, weekend bez otwartej lecznicy w pobliżu… Chcemy, aby opieka weterynaryjna była bardziej dostępna, łagodniejsza i bardziej ludzka.",
+    "Łączymy na jednej platformie wykwalifikowanych weterynarzy, którzy przyjeżdżają do domu, odpowiadają przez wideorozmowę lub przyjmują w gabinecie. Wybierasz format, który pasuje do Twojego zwierzaka, rezerwujesz online w kilku kliknięciach, a po konsultacji otrzymujesz pisemne podsumowanie.",
+    "Nasz zespół ma siedzibę w Station F w Paryżu i współpracuje z weterynarzami oraz klinikami, by tworzyć usługę niezawodną, prostą w obsłudze i szanującą zarówno zwierzęta, jak i ich opiekunów.",
+  ],
+  missionH: "Nasza misja: dobra opieka, blisko Ciebie",
+  mission: [
+    "Wierzymy, że zwierzak leczony w swoim otoczeniu jest spokojniejszy, a dobrze poinformowani opiekunowie podejmują lepsze decyzje dotyczące zdrowia swojego towarzysza.",
+    "Każdy weterynarz w Televet jest wykwalifikowanym specjalistą, a nasi partnerzy weterynarze we Francji przestrzegają zasad Krajowej Izby Weterynaryjnej w ramach dekretu nr 2020-526 z 5 maja 2020 r. o eksperymencie dotyczącym telemedycyny weterynaryjnej. W tych ramach we Francji nie wystawia się na odległość recept ani diagnoz. Teleporada nie zastępuje badania klinicznego, gdy jest ono potrzebne: weterynarz Ci o tym powie i wskaże właściwe rozwiązanie, także w nagłym przypadku.",
+  ],
+  missionPts: ["Wykwalifikowani weterynarze, zweryfikowani i przedstawieni ze specjalizacjami", "Prosta rezerwacja, bez telefonów i czekania", "Pisemne podsumowanie po każdej konsultacji", "Jasne wskazanie kliniki w nagłych przypadkach"],
+  specH: "Specjalizacje na każdą potrzebę",
+  specLead: "Niezależnie od zwierzaka, znajdź weterynarza, który zna jego gatunek i potrzeby.",
+  spec: [
+    { t: "Teleporada w nagłych przypadkach", d: "Wątpliwość, niepokojący objaw, stresująca sytuacja: weterynarze dokonujący selekcji odpowiadają przez wideo w sprawie psów, kotów i innych małych zwierząt i mówią, czy potrzebna jest pilna wizyta, czy można poczekać." },
+    { t: "Żywienie", d: "Dieta dopasowana do wieku, rasy i stanu zdrowia, nadwaga, alergie pokarmowe, karma sucha lub domowe posiłki: jasny plan żywieniowy i opieka w czasie." },
+    { t: "Zachowanie", d: "Lęk separacyjny, szczekanie, załatwianie się w domu, agresja, lęki: zrozumienie źródła problemu i konkretne rozwiązania z weterynarzem znającym się na zachowaniu." },
+    { t: "Naturopatia", d: "Uzupełniające podejście do codziennego wsparcia zwierzaka: styl życia, dieta, komfort i profilaktyka, obok opieki weterynaryjnej." },
+    { t: "Zwierzęta egzotyczne (NAC)", d: "Króliki, fretki, ptaki, złote rybki i inne nowe zwierzęta domowe: weterynarze, którzy znają ich specyfikę, a których często trudno znaleźć w okolicy." },
+    { t: "Konie", d: "Konie i osły: porady, kontrola i wskazówki na odległość, by oszczędzić czas i uniknąć wizyt, gdy nie są potrzebne." },
+  ],
+  faqH: "Najczęstsze pytania",
+  faq: [
+    { q: "Jak działa weterynarz na wizytę domową?", a: "Rezerwujesz termin online, podajesz adres i powód wizyty. Weterynarz przyjeżdża ze sprzętem, bada zwierzaka u Ciebie w domu i przekazuje pisemne podsumowanie." },
+    { q: "Czym jest teleporada weterynaryjna?", a: "To konsultacja przez wideo z wykwalifikowanym weterynarzem. Sprawdza się przy szybkiej opinii, kontroli, poradach lub gdy trzeba ocenić, czy potrzebna jest wizyta na miejscu. Nie zastępuje badania klinicznego, gdy jest ono niezbędne." },
+    { q: "Kiedy powinienem jechać do kliniki lub na dyżur?", a: "Przy trudnościach z oddychaniem, silnym krwawieniu, urazie, drgawkach, połknięciu substancji toksycznej lub silnym bólu natychmiast skontaktuj się z kliniką całodobową. Teleporada nie jest odpowiednia w takich sytuacjach." },
+    { q: "Jakie zwierzęta można leczyć?", a: "Psy, koty, króliki, gryzonie, ptaki i gady. Kompetencje różnią się w zależności od weterynarza: sprawdź jego profil, by zobaczyć, jakie gatunki przyjmuje." },
+    { q: "Jak zarezerwować wizytę i jak dostanę powiadomienie?", a: "Rezerwacja online zajmuje kilka kliknięć. Otrzymasz potwierdzenie i przypomnienia e-mailem, a po konsultacji podsumowanie." },
+    { q: "Jestem weterynarzem: jak dołączyć do Televet?", a: "Załóż konto weterynarza, uzupełnij profil, dostępność i usługi. Potem zaczniesz otrzymywać rezerwacje od opiekunów z Twojej okolicy." },
+  ],
+  contactH: "Masz pytanie? Napisz do nas", contactP: "Nasz zespół odpowiada e-mailem tak szybko, jak to możliwe.", contactBtn: "Napisz do nas", place: "Station F, Paryż",
+};
+
+/* Argentine Spanish (voseo) */
+import { voseo } from "@/lib/voseo";
+ABOUT["es-AR"] = voseo(ABOUT.es);

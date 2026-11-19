@@ -1,3 +1,4 @@
+import { pick } from "@/lib/pick";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Bird, Cat, CalendarCheck, ClipboardList, Dog, FileText, Fish, Hospital, House, Rabbit, Rat, Search, ShieldCheck, Stethoscope, Turtle, Video, BellRing, HeartPulse, Syringe, Pill, Microscope, Bone, PawPrint, Sparkles, Heart, Cross, Thermometer, Activity } from "lucide-react";
@@ -16,25 +17,25 @@ export const dynamic = "force-dynamic";
 type P = { params: Promise<{ lang: string; country: string }> };
 
 export async function generateMetadata({ params }: P): Promise<Metadata> {
-  const { lang, country } = await params; const t = HOME[lang] ?? HOME.en;
+  const { lang, country } = await params; const t = pick(HOME, lang, country);
   return pageMetadata({ title: t.title, description: t.desc, lang, country: country.toUpperCase(), path: (l, c) => `/${l}/${c.toLowerCase()}` });
 }
 
 export default async function OwnerHome({ params }: P) {
-  const { lang, country } = await params; const cc = country.toUpperCase(), t = HOME[lang] ?? HOME.en;
+  const { lang, country } = await params; const cc = country.toUpperCase(), t = pick(HOME, lang, country);
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) notFound();
   const base = `/${lang}/${country}`;
   let vets: { id: string; name: string; slug: string; kind: string; headline: string | null; address: string | null }[] = [];
   try { const { data } = await adminClient().from("practices").select("id, name, slug, kind, headline, address").eq("country", cc).eq("published", true).order("created_at", { ascending: false }).limit(6); vets = data ?? []; } catch { /* no data yet */ }
   let cities: { slug: string; name: string; n: number }[] = [];
   try { const { data } = await adminClient().from("directory_listings").select("city").eq("country", cc).neq("status", "removed").limit(5000); const m = new Map<string, { name: string; n: number }>(); for (const r of data ?? []) { if (!r.city) continue; const k = slugify(r.city); const c = m.get(k) ?? { name: r.city, n: 0 }; c.n++; m.set(k, c); } cities = [...m.entries()].map(([slug, c]) => ({ slug, ...c })).sort((a, b) => b.n - a.n).slice(0, 12); } catch { /* none */ }
-  const D = DIR[lang] ?? DIR.en, F = FOCUS[lang] ?? FOCUS.en;
-  const A = ABOUT[lang] ?? ABOUT.en;
-  const C = CONSULT[lang] ?? CONSULT.en, CP = { home: "vet-family", video: "vet-white-cat", clinic: "vet-dachshund" } as const;
+  const D = DIR[lang] ?? DIR.en, F = pick(FOCUS, lang, country);
+  const A = pick(ABOUT, lang, country);
+  const C = pick(CONSULT, lang, country), CP = { home: "vet-family", video: "vet-white-cat", clinic: "vet-dachshund" } as const;
   const AI = ["dog", "cat", "rabbit", "bird", "turtle", "hamster"], MI = ["stethoscope", "syringe", "bottle", "pill", "thermometer", "bandage", "bone", "pawHeart"], TI = ["shield", "calendar", "chat", "clipboard"], SI = ["magnifier", "calendar", "vet"];
   return (
     <main className="wrap">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }]), faqLd(A.faq), ...(["home", "video"] as const).map((k) => ({ "@context": "https://schema.org", "@type": "Service", name: (FOCUS[lang] ?? FOCUS.en)[k].h, description: (FOCUS[lang] ?? FOCUS.en)[k].p, serviceType: k === "home" ? "Veterinary home visit" : "Veterinary telemedicine", provider: { "@type": "Organization", name: "Televet", url: SITE }, areaServed: { "@type": "Country", name: COUNTRIES[cc].code }, url: `${SITE}${base}/${SERVICE_SLUGS[k][lang] ?? SERVICE_SLUGS[k].en}` }))]) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }]), faqLd(A.faq), ...(["home", "video"] as const).map((k) => ({ "@context": "https://schema.org", "@type": "Service", name: (pick(FOCUS, lang, country))[k].h, description: (FOCUS[lang] ?? FOCUS.en)[k].p, serviceType: k === "home" ? "Veterinary home visit" : "Veterinary telemedicine", provider: { "@type": "Organization", name: "Televet", url: SITE }, areaServed: { "@type": "Country", name: COUNTRIES[cc].code }, url: `${SITE}${base}/${SERVICE_SLUGS[k][lang] ?? SERVICE_SLUGS[k].en}` }))]) }} />
       <section className="hero-panel">
         <div className="hero">
           <h1>{t.h1}</h1><p className="lead">{t.lead}</p>

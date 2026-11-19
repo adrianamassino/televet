@@ -1,3 +1,4 @@
+import { pick } from "@/lib/pick";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VI } from "@/components/VI";
@@ -11,13 +12,13 @@ export const dynamic = "force-dynamic";
 type P = { params: Promise<{ lang: string; country: string }>; searchParams: Promise<{ q?: string; type?: string }> };
 
 export async function generateMetadata({ params }: P): Promise<Metadata> {
-  const { lang, country } = await params; const t = HOME[lang] ?? HOME.en;
+  const { lang, country } = await params; const t = pick(HOME, lang, country);
   return pageMetadata({ title: `${t.results} | Televet`, description: t.desc, lang, country: country.toUpperCase(), index: false, path: (l, c) => `/${l}/${c.toLowerCase()}/recherche` });
 }
 
 export default async function Results({ params, searchParams }: P) {
   const { lang, country } = await params; const sp = await searchParams;
-  const cc = country.toUpperCase(), t = HOME[lang] ?? HOME.en, base = `/${lang}/${country}`;
+  const cc = country.toUpperCase(), t = pick(HOME, lang, country), base = `/${lang}/${country}`;
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) notFound();
   const q = (sp.q ?? "").trim().slice(0, 80).toLowerCase(), type = ["home", "video", "clinic"].includes(sp.type ?? "") ? sp.type! : "";
   let list: { id: string; name: string; slug: string; kind: string; headline: string | null; address: string | null; postal_code: string | null; timezone: string; services: { type: string; active: boolean }[] }[] = [];

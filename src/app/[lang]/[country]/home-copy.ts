@@ -56,3 +56,20 @@ export const FOCUS: Record<string, { title: string; home: { h: string; p: string
     video: { h: "Teleconsulta veterinaria", p: "Habla con un veterinario por video sin salir de casa. Para una opinión rápida, una duda sobre un síntoma, un seguimiento o decidir si hace falta una visita presencial.", pts: ["Una opinión hoy, estés donde estés", "Consejos, seguimiento y orientación", "Informe después de la consulta"], cta: "Reservar una teleconsulta" },
     clinic: "¿Prefieres la clínica? Ver clínicas veterinarias" },
 };
+
+/* Polish (pl) */
+HOME.pl = { title: "Weterynarz na wizytę domową i konsultacja online | Televet", desc: "Wykwalifikowany weterynarz u Ciebie w domu lub przez wideorozmowę. Zarezerwuj online wizytę domową albo teleporadę weterynaryjną dla psa, kota lub małego zwierzaka.", h1: "Weterynarz na wizytę domową i teleporada weterynaryjna", lead: "Wykwalifikowany weterynarz przyjeżdża do Twojego domu albo rozmawia z Tobą przez wideo, prosto z kanapy. Rezerwacja online w kilku kliknięciach.",
+  tabs: { home: "W domu", video: "Przez wideo", clinic: "W klinice" }, ph: "Miasto lub kod pocztowy", go: "Szukaj",
+  trust: ["Weterynarze z uprawnieniami", "Rezerwacja online", "Przypomnienia e-mailem", "Podsumowanie po wizycie"], vets: "Weterynarze w Televet", all: "Zobacz wszystkich", book: "Umów wizytę", none: "Pierwsi weterynarze dołączą wkrótce.",
+  animals: "Dla każdego zwierzaka", animalsList: ["Psy", "Koty", "Króliki", "Ptaki", "Gady", "Gryzonie"],
+  how: "Jak to działa", steps: [{ t: "Szukaj", d: "Wpisz miasto i rodzaj wizyty." }, { t: "Wybierz termin", d: "Sprawdź dostępność weterynarza i zarezerwuj." }, { t: "Odbądź wizytę", d: "W domu, przez wideo lub w klinice, a potem odbierz podsumowanie." }],
+  pro: "Jesteś weterynarzem? Przyjmuj rezerwacje online.", proBtn: "Dla weterynarzy", results: "Weterynarze", noRes: "Na razie brak pasujących weterynarzy. Spróbuj innego miasta lub rodzaju wizyty.", kind: { clinic: "Klinika weterynaryjna", vet: "Weterynarz", home: "Weterynarz na wizytę domową" }, resFor: "Wyniki dla", next: "Najbliższy termin:", wTitle: "Witamy w Televet", wOwner: "Szukam weterynarza", wOwnerD: "Dla mojego zwierzaka: w domu, przez wideo lub w klinice.", wVet: "Jestem weterynarzem", wVetD: "Przyjmuj rezerwacje i zarządzaj kalendarzem." };
+CONSULT.pl = { title: "Trzy sposoby na wizytę u weterynarza", items: [{ k: "home", t: "W domu", d: "Weterynarz przyjeżdża do Ciebie, a zwierzak zostaje spokojny." }, { k: "video", t: "Przez wideo", d: "Szybka opinia z domu, bez dojazdu." }, { k: "clinic", t: "W klinice", d: "Wizyta w gabinecie, zarezerwowana online." }] };
+FOCUS.pl = { title: "Nasze dwie główne usługi",
+  home: { h: "Weterynarz na wizytę domową", p: "Weterynarz przyjeżdża do Ciebie: zwierzak zostaje w swoim otoczeniu, bez stresu podróży. Idealne dla kotów, starszych lub lękliwych zwierząt i domów z kilkoma pupilami.", pts: ["Badanie, szczepienia i kontrole w domu", "Mniej stresu dla zwierzaka", "Wizyta zarezerwowana online"], cta: "Znajdź weterynarza na wizytę domową" },
+  video: { h: "Teleporada weterynaryjna", p: "Porozmawiaj z weterynarzem przez wideo, nie wychodząc z domu. Na szybką opinię, wątpliwość co do objawu, kontrolę po leczeniu albo by ocenić, czy potrzebna jest wizyta na miejscu.", pts: ["Opinia jeszcze dziś, gdziekolwiek jesteś", "Porady, kontrola i wskazówki", "Podsumowanie po konsultacji"], cta: "Zarezerwuj teleporadę" },
+  clinic: "Wolisz klinikę? Zobacz kliniki weterynaryjne" };
+
+/* Argentine Spanish (voseo), derived from neutral Spanish */
+import { voseo } from "@/lib/voseo";
+HOME["es-AR"] = voseo(HOME.es); CONSULT["es-AR"] = voseo(CONSULT.es); FOCUS["es-AR"] = voseo(FOCUS.es);
