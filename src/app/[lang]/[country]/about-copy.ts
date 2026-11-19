@@ -16,7 +16,7 @@ export const ABOUT: Record<string, AboutTxt> = {
     missionH: "Notre mission : des soins de qualité, au plus près de vous",
     mission: [
       "Nous croyons qu'un animal soigné dans son environnement est un animal moins stressé, et que des propriétaires bien informés prennent de meilleures décisions pour la santé de leur compagnon.",
-      "Chaque vétérinaire présent sur Televet est un professionnel diplômé, et nos vétérinaires partenaires en France respectent les règles de l'Ordre national des vétérinaires dans le cadre du décret n°2020-526 du 5 mai 2020 relatif à l'expérimentation de la télémédecine vétérinaire. Conformément à ce cadre, aucune prescription ni aucun diagnostic n'est établi à distance en France. La téléconsultation ne remplace pas un examen clinique lorsqu'il est nécessaire : le vétérinaire vous le dit et vous oriente vers la bonne solution, y compris en urgence.",
+      "Chaque vétérinaire présent sur Televet est un professionnel diplômé. En France, nos vétérinaires partenaires respectent les règles de l'Ordre national des vétérinaires dans le cadre du décret n°2020-526 du 5 mai 2020 relatif à l'expérimentation de la télémédecine vétérinaire. Le téléconseil donne des informations générales, sans diagnostic ni prescription personnalisés ; la téléconsultation est, elle, strictement encadrée. Rien ne remplace un examen clinique lorsqu'il est nécessaire : le vétérinaire vous le dit et vous oriente vers la bonne solution, y compris en urgence.",
     ],
     missionPts: ["Des vétérinaires diplômés, identifiés et présentés avec leurs spécialités", "Un parcours de réservation simple, sans appel ni attente", "Un compte-rendu écrit après chaque consultation", "Une orientation claire vers une clinique en cas d'urgence"],
     specH: "Des spécialités pour tous les besoins",
@@ -50,7 +50,7 @@ export const ABOUT: Record<string, AboutTxt> = {
     missionH: "La nostra missione: cure di qualità, vicino a te",
     mission: [
       "Crediamo che un animale curato nel proprio ambiente sia meno stressato, e che proprietari ben informati prendano decisioni migliori per la salute del loro compagno.",
-      "Ogni veterinario presente su Televet è un professionista abilitato, e i nostri veterinari partner in Francia rispettano le regole dell'Ordine nazionale dei veterinari nell'ambito del decreto n°2020-526 del 5 maggio 2020 sulla sperimentazione della telemedicina veterinaria. In questo quadro, in Francia non vengono fatte prescrizioni né diagnosi a distanza. La televisita non sostituisce la visita clinica quando questa è necessaria: il veterinario te lo dice e ti indirizza verso la soluzione giusta, anche in urgenza.",
+      "Ogni veterinario presente su Televet è un professionista abilitato. In Francia i nostri veterinari partner rispettano le regole dell'Ordine nazionale dei veterinari nell'ambito del decreto n°2020-526 del 5 maggio 2020 sulla sperimentazione della telemedicina veterinaria. Il teleconsiglio fornisce informazioni generali, senza diagnosi né prescrizioni personalizzate; la televisita è invece rigorosamente regolamentata. Nulla sostituisce la visita clinica quando è necessaria: il veterinario te lo dice e ti indirizza verso la soluzione giusta, anche in urgenza.",
     ],
     missionPts: ["Veterinari abilitati, identificati e presentati con le loro specialità", "Una prenotazione semplice, senza telefonate né attese", "Un referto scritto dopo ogni visita", "Un'indicazione chiara per rivolgersi a una clinica in caso di urgenza"],
     specH: "Specialità per ogni esigenza",
@@ -84,7 +84,7 @@ export const ABOUT: Record<string, AboutTxt> = {
     missionH: "Our mission: quality care, close to you",
     mission: [
       "We believe a pet cared for in its own environment is a calmer pet, and that well-informed owners make better decisions for their companion's health.",
-      "Every vet on Televet is a qualified professional, and our partner vets in France follow the rules of the French Veterinary Order under decree no. 2020-526 of 5 May 2020 on veterinary telemedicine trials. Under that framework, no prescriptions or diagnoses are made remotely in France. Online consultations do not replace a physical examination when one is needed: the vet will tell you and point you to the right solution, including in an emergency.",
+      "Every vet on Televet is a qualified professional. In France, our partner vets follow the rules of the French Veterinary Order under decree no. 2020-526 of 5 May 2020 on veterinary telemedicine trials. Tele-advice gives general information, without a personalised diagnosis or prescription; teleconsultation is strictly regulated. Nothing replaces a physical examination when one is needed: the vet will tell you and point you to the right solution, including in an emergency.",
     ],
     missionPts: ["Qualified vets, identified and presented with their specialties", "Simple booking: no phone calls, no waiting", "A written report after every consultation", "Clear guidance to a clinic when it is an emergency"],
     specH: "Specialties for every need",
@@ -118,7 +118,7 @@ export const ABOUT: Record<string, AboutTxt> = {
     missionH: "Nuestra misión: atención de calidad, cerca de ti",
     mission: [
       "Creemos que un animal atendido en su propio entorno está más tranquilo, y que unos dueños bien informados toman mejores decisiones para la salud de su compañero.",
-      "Cada veterinario de Televet es un profesional titulado, y nuestros veterinarios asociados en Francia respetan las normas del Colegio Nacional de Veterinarios en el marco del decreto n.º 2020-526 de 5 de mayo de 2020 sobre la experimentación de la telemedicina veterinaria. Con este marco, en Francia no se hacen recetas ni diagnósticos a distancia. La teleconsulta no sustituye la exploración clínica cuando es necesaria: el veterinario te lo dirá y te orientará hacia la solución adecuada, también en una urgencia.",
+      "Cada veterinario de Televet es un profesional titulado. En Francia, nuestros veterinarios asociados respetan las normas del Colegio Nacional de Veterinarios en el marco del decreto n.º 2020-526 de 5 de mayo de 2020 sobre la experimentación de la telemedicina veterinaria. El teleconsejo ofrece información general, sin diagnóstico ni receta personalizados; la teleconsulta está estrictamente regulada. Nada sustituye la exploración clínica cuando es necesaria: el veterinario te lo dirá y te orientará hacia la solución adecuada, también en una urgencia.",
     ],
     missionPts: ["Veterinarios titulados, identificados y presentados con sus especialidades", "Reserva sencilla, sin llamadas ni esperas", "Un informe escrito después de cada consulta", "Orientación clara hacia una clínica en caso de urgencia"],
     specH: "Especialidades para cada necesidad",
@@ -155,7 +155,7 @@ ABOUT.pl = {
   missionH: "Nasza misja: dobra opieka, blisko Ciebie",
   mission: [
     "Wierzymy, że zwierzak leczony w swoim otoczeniu jest spokojniejszy, a dobrze poinformowani opiekunowie podejmują lepsze decyzje dotyczące zdrowia swojego towarzysza.",
-    "Każdy weterynarz w Televet jest wykwalifikowanym specjalistą, a nasi partnerzy weterynarze we Francji przestrzegają zasad Krajowej Izby Weterynaryjnej w ramach dekretu nr 2020-526 z 5 maja 2020 r. o eksperymencie dotyczącym telemedycyny weterynaryjnej. W tych ramach we Francji nie wystawia się na odległość recept ani diagnoz. Teleporada nie zastępuje badania klinicznego, gdy jest ono potrzebne: weterynarz Ci o tym powie i wskaże właściwe rozwiązanie, także w nagłym przypadku.",
+    "Każdy weterynarz w Televet jest wykwalifikowanym specjalistą. We Francji nasi partnerzy weterynarze przestrzegają zasad Krajowej Izby Weterynaryjnej w ramach dekretu nr 2020-526 z 5 maja 2020 r. o eksperymencie dotyczącym telemedycyny weterynaryjnej. Teleporada przekazuje ogólne informacje, bez spersonalizowanej diagnozy ani recepty; telekonsultacja jest ściśle uregulowana. Nic nie zastępuje badania klinicznego, gdy jest ono potrzebne: weterynarz Ci o tym powie i wskaże właściwe rozwiązanie, także w nagłym przypadku.",
   ],
   missionPts: ["Wykwalifikowani weterynarze, zweryfikowani i przedstawieni ze specjalizacjami", "Prosta rezerwacja, bez telefonów i czekania", "Pisemne podsumowanie po każdej konsultacji", "Jasne wskazanie kliniki w nagłych przypadkach"],
   specH: "Specjalizacje na każdą potrzebę",

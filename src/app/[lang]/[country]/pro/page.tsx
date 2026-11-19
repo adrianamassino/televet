@@ -1,3 +1,4 @@
+import { PRO_X } from "@/lib/pro-extra";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BellRing, Bird, Bone, Cat, CalendarCheck, CreditCard, Dog, HeartPulse, PawPrint, Rabbit, Settings2, Stethoscope, Syringe, Video } from "lucide-react";
@@ -26,7 +27,8 @@ export default async function ProPage({ params }: P) {
   if (!ok(lang, cc)) notFound();
   const t = copy(lang, country);
   const base = `${SITE}/${lang}/${country}`;
-  const ld = [organizationLd(), faqLd(t.faq.map(([q, a]) => ({ q, a }))), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: "Televet Pro", url: `${base}/pro` }])];
+  const ld = [organizationLd(), faqLd([...t.faq, ...(PRO_X[`${lang}-${cc}`] ?? PRO_X[lang])?.moreFaq ?? []].map(([q, a]) => ({ q, a }))), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: "Televet Pro", url: `${base}/pro` }])];
+  const X = PRO_X[`${lang}-${cc}`] ?? PRO_X[lang];
   const cta = signupUrl(lang, cc);
   const icons = [[CalendarCheck, "t-sky"], [Settings2, "t-lilac"], [CreditCard, "t-mint"], [Video, "t-coral"], [BellRing, "t-sun"]] as const;
   return (
@@ -56,10 +58,15 @@ export default async function ProPage({ params }: P) {
       <section aria-labelledby="b"><h2 id="b">{t.benefitsTitle}</h2>
         <ul className="facts">{t.benefits.map(([h, d], i) => { const [I, c] = icons[i] ?? icons[0]; return <li key={h}><span className={`ico ${c}`} aria-hidden><I /></span><h3>{h}</h3><p>{d}</p></li>; })}</ul></section>
 
+      {X && <section aria-labelledby="mb"><h2 id="mb" className="sr-only">{t.benefitsTitle}</h2><ul className="facts">{X.moreBenefits.map(([h, d]) => <li key={h}><h3>{h}</h3><p>{d}</p></li>)}</ul><p className="free-note">{X.free}</p></section>}
+      {X && <section aria-labelledby="df"><h2 id="df">{X.diffH}</h2><div className="pro-diff"><div><h3>{X.diffTa[0]}</h3><p>{X.diffTa[1]}</p></div><div><h3>{X.diffTc[0]}</h3><p>{X.diffTc[1]}</p></div></div></section>}
+      {X && <section aria-labelledby="rg"><h2 id="rg">{X.regH}</h2><p>{X.regIntro}</p><div className="pro-diff"><ul className="pro-list">{X.regPts.map((x) => <li key={x}>{x}</li>)}</ul><ul className="pro-list">{X.regCond.map((x) => <li key={x}>{x}</li>)}</ul></div><p className="fineprint">{X.regNote}</p>
+        <h3>{X.rxH}</h3><p>{X.rxP}</p><ul className="pro-list">{X.rxPts.map((x) => <li key={x}>{x}</li>)}</ul></section>}
+
       <section aria-labelledby="s"><h2 id="s">{t.stepsTitle}</h2><ol className="steps">{t.steps.map((x) => <li key={x}>{x}</li>)}</ol></section>
 
       <section aria-labelledby="f"><h2 id="f">{t.faqTitle}</h2>
-        {t.faq.map(([q, a]) => <details key={q} className="qa"><summary>{q}</summary><p>{a}</p></details>)}</section>
+        {[...t.faq, ...(X?.moreFaq ?? [])].map(([q, a]) => <details key={q} className="qa"><summary>{q}</summary><p>{a}</p></details>)}</section>
 
       <div className="band"><h2>{t.h1}</h2><a className="btn btn-lg" href={cta}>{t.cta}</a></div>
       <p className="fineprint">{t.legal}</p>
