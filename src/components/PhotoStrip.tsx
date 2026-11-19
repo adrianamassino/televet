@@ -1,7 +1,7 @@
 /** Photo strip: three full photos in matching rounded frames (files in /public/photos). */
 const SETS: Record<string, string[]> = {
   a: ["vet-chihuahua", "vet-family", "vet-exam"],
-  b: ["vet-dachshund", "girl-cat", "vet-chihuahua"],
+  b: ["vet-dachshund", "vet-white-cat", "vet-chihuahua"],
   c: ["vet-exam", "vet-dachshund", "vet-family"],
 };
 export function PhotoStrip({ set = "a" }: { set?: keyof typeof SETS | string }) {

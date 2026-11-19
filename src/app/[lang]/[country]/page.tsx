@@ -28,7 +28,7 @@ export default async function OwnerHome({ params }: P) {
   let cities: { slug: string; name: string; n: number }[] = [];
   try { const { data } = await adminClient().from("directory_listings").select("city").eq("country", cc).neq("status", "removed").limit(5000); const m = new Map<string, { name: string; n: number }>(); for (const r of data ?? []) { if (!r.city) continue; const k = slugify(r.city); const c = m.get(k) ?? { name: r.city, n: 0 }; c.n++; m.set(k, c); } cities = [...m.entries()].map(([slug, c]) => ({ slug, ...c })).sort((a, b) => b.n - a.n).slice(0, 12); } catch { /* none */ }
   const D = DIR[lang] ?? DIR.en, F = FOCUS[lang] ?? FOCUS.en;
-  const C = CONSULT[lang] ?? CONSULT.en, CP = { home: "vet-family", video: "girl-cat", clinic: "vet-dachshund" } as const;
+  const C = CONSULT[lang] ?? CONSULT.en, CP = { home: "vet-family", video: "vet-white-cat", clinic: "vet-dachshund" } as const;
   const AI = ["dog", "cat", "rabbit", "bird", "turtle", "hamster"], MI = ["stethoscope", "syringe", "bottle", "pill", "thermometer", "bandage", "bone", "pawHeart"], TI = ["shield", "calendar", "chat", "clipboard"], SI = ["magnifier", "calendar", "vet"];
   return (
     <main className="wrap">
@@ -45,7 +45,7 @@ export default async function OwnerHome({ params }: P) {
           </form>
         </div>
         <div className="sparkles" aria-hidden>{["s1","s2","s3","s4","s5","s6","s7","s8"].map((k) => <i key={k} className={`spk ${k}`} />)}</div>
-        <div className="hero-photo" aria-hidden><img src="/photos/girl-cat.jpg" alt="" /></div>
+        <div className="hero-photo" aria-hidden><img src="/photos/vet-white-cat.jpg" alt="" /></div>
       </section>
       <ul className="trust">{t.trust.map((x, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={TI[i]} size={34} /></span>{x}</li>; })}</ul>
       <section className="focus" aria-labelledby="focus-h"><h2 id="focus-h" className="sr-only">{F.title}</h2><div className="focus-grid">

@@ -1031,3 +1031,11 @@ html{background:radial-gradient(60% 40% at 100% 0%,#46ebff 0%,transparent 70%),r
 body::before{content:""!important;position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.38)),url(/decor/bg2.svg) center / cover no-repeat!important}
 .hero-panel{background:radial-gradient(700px 380px at 90% 0%,rgba(90,170,255,.55),transparent 65%),radial-gradient(600px 400px at 0% 100%,rgba(6,30,100,.7),transparent 70%),linear-gradient(125deg,#071f55 0%,#0e3fa8 45%,#2a7bff 100%)!important}
 .band{background:radial-gradient(500px 300px at 90% 0%,rgba(90,170,255,.5),transparent 65%),linear-gradient(125deg,#071f55,#0e3fa8 50%,#2a7bff)!important}
+
+/* v44 bright glowing background back (cyan gradients, molecules, sparkles); photos stay whole */
+.hero-panel{background:url(/decor/glow2.svg) 30% center / auto 100% no-repeat,radial-gradient(60% 75% at 100% 100%,rgba(80,225,255,.6),transparent 72%),radial-gradient(40% 50% at 0% 0%,rgba(40,120,255,.55),transparent 70%),linear-gradient(125deg,#0a5ce0 0%,#1a8cf5 55%,#3cd0f8 100%)!important;box-shadow:0 26px 60px -30px rgba(10,100,220,.6)!important}
+.hero-photo{width:44%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%);mask-image:linear-gradient(90deg,transparent 0,#000 30%)}
+.hero-photo img{object-position:60% 50%}
+.band{background:url(/decor/glow.svg) 30% 40% / 130% auto no-repeat,linear-gradient(120deg,#0a63ee,#14a0ff 60%,#3fe0ff)!important}
+body::before{background:url(/decor/glow.svg) center / cover no-repeat,url(/decor/icons.svg) center / cover no-repeat,linear-gradient(180deg,rgba(255,255,255,.50),rgba(255,255,255,.30)),url(/decor/bg2.svg) center / cover no-repeat!important}
+.profile-head,.vet-hero{background-image:url(/decor/glow.svg),linear-gradient(135deg,#0a63ee,#14a0ff 55%,#3fe0ff)!important;background-size:cover!important}
