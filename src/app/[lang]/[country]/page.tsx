@@ -8,7 +8,8 @@ import { VI } from "@/components/VI";
 import { PhotoStrip } from "@/components/PhotoStrip";
 import { DIR } from "./annuaire/copy";
 import { slugify } from "@/lib/seo";
-import { CONSULT, HOME } from "./home-copy";
+import { CONSULT, FOCUS, HOME } from "./home-copy";
+import { SERVICE_SLUGS } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 type P = { params: Promise<{ lang: string; country: string }> };
@@ -26,12 +27,12 @@ export default async function OwnerHome({ params }: P) {
   try { const { data } = await adminClient().from("practices").select("id, name, slug, kind, headline, address").eq("country", cc).eq("published", true).order("created_at", { ascending: false }).limit(6); vets = data ?? []; } catch { /* no data yet */ }
   let cities: { slug: string; name: string; n: number }[] = [];
   try { const { data } = await adminClient().from("directory_listings").select("city").eq("country", cc).neq("status", "removed").limit(5000); const m = new Map<string, { name: string; n: number }>(); for (const r of data ?? []) { if (!r.city) continue; const k = slugify(r.city); const c = m.get(k) ?? { name: r.city, n: 0 }; c.n++; m.set(k, c); } cities = [...m.entries()].map(([slug, c]) => ({ slug, ...c })).sort((a, b) => b.n - a.n).slice(0, 12); } catch { /* none */ }
-  const D = DIR[lang] ?? DIR.en;
+  const D = DIR[lang] ?? DIR.en, F = FOCUS[lang] ?? FOCUS.en;
   const C = CONSULT[lang] ?? CONSULT.en, CP = { home: "vet-family", video: "girl-cat", clinic: "vet-dachshund" } as const;
   const AI = ["dog", "cat", "rabbit", "bird", "turtle", "hamster"], MI = ["stethoscope", "syringe", "bottle", "pill", "thermometer", "bandage", "bone", "pawHeart"], TI = ["shield", "calendar", "chat", "clipboard"], SI = ["magnifier", "calendar", "vet"];
   return (
     <main className="wrap">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }])]) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }]), ...(["home", "video"] as const).map((k) => ({ "@context": "https://schema.org", "@type": "Service", name: (FOCUS[lang] ?? FOCUS.en)[k].h, description: (FOCUS[lang] ?? FOCUS.en)[k].p, serviceType: k === "home" ? "Veterinary home visit" : "Veterinary telemedicine", provider: { "@type": "Organization", name: "Televet", url: SITE }, areaServed: { "@type": "Country", name: COUNTRIES[cc].code }, url: `${SITE}${base}/${SERVICE_SLUGS[k][lang] ?? SERVICE_SLUGS[k].en}` }))]) }} />
       <section className="hero-panel">
         <div className="hero">
           <h1>{t.h1}</h1><p className="lead">{t.lead}</p>
@@ -47,6 +48,16 @@ export default async function OwnerHome({ params }: P) {
         <div className="collage" aria-hidden><span className="shp shp-a"><img src="/photos/vet-pomeranian.jpg" alt="" /></span><span className="shp shp-b"><img src="/photos/nurse-cat.jpg" alt="" /></span><span className="fb b1"><VI n="heartPulse" size={34} /></span><span className="fb b2"><VI n="paw" size={32} /></span><span className="fb b3"><VI n="syringe" size={30} /></span><span className="fb b4"><VI n="bone" size={28} /></span></div>
       </section>
       <ul className="trust">{t.trust.map((x, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={TI[i]} size={34} /></span>{x}</li>; })}</ul>
+      <section className="focus" aria-labelledby="focus-h"><h2 id="focus-h" className="sr-only">{F.title}</h2><div className="focus-grid">
+        {(["home", "video"] as const).map((k) => (
+          <article key={k} className={`focus-card f-${k}`}>
+            <span className="shp"><img src={`/photos/${k === "home" ? "vet-family" : "girl-cat"}.jpg`} alt="" loading="lazy" /></span>
+            <div><span className="f-ico"><VI n={k === "home" ? "housePaw" : "monitor"} size={40} tone="white" /></span>
+              <h3>{F[k].h}</h3><p>{F[k].p}</p>
+              <ul>{F[k].pts.map((x) => <li key={x}><VI n="check" size={20} tone="white" />{x}</li>)}</ul>
+              <a className="btn btn-lg" href={`${base}/${SERVICE_SLUGS[k][lang] ?? SERVICE_SLUGS[k].en}`}>{F[k].cta}</a></div>
+          </article>))}</div>
+        <p className="focus-clinic"><a href={`${base}/${SERVICE_SLUGS.clinic[lang] ?? SERVICE_SLUGS.clinic.en}`}>{F.clinic}</a></p></section>
       <section className="block"><h2><span className="h2i"><Stethoscope /></span>{t.vets}</h2>
         {vets.length ? <ul className="vet-list">{vets.map((v) => (
           <li key={v.id}><span className="ico" aria-hidden><VI n="vet" size={34} /></span>

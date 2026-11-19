@@ -931,3 +931,23 @@ body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gr
 .photo-strip .shp{transform:none!important}.photo-strip .shp:nth-child(2){transform:translateY(8px)!important}
 @media(max-width:900px){.collage .shp-a{width:52%}.collage .shp-b{width:42%}}
 @media(prefers-reduced-motion:reduce){.collage .shp-a,.collage .shp-b{animation:none!important}}
+
+/* v38 featured services: home visit + telemedicine */
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.focus{margin:22px 0}
+.focus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.focus-card{display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center;padding:26px;border-radius:26px;color:#fff;position:relative;overflow:hidden;box-shadow:0 24px 50px -28px rgba(10,80,200,.7)}
+.focus-card.f-home{background:radial-gradient(70% 90% at 100% 0%,rgba(255,216,77,.38),transparent 65%),linear-gradient(135deg,#0b5fe0,#1a8cf5)}
+.focus-card.f-video{background:radial-gradient(70% 90% at 100% 0%,rgba(120,255,240,.45),transparent 65%),linear-gradient(135deg,#0a8fe0,#1ec2f5)}
+.focus-card h3{color:#fff;margin:6px 0 8px;font-size:1.5rem;line-height:1.15}
+.focus-card p{margin:0 0 12px;color:rgba(255,255,255,.95)}
+.focus-card ul{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:6px}
+.focus-card li{display:flex;gap:8px;align-items:center;font-weight:600}
+.focus-card .f-ico{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.2)}
+.focus-card .btn{background:#fff!important;color:#0a4fb8!important;box-shadow:0 12px 24px -12px rgba(0,30,100,.6)}
+.focus-card .shp{width:150px;aspect-ratio:1}
+.focus-card.f-home .shp>img,.focus-card.f-home .shp::before{clip-path:url(#c-flower)}.focus-card.f-home .shp::before{background:#ffd84d}
+.focus-card.f-video .shp>img,.focus-card.f-video .shp::before{clip-path:url(#c-heart)}.focus-card.f-video .shp::before{background:#46ebff}
+.focus-clinic{text-align:center;margin:12px 0 0}.focus-clinic a{font-weight:600}
+@media(max-width:900px){.focus-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.focus-card{grid-template-columns:1fr;justify-items:start}.focus-card .shp{width:120px}}

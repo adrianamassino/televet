@@ -5,7 +5,7 @@ export const SITE = process.env.APP_URL || "https://televet.co";
 
 export const SERVICE_SLUGS: Record<"home" | "video" | "clinic", Record<string, string>> = {
   home: { fr: "veterinaire-a-domicile", it: "veterinario-a-domicilio", en: "home-visit-vet", es: "veterinario-a-domicilio", pt: "veterinario-ao-domicilio", de: "tierarzt-hausbesuch", pl: "weterynarz-z-dojazdem", nl: "dierenarts-aan-huis" },
-  video: { fr: "veterinaire-en-ligne", it: "veterinario-online", en: "online-vet", es: "veterinario-online", pt: "veterinario-online", de: "online-tierarzt", pl: "weterynarz-online", nl: "online-dierenarts" },
+  video: { fr: "teleconsultation-veterinaire", it: "veterinario-online", en: "online-vet", es: "veterinario-online", pt: "veterinario-online", de: "online-tierarzt", pl: "weterynarz-online", nl: "online-dierenarts" },
   clinic: { fr: "clinique-veterinaire", it: "clinica-veterinaria", en: "vet-clinic", es: "clinica-veterinaria", pt: "clinica-veterinaria", de: "tierarztpraxis", pl: "klinika-weterynaryjna", nl: "dierenartspraktijk" },
 };
 
