@@ -1,9 +1,9 @@
-/** Decorative strip of cut-out photos on coloured shapes (files in /public/photos/cut). */
+/** Photo strip: three full photos in matching rounded frames (files in /public/photos). */
 const SETS: Record<string, string[]> = {
-  a: ["vet-chihuahua", "girl-cat", "vet-exam"],
-  b: ["vet-exam", "vet-chihuahua", "girl-cat"],
-  c: ["girl-cat", "vet-exam", "vet-chihuahua"],
+  a: ["vet-chihuahua", "vet-family", "vet-exam"],
+  b: ["vet-dachshund", "girl-cat", "vet-chihuahua"],
+  c: ["vet-exam", "vet-dachshund", "vet-family"],
 };
 export function PhotoStrip({ set = "a" }: { set?: keyof typeof SETS | string }) {
-  return <div className="photo-strip" aria-hidden>{(SETS[set] ?? SETS.a).map((n) => <span key={n} className="pop"><img src={`/photos/cut/${n}.webp`} alt="" loading="lazy" /></span>)}</div>;
+  return <div className="photo-strip" aria-hidden>{(SETS[set] ?? SETS.a).map((n) => <span key={n} className="ps"><img src={`/photos/${n}.jpg`} alt="" loading="lazy" /></span>)}</div>;
 }

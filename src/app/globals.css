@@ -980,3 +980,50 @@ body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gr
 .pop>img,.collage .pop>img{height:108%!important}
 .collage .pop-a>img{height:116%!important}
 .pop-a>img,.pop-b>img{-webkit-mask-image:none!important;mask-image:none!important}
+
+/* v42 professional redesign: calm navy/blue palette, clean surfaces, full photos in consistent frames. No glow, stars, blobs, cut-outs or wallpaper. */
+:root{--navy:#0a2540;--brand:#1556d6;--brand-d:#0e3fa8;--ink2:#51657f;--line:#e2eaf4;--bg:#f5f8fc}
+html{background:var(--bg)!important}
+body{background:transparent!important;color:var(--navy)}
+body::before{content:none!important;background:none!important}
+.sparkles,.collage,.float,.fb{display:none!important}
+/* hero */
+.hero-panel{position:relative;overflow:hidden;border-radius:28px!important;padding:clamp(28px,5vw,64px)!important;background:linear-gradient(120deg,#0a2a63 0%,#0e3fa8 55%,#1556d6 100%)!important;box-shadow:0 30px 60px -36px rgba(10,37,64,.55)!important;min-height:520px;display:flex;align-items:center}
+.hero-panel .hero{position:relative;z-index:2;max-width:620px;display:block!important}
+.hero-panel h1{color:#fff;font-size:clamp(2rem,4.2vw,3.4rem);letter-spacing:-.03em;line-height:1.06;margin:0 0 .45em}
+.hero-panel .lead{color:rgba(255,255,255,.86);font-size:1.1rem;max-width:34em}
+.hero-photo{position:absolute;right:0;top:0;bottom:0;width:46%;z-index:1;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 38%);mask-image:linear-gradient(90deg,transparent 0,#000 38%)}
+.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block}
+.search-card{background:#fff!important;border:0!important;border-radius:18px!important;box-shadow:0 22px 40px -24px rgba(0,20,60,.6)!important}
+.search-card .tabs label input:checked+span{background:var(--brand)!important;color:#fff!important}
+.search-card .btn{background:var(--brand)!important;color:#fff!important}
+@media(max-width:860px){.hero-photo{position:relative;width:100%;height:240px;margin:24px -4px -8px;-webkit-mask-image:none;mask-image:none;border-radius:18px;overflow:hidden}.hero-panel{flex-direction:column;align-items:flex-start;min-height:0}}
+/* surfaces */
+.block,main.narrow,.profile-section,.panel,.stat{background:#fff!important;border:1px solid var(--line)!important;border-radius:20px!important;box-shadow:0 1px 2px rgba(10,37,64,.04),0 12px 28px -22px rgba(10,37,64,.25)!important}
+.trust li{background:#fff!important;border:1px solid var(--line)!important;box-shadow:none!important;color:var(--navy)}
+.trust li::after{display:none}
+h2{color:var(--navy)}
+/* focus cards: photo on top, white card */
+.focus-card,.focus-card.f-home,.focus-card.f-video{display:flex!important;flex-direction:column;gap:0;padding:0!important;color:var(--navy)!important;background:#fff!important;border:1px solid var(--line);box-shadow:0 1px 2px rgba(10,37,64,.04),0 24px 40px -30px rgba(10,37,64,.35)!important;overflow:hidden}
+.focus-card .f-photo{display:block;aspect-ratio:16/9;overflow:hidden}
+.focus-card .f-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;transition:transform .5s ease}
+.focus-card:hover .f-photo img{transform:scale(1.03)}
+.focus-card>div{padding:24px 26px 28px}
+.focus-card .f-ico{background:#eaf1ff!important;margin-bottom:6px}
+.focus-card .f-ico svg{filter:none}
+.focus-card h3{color:var(--navy)!important}.focus-card p{color:var(--ink2)!important}
+.focus-card li{color:var(--navy);font-weight:600}
+.focus-card li svg{color:var(--brand)}
+.focus-card .btn{background:var(--brand)!important;color:#fff!important;box-shadow:none!important}
+.focus-card .btn:hover{background:var(--brand-d)!important}
+/* photo strips: matching rounded frames */
+.photo-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-top:0!important;align-items:stretch!important}
+.photo-strip .ps{display:block;aspect-ratio:4/5;border-radius:20px;overflow:hidden;box-shadow:0 18px 30px -24px rgba(10,37,64,.45)}
+.photo-strip .ps img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
+@media(max-width:600px){.photo-strip{grid-template-columns:1fr 1fr}.photo-strip .ps:nth-child(3){display:none}}
+/* profile heads and band: same navy-blue, no glow */
+.profile-head,.vet-hero{background-image:linear-gradient(120deg,#0a2a63,#0e3fa8 55%,#1556d6)!important}
+.band{background:linear-gradient(120deg,#0a2a63,#0e3fa8 60%,#1556d6)!important}
+.photo-strip .ps,.photo-strip .ps img{border-radius:20px!important;clip-path:none!important;transform:none!important;margin:0!important}
+.photo-strip .ps{aspect-ratio:4/3}
+.focus-card .f-ico{display:none!important}

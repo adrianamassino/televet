@@ -44,14 +44,13 @@ export default async function OwnerHome({ params }: P) {
             <div className="row"><input name="q" type="search" placeholder={t.ph} aria-label={t.ph} autoComplete="address-level2" /><button className="btn" type="submit"><Search aria-hidden />{t.go}</button></div>
           </form>
         </div>
-        <div className="sparkles" aria-hidden>{["s1","s2","s3","s4","s5","s6","s7","s8"].map((k) => <i key={k} className={`spk ${k}`} />)}</div>
-        <div className="collage" aria-hidden><span className="pop pop-a"><img src="/photos/cut/vet-exam.webp" alt="" /></span><span className="pop pop-b"><img src="/photos/cut/girl-cat.webp" alt="" /></span><span className="fb b1"><VI n="heartPulse" size={34} /></span><span className="fb b2"><VI n="paw" size={32} /></span><span className="fb b3"><VI n="syringe" size={30} /></span><span className="fb b4"><VI n="bone" size={28} /></span></div>
+        <div className="hero-photo" aria-hidden><img src="/photos/girl-cat.jpg" alt="" /></div>
       </section>
       <ul className="trust">{t.trust.map((x, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={TI[i]} size={34} /></span>{x}</li>; })}</ul>
       <section className="focus" aria-labelledby="focus-h"><h2 id="focus-h" className="sr-only">{F.title}</h2><div className="focus-grid">
         {(["home", "video"] as const).map((k) => (
           <article key={k} className={`focus-card f-${k}`}>
-            <span className="pop"><img src={`/photos/cut/${k === "home" ? "vet-chihuahua" : "girl-cat"}.webp`} alt="" loading="lazy" /></span>
+            <span className="f-photo"><img src={`/photos/${k === "home" ? "vet-family" : "vet-exam"}.jpg`} alt="" loading="lazy" /></span>
             <div><span className="f-ico"><VI n={k === "home" ? "housePaw" : "monitor"} size={40} tone="white" /></span>
               <h3>{F[k].h}</h3><p>{F[k].p}</p>
               <ul>{F[k].pts.map((x) => <li key={x}><VI n="check" size={20} tone="white" />{x}</li>)}</ul>
