@@ -910,3 +910,24 @@ body::before{background:url(/decor/icons.svg) center / cover no-repeat,linear-gr
 .collage img:nth-child(2){animation:pop-in .8s .35s both,morph 9s 1.2s ease-in-out infinite alternate}
 @media(prefers-reduced-motion:reduce){.spk,.collage .fb,.collage img{animation:none!important}.spk{opacity:.8}}
 @media(max-width:900px){.spk.s2,.spk.s5,.spk.s7{display:none}}
+
+/* v37 original photo shapes: flower, heart, organic blob (SVG clip-paths) with white outline and an offset yellow/cyan twin */
+.shp{position:relative;display:block;filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 22px 22px rgba(5,40,140,.35))}
+.shp::before{content:"";position:absolute;inset:0;z-index:0;transform:translate(-12px,12px);background:#ffd84d;clip-path:url(#c-blob)}
+.shp>img{position:relative!important;z-index:1;display:block;width:100%!important;height:100%!important;inset:auto!important;transform:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;animation:none!important;object-fit:cover;aspect-ratio:1;clip-path:url(#c-blob)}
+.collage .shp{position:absolute}
+.collage .shp-a{width:64%;aspect-ratio:1;right:0;top:0;animation:pop-in .8s .15s both,spin-tilt 14s ease-in-out infinite alternate}
+.collage .shp-a::before{background:#ffd84d;clip-path:url(#c-flower);transform:translate(-14px,14px)}
+.collage .shp-a>img{clip-path:url(#c-flower)}
+.collage .shp-b{width:50%;aspect-ratio:1;left:0;bottom:0;animation:pop-in .8s .35s both}
+.collage .shp-b::before{background:#46ebff;clip-path:url(#c-heart);transform:translate(12px,12px)}
+.collage .shp-b>img{clip-path:url(#c-heart)}
+@keyframes spin-tilt{from{transform:rotate(-2deg)}to{transform:rotate(3deg)}}
+.photo-strip{align-items:center;gap:18px}
+.photo-strip .shp:nth-child(1)>img,.photo-strip .shp:nth-child(1)::before{clip-path:url(#c-flower)}
+.photo-strip .shp:nth-child(2)>img,.photo-strip .shp:nth-child(2)::before{clip-path:url(#c-heart)}
+.photo-strip .shp:nth-child(3)>img,.photo-strip .shp:nth-child(3)::before{clip-path:url(#c-blob)}
+.photo-strip .shp:nth-child(1)::before{background:#ffd84d}.photo-strip .shp:nth-child(2)::before{background:#46ebff}.photo-strip .shp:nth-child(3)::before{background:#8fb8ff}
+.photo-strip .shp{transform:none!important}.photo-strip .shp:nth-child(2){transform:translateY(8px)!important}
+@media(max-width:900px){.collage .shp-a{width:52%}.collage .shp-b{width:42%}}
+@media(prefers-reduced-motion:reduce){.collage .shp-a,.collage .shp-b{animation:none!important}}

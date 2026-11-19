@@ -44,7 +44,7 @@ export default async function OwnerHome({ params }: P) {
           </form>
         </div>
         <div className="sparkles" aria-hidden>{["s1","s2","s3","s4","s5","s6","s7","s8"].map((k) => <i key={k} className={`spk ${k}`} />)}</div>
-        <div className="collage" aria-hidden><img src="/photos/vet-pomeranian.jpg" alt="" /><img src="/photos/nurse-cat.jpg" alt="" /><span className="fb b1"><VI n="heartPulse" size={34} /></span><span className="fb b2"><VI n="paw" size={32} /></span><span className="fb b3"><VI n="syringe" size={30} /></span><span className="fb b4"><VI n="bone" size={28} /></span></div>
+        <div className="collage" aria-hidden><span className="shp shp-a"><img src="/photos/vet-pomeranian.jpg" alt="" /></span><span className="shp shp-b"><img src="/photos/nurse-cat.jpg" alt="" /></span><span className="fb b1"><VI n="heartPulse" size={34} /></span><span className="fb b2"><VI n="paw" size={32} /></span><span className="fb b3"><VI n="syringe" size={30} /></span><span className="fb b4"><VI n="bone" size={28} /></span></div>
       </section>
       <ul className="trust">{t.trust.map((x, i) => { return <li key={i}><span className="ico" aria-hidden><VI n={TI[i]} size={34} /></span>{x}</li>; })}</ul>
       <section className="block"><h2><span className="h2i"><Stethoscope /></span>{t.vets}</h2>

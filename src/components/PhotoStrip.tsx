@@ -5,5 +5,5 @@ const SETS: Record<string, string[]> = {
   c: ["girl-cat", "vet-chihuahua", "vet-exam"],
 };
 export function PhotoStrip({ set = "a" }: { set?: keyof typeof SETS | string }) {
-  return <div className="photo-strip" aria-hidden>{(SETS[set] ?? SETS.a).map((n) => <img key={n} src={`/photos/${n}.jpg`} alt="" loading="lazy" />)}</div>;
+  return <div className="photo-strip" aria-hidden>{(SETS[set] ?? SETS.a).map((n) => <span key={n} className="shp"><img src={`/photos/${n}.jpg`} alt="" loading="lazy" /></span>)}</div>;
 }

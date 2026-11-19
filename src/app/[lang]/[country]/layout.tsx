@@ -1,3 +1,4 @@
+import { ShapeDefs } from "@/components/ShapeDefs";
 import type { ReactNode } from "react";
 
 const NAV: Record<string, { vets: string; faq: string; blog: string; contact: string; rights: string; dir: string }> = {
@@ -16,6 +17,7 @@ export default async function Layout({ children, params }: { children: ReactNode
   const t = NAV[lang] ?? NAV.en, base = `/${lang}/${country}`;
   return (
     <>
+      <ShapeDefs />
       <header className="site-header"><div className="in">
         <a className="brand" href={`${base}/`} aria-label="Televet"><img src="/logo.svg" alt="Televet" height={34} style={{ height: 34, width: "auto" }} /></a>
         <nav className="site-nav" aria-label="Main">
