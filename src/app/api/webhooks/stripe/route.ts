@@ -2,6 +2,7 @@ import type Stripe from "stripe";
 import { adminClient } from "@/lib/supabase";
 import { statusFromAccount, stripe } from "@/lib/payments/stripe";
 import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
+import { notifyVetNewBooking } from "@/lib/push";
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature") ?? "";
@@ -19,8 +20,11 @@ export async function POST(req: Request) {
       break;
     }
     case "payment_intent.amount_capturable_updated": {
+      // bookings that were not yet authorized: the vet hears about them now (a webhook delivered twice must not notify twice)
+      const { data: fresh } = await db.from("bookings").select("id").eq("payment_ref", event.data.object.id).eq("payment_status", "pending");
       const { data: rows } = await db.from("bookings").update({ payment_status: "authorized" }).eq("payment_ref", event.data.object.id).select("id");
       for (const r of rows ?? []) await autoConfirmIfEnabled(r.id);   // no-op when the vet confirms by hand
+      for (const r of fresh ?? []) await notifyVetNewBooking(r.id);
       break;
     }
     case "payment_intent.succeeded":

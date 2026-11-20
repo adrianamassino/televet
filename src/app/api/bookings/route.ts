@@ -5,6 +5,7 @@ import { busyFor } from "@/lib/busy";
 import { extractPostalCode, geocode, matchZones, type ServiceZone } from "@/lib/zones";
 import { localDay } from "@/lib/time";
 import { amounts, resolveRule } from "@/lib/commission";
+import { notifyVetNewBooking } from "@/lib/push";
 import { createBookingPayment } from "@/lib/payments/stripe";
 import { createPreference } from "@/lib/payments/mercadopago";
 import { providerFor, toProviderAmount } from "@/lib/payments";
@@ -19,6 +20,7 @@ const Body = z.object({
   address: z.string().max(300).optional(),
   accessNotes: z.string().max(300).optional(),
   transcriptConsent: z.boolean().optional(),
+  source: z.enum(["web", "app"]).optional(), // "app": after an online payment the return page sends the client back into the mobile app
 });
 
 /** POST /api/bookings — re-checks availability and home-visit zone server side, then starts payment. */
@@ -72,7 +74,7 @@ export const POST = handle(async (req) => {
   }).select("id").single();
   if (error) throw new HttpError(error.code === "23P01" ? 409 : 500, error.code === "23P01" ? "slot_unavailable" : error.message);
 
-  if (!svc.online_payment) { await autoConfirmIfEnabled(booking.id); return json({ bookingId: booking.id, payment: null }); }
+  if (!svc.online_payment) { await autoConfirmIfEnabled(booking.id); await notifyVetNewBooking(booking.id); return json({ bookingId: booking.id, payment: null }); }
 
   // 4) payment
   if (provider === "stripe") {
@@ -86,7 +88,7 @@ export const POST = handle(async (req) => {
   const pref = await createPreference({
     sellerToken: sec.mp_access_token, bookingId: booking.id, title: `${practice.name} · ${svc.custom_name ?? svc.catalog_code}`,
     amount: toProviderAmount(price, svc.currency, "mercadopago"), currency: svc.currency,
-    marketplaceFee: toProviderAmount(fee, svc.currency, "mercadopago"), appUrl: process.env.APP_URL!, payerEmail: user.email,
+    marketplaceFee: toProviderAmount(fee, svc.currency, "mercadopago"), appUrl: process.env.APP_URL!, payerEmail: user.email, fromApp: body.source === "app",
   });
-  return json({ bookingId: booking.id, payment: { provider, redirectUrl: pref.init_point } });
+  return json({ bookingId: booking.id, payment: { provider, redirectUrl: pref.init_point }, total: price });
 });

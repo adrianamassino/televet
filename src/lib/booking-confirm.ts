@@ -2,6 +2,7 @@ import { adminClient } from "@/lib/supabase";
 import { capturePayment } from "@/lib/payments/stripe";
 import { pushBookingToGoogle } from "@/lib/calendar/push";
 import { ensureRoom, loadBooking, sendConfirmation } from "@/lib/booking-mail";
+import { pushBooking } from "@/lib/push";
 
 /**
  * Confirms a pending booking: captures a Stripe authorization, marks it confirmed, creates the video room and e-mails the owner.
@@ -21,6 +22,7 @@ export async function confirmBooking(id: string): Promise<boolean> {
     await pushBookingToGoogle(full);
     await sendConfirmation(full).catch((e) => console.error("confirmation email", e));
   }
+  await pushBooking(id, "owner_confirmed");
   return true;
 }
 

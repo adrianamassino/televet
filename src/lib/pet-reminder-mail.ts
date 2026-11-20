@@ -3,6 +3,7 @@ import { sendEmail } from "./notify";
 import { SITE } from "./seo";
 import { COUNTRIES } from "./countries";
 import { reminderStage, daysUntil, type Stage } from "./pet-health";
+import { pushPetDue } from "./push";
 
 type L = { s: string; hi: string; intro: string; d30: string; d7: string; d0: string; late: string; cta: string; note: string; kinds: Record<string, string> };
 const T: Record<string, L> = {
@@ -47,6 +48,7 @@ export async function sendPetReminders(now = new Date()): Promise<{ owners: numb
     const stamp = now.toISOString();
     for (const x of g.ids) await db.from("pet_health_records").update({ [`remind_${x.stage}_at`]: stamp }).eq("id", x.id);
     const [{ data: u }, { data: o }] = await Promise.all([db.auth.admin.getUserById(ownerId), db.from("owners").select("full_name, language, country").eq("id", ownerId).maybeSingle()]);
+    await pushPetDue(ownerId, [...g.items].sort((a, b) => a.due.localeCompare(b.due))); // phone notification for people who use the app
     const to = u.user?.email; if (!to) continue;
     const country = o?.country && COUNTRIES[o.country] ? o.country : "FR";
     const m = petReminderEmail(o?.language ?? COUNTRIES[country].languages[0], country, (o?.full_name ?? "").split(" ")[0], g.items.sort((a, b) => a.due.localeCompare(b.due)));

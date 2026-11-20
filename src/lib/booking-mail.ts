@@ -2,6 +2,7 @@ import { adminClient } from "./supabase";
 import { sendEmail } from "./notify";
 import { confirmationEmail, reminderEmail, type MailData } from "./email/templates";
 import { createRoom, signedVisioLink } from "./video";
+import { pushBooking } from "./push";
 
 const VIDEO_TYPES = new Set(["video", "expertise"]);
 
@@ -69,4 +70,7 @@ export async function sendReminder(b: BookingCtx, kind: "24h" | "2h") {
   // the vet also receives the video link before a teleconsultation
   if (kind === "2h" && isVideo(b) && b.practice.email) { const m = reminderEmail(mailData(b, true, null), true); await sendEmail(b.practice.email, m.subject, m.html); }
   await adminClient().from("bookings").update({ [col]: new Date().toISOString() }).eq("id", b.id);
+  // same reminders on the phone, for people who use the apps
+  await pushBooking(b.id, kind === "24h" ? "owner_reminder_24h" : "owner_reminder_2h");
+  if (kind === "2h" && isVideo(b)) await pushBooking(b.id, "vet_video_soon");
 }

@@ -1,6 +1,7 @@
 import { adminClient } from "@/lib/supabase";
 import { getPayment } from "@/lib/payments/mercadopago";
 import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
+import { notifyVetNewBooking } from "@/lib/push";
 
 /**
  * Mercado Pago notifications. We never trust the payload: the payment is re-read
@@ -17,8 +18,12 @@ export async function POST(req: Request) {
   if (!sec?.mp_access_token) return new Response("no token");
   const p = await getPayment(sec.mp_access_token, body.data.id);
   const map: Record<string, string> = { approved: "captured", refunded: "refunded", rejected: "failed", cancelled: "failed", in_process: "pending", pending: "pending" };
+  const { data: before } = await db.from("bookings").select("payment_status").eq("id", p.external_reference).eq("practice_id", practice.id).maybeSingle();
   await db.from("bookings").update({ payment_ref: String(p.id), payment_status: map[p.status] ?? "pending" })
     .eq("id", p.external_reference).eq("practice_id", practice.id);
-  if (map[p.status] === "captured") await autoConfirmIfEnabled(p.external_reference);
+  if (map[p.status] === "captured") {
+    await autoConfirmIfEnabled(p.external_reference);
+    if (before && before.payment_status !== "captured") await notifyVetNewBooking(p.external_reference); // only the first time the payment is seen as paid
+  }
   return new Response("ok");
 }

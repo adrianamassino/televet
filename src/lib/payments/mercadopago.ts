@@ -58,8 +58,9 @@ export function refreshTokens(country: string, refreshToken: string) {
 /** Checkout Pro preference created with the vet's token; Televet keeps marketplace_fee. */
 export function createPreference(p: {
   sellerToken: string; bookingId: string; title: string; amount: number; currency: string;
-  marketplaceFee: number; appUrl: string; payerEmail?: string;
+  marketplaceFee: number; appUrl: string; payerEmail?: string; fromApp?: boolean;
 }) {
+  const back = (paid: string) => `${p.appUrl}/booking/${p.bookingId}?paid=${paid}${p.fromApp ? "&app=1" : ""}`;
   return mp<{ id: string; init_point: string }>("/checkout/preferences", {
     method: "POST",
     token: p.sellerToken,
@@ -70,11 +71,7 @@ export function createPreference(p: {
       external_reference: p.bookingId,
       payer: p.payerEmail ? { email: p.payerEmail } : undefined,
       notification_url: `${p.appUrl}/api/webhooks/mercadopago`,
-      back_urls: {
-        success: `${p.appUrl}/booking/${p.bookingId}?paid=1`,
-        failure: `${p.appUrl}/booking/${p.bookingId}?paid=0`,
-        pending: `${p.appUrl}/booking/${p.bookingId}?paid=pending`,
-      },
+      back_urls: { success: back("1"), failure: back("0"), pending: back("pending") },
       auto_return: "approved",
       // Cash methods settle in days: excluded for same-week appointments.
       payment_methods: { excluded_payment_types: [{ id: "ticket" }, { id: "atm" }] },

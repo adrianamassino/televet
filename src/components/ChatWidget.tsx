@@ -16,7 +16,7 @@ const T: Record<string, Record<string, string | string[]>> = {
   nl: { title: "Televet-assistent", ai: "AI", notice: "Ik ben een AI, geen dierenarts. Televet bewaart dit gesprek om je beter te helpen en de dienst te verbeteren; deel liever geen gevoelige persoonsgegevens.", welcome: "Hoi, ik ben de assistent van Televet 🐾 Vertel me wat er aan de hand is: iets met je dier, een vraag over de site, of ben je dierenarts? We kijken er samen rustig naar.", chips: ["Mijn dier voelt zich niet goed", "Ik wil met een dierenarts praten", "Ik ben dierenarts"], emergency: "Levensbedreigend? Neem meteen contact op met een spoeddierenarts.", ph: "Typ je bericht…", send: "Verstuur", open: "Chat openen", close: "Sluiten", err: "Er ging iets mis. Probeer het zo nog eens.", rate: "Te veel berichten, probeer het later of mail contact@televet.co.", fab: "Een vraag?" },
 };
 const KEY = "televet_chat_v1";
-const HIDDEN = /^\/(admin|visio|auth|api)(\/|$)/;
+const HIDDEN = /^\/(admin|visio|auth|api|m|booking)(\/|$)/; // "m" and "booking": payment pages opened from the mobile apps
 
 const CSS = `
 .tvc-fab{position:fixed;right:16px;bottom:16px;z-index:2147483000;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;background:linear-gradient(135deg,#0d4fe6,#17a9ff);color:#fff;font:600 15px system-ui,sans-serif;padding:13px 18px;cursor:pointer;box-shadow:0 6px 24px rgba(58,47,168,.4)}

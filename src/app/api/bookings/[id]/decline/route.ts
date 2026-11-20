@@ -1,6 +1,7 @@
 import { adminClient, handle, HttpError, json, userFromRequest } from "@/lib/supabase";
 import { cancelPayment } from "@/lib/payments/stripe";
 import { refund } from "@/lib/payments/mercadopago";
+import { pushBooking } from "@/lib/push";
 
 /** POST /api/bookings/:id/decline — vet declines; owner is never charged (Stripe) or refunded (Mercado Pago). */
 export const POST = handle(async (req, ctx) => {
@@ -19,5 +20,6 @@ export const POST = handle(async (req, ctx) => {
     if (sec?.mp_access_token) { await refund(sec.mp_access_token, b.payment_ref); payment_status = "refunded"; }
   }
   await db.from("bookings").update({ status: "declined", vet_reply: reply?.slice(0, 300) ?? null, payment_status }).eq("id", id);
+  await pushBooking(id, "owner_declined");
   return json({ ok: true });
 });

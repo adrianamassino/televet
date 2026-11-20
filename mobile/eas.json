@@ -1,0 +1,47 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "base": {},
+    "owner-preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "env": {
+        "APP_VARIANT": "owner"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "vet-preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "env": {
+        "APP_VARIANT": "vet"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "owner": {
+      "extends": "base",
+      "autoIncrement": true,
+      "env": {
+        "APP_VARIANT": "owner"
+      }
+    },
+    "vet": {
+      "extends": "base",
+      "autoIncrement": true,
+      "env": {
+        "APP_VARIANT": "vet"
+      }
+    }
+  },
+  "submit": {
+    "owner": {},
+    "vet": {}
+  }
+}
