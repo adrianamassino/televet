@@ -17,6 +17,10 @@
       "schedule": "0 8 * * *"
     },
     {
+      "path": "/api/cron/pet-reminders",
+      "schedule": "5 8 * * *"
+    },
+    {
       "path": "/api/cron/purge-chats",
       "schedule": "0 3 * * *"
     }

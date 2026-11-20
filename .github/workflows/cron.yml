@@ -21,5 +21,5 @@ jobs:
           [ -n "$APP_URL" ] || { echo "APP_URL non impostato"; exit 1; }
           call() { curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/$1"; echo; }
           if [ "$SCHEDULE" = "0 3 * * *" ]; then call purge-chats
-          elif [ "$SCHEDULE" = "0 8 * * *" ]; then call onboarding
+          elif [ "$SCHEDULE" = "0 8 * * *" ]; then call onboarding; call pet-reminders
           else call reminders; call sync-calendars; call reviews; fi

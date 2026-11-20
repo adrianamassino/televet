@@ -12,6 +12,7 @@ const T = {
 type L = keyof typeof T;
 interface B { id: string; starts_at: string; type: string; status: keyof typeof T["fr"]["st"]; practices: { name: string } | null; pets: { name: string } | null }
 interface P { id: string; name: string; species: string }
+const CARNET: Record<string, string> = { fr: "Carnet de santé", it: "Libretto sanitario", en: "Health record", es: "Cartilla sanitaria" };
 const ICON: Record<string, string> = { video: "monitor", home: "housePaw", clinic: "clinic", expertise: "stethoscope" };
 const PET: Record<string, string> = { dog: "dog", cat: "cat", rabbit: "rabbit", bird: "bird", ferret: "paw", horse: "paw", other: "paw" };
 
@@ -51,7 +52,7 @@ export default function OwnerAccount({ lang }: { lang: string }) {
         <span className={`pill st-${b.status}`}>{t.st[b.status]}</span></li>)}</ul>}
     </section>
     <section><h2>{t.pets}</h2>
-      {pets.length === 0 ? <p>{t.noPets}</p> : <ul className="acct-list">{pets.map((p) => <li key={p.id}><span className="ico sm"><VI n={PET[p.species] ?? "paw"} size={30} /></span><span><strong>{p.name}</strong><br /><small>{(t.sp as Record<string, string>)[p.species]}</small></span></li>)}</ul>}
+      {pets.length === 0 ? <p>{t.noPets}</p> : <ul className="acct-list">{pets.map((p) => <li key={p.id}><span className="ico sm"><VI n={PET[p.species] ?? "paw"} size={30} /></span><span><strong>{p.name}</strong><br /><small>{(t.sp as Record<string, string>)[p.species]}</small></span><a className="btn btn-ghost" style={{ marginLeft: "auto" }} href={`/${lang}/${typeof window !== "undefined" ? window.location.pathname.split("/")[2] || lang : lang}/compte/animal/${p.id}`}>{CARNET[lang] ?? CARNET.en}</a></li>)}</ul>}
       <div className="row" style={{ marginTop: 8 }}><input className="field" placeholder={t.name} value={name} onChange={(e) => setName(e.target.value)} />
         <select className="field" value={species} onChange={(e) => setSpecies(e.target.value)}>{Object.entries(t.sp).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
         <button className="btn" onClick={addPet} disabled={!name.trim()}>{t.add}</button></div>
