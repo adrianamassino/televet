@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
+import { brazilian } from "@/lib/brazilian";
 import { pick } from "@/lib/pick";
 import { ReviewForm } from "./ReviewForm";
 import "../../home-brand.css";
@@ -20,6 +21,8 @@ const COPY: Record<string, any> = {
   pl: { title: "Twoja opinia o Televet", sub: "Dotknij gwiazdki", comment: "Chcesz dodać komentarz? (opcjonalnie)", placeholder: "Opowiedz nam o swoim doświadczeniu…", send: "Wyślij opinię", sending: "Wysyłanie…", thanks: "Dziękujemy za opinię. Wykorzystamy ją, by być lepszymi.", thanks5: "Dziękujemy, bardzo nam miło! Jeśli masz minutę, podziel się opinią w Google – pomoże to innym opiekunom nas znaleźć.", googleBtn: "Dodaj opinię w Google", copy: "Skopiuj mój komentarz", copied: "Komentarz skopiowany – wklej go w Google", done: "Dziękujemy, Twoja opinia została zapisana.", err: "Nie udało się wysłać. Spróbuj ponownie za chwilę.", labels: ["Bardzo rozczarowany", "Rozczarowujące", "W porządku", "Dobrze", "Idealnie"] },
   nl: { title: "Uw mening over Televet", sub: "Tik op een ster", comment: "Wilt u een opmerking toevoegen? (optioneel)", placeholder: "Vertel ons over uw ervaring…", send: "Beoordeling versturen", sending: "Versturen…", thanks: "Bedankt voor uw feedback. We gebruiken die om te verbeteren.", thanks5: "Bedankt, dat doet ons veel plezier! Heeft u een minuut? Deel uw ervaring op Google: zo vinden andere dierhouders ons.", googleBtn: "Google-review achterlaten", copy: "Mijn opmerking kopiëren", copied: "Opmerking gekopieerd – plak hem in Google", done: "Bedankt, uw beoordeling is opgeslagen.", err: "Versturen mislukt. Probeer het zo opnieuw.", labels: ["Zeer teleurgesteld", "Teleurstellend", "Prima", "Goed", "Perfect"] },
 };
+
+COPY["pt-BR"] = brazilian(COPY.pt);
 
 export default async function ReviewPage({ params, searchParams }: P) {
   const { lang, country, token } = await params, { r } = await searchParams;

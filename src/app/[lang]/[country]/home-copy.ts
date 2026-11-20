@@ -72,6 +72,7 @@ FOCUS.pl = { title: "Nasze dwie główne usługi",
 
 /* Argentine Spanish (voseo), derived from neutral Spanish */
 import { voseo } from "@/lib/voseo";
+import { brazilian } from "@/lib/brazilian";
 HOME["es-AR"] = voseo(HOME.es); CONSULT["es-AR"] = voseo(CONSULT.es); FOCUS["es-AR"] = voseo(FOCUS.es);
 
 /* Portuguese (pt), German (de), Dutch (nl) */
@@ -108,3 +109,6 @@ FOCUS.nl = { title: "Onze twee belangrijkste diensten",
   home: { h: "Dierenarts aan huis", p: "De dierenarts komt naar u toe: uw huisdier blijft in zijn vertrouwde omgeving, zonder reisstress. Ideaal voor katten, oudere of angstige dieren en gezinnen met meerdere huisdieren.", pts: ["Onderzoek, vaccinaties en controles thuis", "Minder stress voor uw huisdier", "Afspraak online geboekt"], cta: "Vind een dierenarts aan huis" },
   video: { h: "Online dierenartsconsult", p: "Spreek een dierenarts via video zonder het huis te verlaten. Voor een snelle mening, een vraag over een symptoom, een nacontrole of om te bepalen of een bezoek ter plaatse nodig is.", pts: ["Vandaag nog een mening, waar u ook bent", "Advies, opvolging en doorverwijzing", "Schriftelijke samenvatting na het consult"], cta: "Boek een online consult" },
   clinic: "Liever de praktijk? Bekijk dierenklinieken" };
+
+/* Brazilian Portuguese, derived from the European copy (must run after every pt entry above) */
+HOME["pt-BR"] = brazilian(HOME.pt); CONSULT["pt-BR"] = brazilian(CONSULT.pt); FOCUS["pt-BR"] = brazilian(FOCUS.pt);

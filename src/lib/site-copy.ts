@@ -1,7 +1,8 @@
 import { voseo } from "./voseo";
+import { brazilian } from "./brazilian";
 
 type L = Record<string, any>;
-const addAR = <T extends L>(m: T): T => ({ ...m, "es-AR": voseo(m.es) });
+const addAR = <T extends L>(m: T): T => ({ ...m, "es-AR": voseo(m.es), ...(m.pt ? { "pt-BR": brazilian(m.pt) } : {}) });
 
 /** Header menu labels. */
 export const MENU = addAR({

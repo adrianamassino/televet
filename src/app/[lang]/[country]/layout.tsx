@@ -1,5 +1,6 @@
 import { ShapeDefs } from "@/components/ShapeDefs";
 import type { ReactNode } from "react";
+import { brazilian } from "@/lib/brazilian";
 import { pick } from "@/lib/pick";
 import { LEGAL_LABEL, MENU } from "@/lib/site-copy";
 
@@ -14,9 +15,11 @@ const NAV: Record<string, { vets: string; faq: string; blog: string; contact: st
   nl: { dir: "Gids", vets: "Voor dierenartsen", faq: "Veelgestelde vragen", blog: "Blog", contact: "Contact", rights: "Dierenartsen, een videogesprek verderop." },
 };
 
+NAV["pt-BR"] = brazilian(NAV.pt);
+
 export default async function Layout({ children, params }: { children: ReactNode; params: Promise<{ lang: string; country: string }> }) {
   const { lang, country } = await params;
-  const t = NAV[lang] ?? NAV.en, m = pick(MENU, lang, country), lg = pick(LEGAL_LABEL, lang, country), base = `/${lang}/${country}`;
+  const t = pick(NAV, lang, country), m = pick(MENU, lang, country), lg = pick(LEGAL_LABEL, lang, country), base = `/${lang}/${country}`;
   return (
     <>
       <ShapeDefs />

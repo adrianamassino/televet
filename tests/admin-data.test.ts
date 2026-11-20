@@ -26,3 +26,14 @@ test("review e-mail has five rating links with the booking token, in the owner's
   for (const n of [1, 2, 3, 4, 5]) assert.ok(m.html.includes(`/it/it/avis/tok-123?r=${n}`));
   assert.ok(reviewEmail("xx", "", "FR", "t").html.includes("/en/fr/avis/t?r=5")); // unknown language falls back to English
 });
+
+import { brazilian } from "../src/lib/brazilian";
+test("Brazilian Portuguese derivation", () => {
+  assert.equal(brazilian("Marcar consulta"), "Agendar consulta");
+  assert.equal(brazilian("O seu animal merece atenção. Veterinário ao domicílio."), "Seu animal merece atenção. Veterinário a domicílio.");
+  assert.equal(brazilian("A enviar…"), "Enviando…");
+  assert.equal(brazilian("Escreva-nos pelo contacto ou telemóvel"), "Escreva para nós pelo contato ou celular");
+  assert.equal(brazilian("Os nossos serviços e a nossa equipa"), "Nossos serviços e nossa equipe");
+  assert.equal(brazilian("A casa e a mulher"), "A casa e a mulher"); // no false positives on plain articles
+  assert.deepEqual(brazilian({ a: ["os seus cães"] }), { a: ["seus cachorros"] });
+});

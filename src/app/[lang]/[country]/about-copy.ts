@@ -182,6 +182,7 @@ ABOUT.pl = {
 
 /* Argentine Spanish (voseo) */
 import { voseo } from "@/lib/voseo";
+import { brazilian } from "@/lib/brazilian";
 ABOUT["es-AR"] = voseo(ABOUT.es);
 
 /* Portuguese, German, Dutch */
@@ -226,3 +227,6 @@ ABOUT.nl = {
   faq: [{ q: "Hoe werkt een dierenarts aan huis?", a: "U boekt online een tijd en geeft uw adres en de reden van het bezoek door. De dierenarts komt met zijn materiaal, onderzoekt uw huisdier bij u thuis en geeft u een schriftelijk verslag." }, { q: "Wat is een online dierenartsconsult?", a: "Een videoconsult met een gekwalificeerde dierenarts. Geschikt voor een snelle mening, opvolging, advies of om te beslissen of een bezoek ter plaatse nodig is. Het vervangt geen lichamelijk onderzoek wanneer dat onmisbaar is." }, { q: "Wanneer ga ik beter naar een kliniek of de spoed?", a: "Bij moeite met ademen, hevig bloeden, een ongeval, stuipen, inname van giftige stoffen of hevige pijn neemt u meteen contact op met een spoedkliniek. Een online consult is hiervoor niet geschikt." }, { q: "Welke dieren kunnen worden gezien?", a: "Honden, katten, konijnen, knaagdieren, vogels en reptielen. De expertise verschilt per dierenarts: bekijk het profiel om te zien welke soorten hij behandelt." }, { q: "Hoe boek ik en hoe word ik op de hoogte gehouden?", a: "Boeken kost online enkele klikken. U ontvangt een bevestiging en e-mailherinneringen, en daarna een verslag van het consult." }, { q: "Ik ben dierenarts: hoe sluit ik aan bij Televet?", a: "Maak uw dierenartsaccount aan en vul profiel, beschikbaarheid en diensten in. Daarna ontvangt u boekingen van baasjes in uw omgeving." }],
   contactH: "Een vraag? Schrijf ons", contactP: "Ons team antwoordt zo snel mogelijk per e-mail.", contactBtn: "Neem contact op", place: "Station F, Parijs",
 };
+
+/* Brazilian Portuguese, derived from the European copy (after every pt entry) */
+ABOUT["pt-BR"] = brazilian(ABOUT.pt);

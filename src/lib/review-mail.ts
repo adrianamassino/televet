@@ -1,6 +1,7 @@
 import { adminClient } from "./supabase";
 import { sendEmail } from "./notify";
 import { SITE } from "./seo";
+import { brazilian } from "./brazilian";
 
 type L = { s: string; hi: string; q: string; sub: string; foot: string; stars: string };
 const T: Record<string, L> = {
@@ -13,12 +14,13 @@ const T: Record<string, L> = {
   pl: { s: "Jak minęła Twoja wizyta w Televet?", hi: "Dzień dobry", q: "Jak oceniasz swoje doświadczenie z Televet?", sub: "Wystarczy jedno kliknięcie: 1 gwiazdka = bardzo rozczarowany, 5 gwiazdek = idealnie. Pomaga nam to być lepszymi.", foot: "Dziękujemy, że zaufałeś Televet w opiece nad swoim pupilem.", stars: "gwiazdek" },
   nl: { s: "Hoe was uw afspraak bij Televet?", hi: "Hallo", q: "Hoe beoordeelt u uw ervaring met Televet?", sub: "Eén klik is genoeg: 1 ster = zeer teleurgesteld, 5 sterren = perfect. Het helpt ons verbeteren.", foot: "Bedankt dat u Televet vertrouwde met uw trouwe vriend.", stars: "sterren" },
 };
+T["pt-BR"] = brazilian(T.pt);
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
 export const reviewUrl = (lang: string, country: string, token: string, rating?: number) => `${SITE}/${lang}/${country.toLowerCase()}/avis/${token}${rating ? `?r=${rating}` : ""}`;
 
 export function reviewEmail(lang: string, name: string, country: string, token: string) {
-  const t = T[lang] ?? T.en, l = T[lang] ? lang : "en";
+  const t = (lang === "pt" && country.toUpperCase() === "BR" ? T["pt-BR"] : T[lang]) ?? T.en, l = T[lang] ? lang : "en";
   const star = (n: number) => `<a href="${reviewUrl(l, country, token, n)}" aria-label="${n} ${t.stars}" style="display:inline-block;text-decoration:none;text-align:center;margin:0 3px"><span style="display:block;font-size:34px;line-height:40px;color:#f5b301">★</span><span style="display:block;font-size:13px;color:#526077;font-family:Arial,sans-serif">${n}</span></a>`;
   const html = `<!doctype html><html><body style="margin:0;background:#F6F8FB;font-family:Arial,Helvetica,sans-serif;color:#0F172A"><table role="presentation" width="100%"><tr><td align="center" style="padding:24px 12px">
 <table role="presentation" width="100%" style="max-width:520px;background:#fff;border:1px solid #E3E8EF;border-radius:14px"><tr><td style="padding:26px;text-align:center">

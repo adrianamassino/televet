@@ -155,4 +155,6 @@ export const PRO: Record<string, ProCopy> = {
 };
 
 import { voseo } from "@/lib/voseo";
+import { brazilian } from "./brazilian";
+PRO["pt-BR"] = brazilian(PRO.pt);
 PRO["es-AR"] = voseo(PRO.es);

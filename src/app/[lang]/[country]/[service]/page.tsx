@@ -1,3 +1,5 @@
+import { pick } from "@/lib/pick";
+import { brazilian } from "@/lib/brazilian";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
@@ -22,6 +24,8 @@ const TXT: Record<string, { h1: Record<Svc, string>; intro: Record<Svc, string>;
   pl: { h1: { video: "Weterynarz online", home: "Weterynarz z dojazdem", clinic: "Kliniki weterynaryjne" }, intro: { video: "Porozmawiaj z weterynarzem przez wideo, skądkolwiek w {c}: bez wyboru miasta i dojazdu.", home: "Weterynarz, który przyjeżdża do Ciebie – mniej stresu dla zwierzaka.", clinic: "Znajdź klinikę weterynaryjną i umów wizytę." }, empty: "Televet nie ma tu jeszcze weterynarzy ({c}). Napisz, jeśli jesteś zainteresowany – damy znać.", list: "Weterynarze", ask: "Napisz do zespołu" },
   nl: { h1: { video: "Online dierenarts", home: "Dierenarts aan huis", clinic: "Dierenartspraktijken" }, intro: { video: "Praat via video met een dierenarts, waar je ook bent in {c}: geen stad kiezen, niet reizen.", home: "Een dierenarts die bij je thuis komt – minder stress voor je dier.", clinic: "Vind een dierenartspraktijk en maak een afspraak." }, empty: "Televet heeft hier ({c}) nog geen dierenartsen. Laat het ons weten als je interesse hebt, dan melden we ons.", list: "Dierenartsen", ask: "Schrijf het team" },
 };
+TXT["pt-BR"] = brazilian(TXT.pt);
+
 
 async function load(lang: string, country: string, service: string) {
   const cc = country.toUpperCase(), svc = serviceFromSlug(lang, service);
@@ -36,7 +40,7 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
   const { lang, country, service } = await params;
   const d = await load(lang, country, service);
   if (!d) return {};
-  const t = TXT[lang] ?? TXT.en;
+  const t = pick(TXT, lang, country);
   return pageMetadata({
     title: `${t.h1[d.svc]} — ${d.countryName} | Televet`, description: t.intro[d.svc].replace("{c}", d.countryName),
     lang, country: d.cc, onlyCountry: d.cc, index: d.list.length > 0,
@@ -48,7 +52,7 @@ export default async function ServicePage({ params }: P) {
   const { lang, country, service } = await params;
   const d = await load(lang, country, service);
   if (!d) notFound();
-  const t = TXT[lang] ?? TXT.en;
+  const t = pick(TXT, lang, country);
   const base = `${SITE}/${lang}/${country}`;
   const ld = [organizationLd(), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: t.h1[d.svc], url: `${base}/${service}` }]),
     ...d.list.map((p) => veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }))];
