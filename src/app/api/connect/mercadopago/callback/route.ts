@@ -1,3 +1,4 @@
+import { COUNTRIES } from "@/lib/countries";
 import { adminClient, handle } from "@/lib/supabase";
 import { exchangeCode } from "@/lib/payments/mercadopago";
 import { readState } from "@/lib/state";
@@ -12,5 +13,5 @@ export const GET = handle(async (req) => {
     mp_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
   });
   await db.from("practices").update({ mp_user_id: String(tokens.user_id), mp_status: "active" }).eq("id", st.practiceId);
-  return Response.redirect(`${process.env.APP_URL}/pro/payouts?connected=mercadopago`, 302);
+  return Response.redirect(`${process.env.APP_URL}/${COUNTRIES[st.country]?.languages[0] ?? "es"}/${String(st.country).toLowerCase()}/pro/dashboard?mercadopago=connected`, 302);
 });

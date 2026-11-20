@@ -22,12 +22,12 @@ export async function createConnectedAccount(p: { country: string; email?: strin
 }
 
 /** Hosted onboarding page (identity, bank details…) managed by Stripe. */
-export async function onboardingLink(accountId: string, appUrl: string) {
+export async function onboardingLink(accountId: string, backUrl: string) {
   return stripe().accountLinks.create({
     account: accountId,
     type: "account_onboarding",
-    refresh_url: `${appUrl}/pro/payouts?refresh=1`,
-    return_url: `${appUrl}/pro/payouts?done=1`,
+    refresh_url: `${backUrl}?stripe=refresh`,
+    return_url: `${backUrl}?stripe=done`,
   });
 }
 

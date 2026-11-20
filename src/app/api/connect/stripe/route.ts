@@ -1,4 +1,5 @@
 import { adminClient, handle, HttpError, json, userFromRequest } from "@/lib/supabase";
+import { COUNTRIES } from "@/lib/countries";
 import { createConnectedAccount, onboardingLink } from "@/lib/payments/stripe";
 
 /** POST /api/connect/stripe { practiceId } → { url } hosted onboarding (identity, IBAN…). */
@@ -15,6 +16,6 @@ export const POST = handle(async (req) => {
     accountId = acct.id;
     await db.from("practices").update({ stripe_account_id: accountId, stripe_status: "onboarding" }).eq("id", p.id);
   }
-  const link = await onboardingLink(accountId, process.env.APP_URL!);
+  const link = await onboardingLink(accountId, `${process.env.APP_URL}/${COUNTRIES[p.country]?.languages[0] ?? "en"}/${p.country.toLowerCase()}/pro/dashboard`);
   return json({ url: link.url });
 });
