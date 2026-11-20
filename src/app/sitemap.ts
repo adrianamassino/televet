@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     Object.fromEntries(combos.filter((x) => !only || only(x.l)).map((x) => [`${x.l}-${x.c.toUpperCase()}`, `${SITE}${path(x.l, x.c)}`]));
   for (const x of combos) {
     out.push({ url: `${SITE}/${x.l}/${x.c}/`, changeFrequency: "daily", priority: 1, alternates: { languages: alt((l, c) => `/${l}/${c}/`) } });
+    for (const pg of ["pricing", "contact"]) out.push({ url: `${SITE}/${x.l}/${x.c}/${pg}`, changeFrequency: "monthly", priority: 0.6, alternates: { languages: alt((l, c) => `/${l}/${c}/${pg}`) } });
     out.push({ url: `${SITE}/${x.l}/${x.c}/pro`, changeFrequency: "monthly", priority: 0.8, alternates: { languages: alt((l, c) => `/${l}/${c}/pro`) } });
     if (faqLanguages().includes(x.l)) out.push({ url: `${SITE}/${x.l}/${x.c}/faq`, changeFrequency: "monthly", priority: 0.7, alternates: { languages: alt((l, c) => `/${l}/${c}/faq`, (l) => faqLanguages().includes(l)) } });
   }

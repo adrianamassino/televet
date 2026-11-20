@@ -115,7 +115,7 @@ details.qa p { color: var(--ink-soft); padding-bottom: 12px; }
   .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 16px; }
   .facts { grid-template-columns: 1fr; }
   .ticket { transform: rotate(-1.2deg); }
-  .site-nav a:not(.pill) { display: none; }
+  .site-nav a:not(.pill):not(.cta) { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ticket { animation: none; } .ticket .status .s0 { display: none; } .ticket .status .s1 { opacity: 1; animation: none; }
@@ -1069,3 +1069,17 @@ body::before{background:url(/decor/glow.svg) center / cover no-repeat,url(/decor
 
 /* v48 brand typography: Manrope for headings and navigation, Inter for text */
 :root{--display:"Manrope Variable","Manrope",system-ui,sans-serif;--body:"Inter Variable","Inter",system-ui,sans-serif}
+
+/* v49 — header menu (services/pricing/about/contact + book pill), footer links, inner brand pages */
+.site-nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.site-nav a.cta { background: linear-gradient(135deg, #0756d9, #00bfef) !important; color: #fff !important; border-radius: 999px; padding: 10px 18px; font-weight: 700; margin-left: 8px; box-shadow: 0 8px 22px rgba(7,86,217,.28); }
+.site-nav a.cta:hover { filter: brightness(1.06); }
+.foot-links { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+.foot-links a { color: inherit; opacity: .85; }
+.foot-links a:hover { opacity: 1; text-decoration: underline; }
+@media (max-width: 900px) {
+  .site-nav a:not(.cta) { display: none; }
+  .site-nav a.cta { margin-left: auto; padding: 9px 14px; font-size: 14px; }
+}
+body:has(.tv) .site-nav a.cta { color: #fff; }
+@media (max-width: 900px) { body:has(.tv) .site-nav { display: flex !important; } }
