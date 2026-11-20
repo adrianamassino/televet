@@ -70,13 +70,13 @@ export const ruleLabel = (pct: number | null | undefined, fixed: number | null |
   fixed !== null && fixed !== undefined ? `${eur(fixed, cur)} fissi in più` : pct !== null && pct !== undefined ? `${pct}%` : "—";
 
 export type CommissionBody = { commission_pct: number | null; commission_fixed_cents: number | null };
-/** Commission editor: percentage OR fixed fee in cents added to the vet's price (1000 = 10,00). `inherit` = label shown when nothing is set (omit to force a value). */
+/** Commission editor: percentage OR fixed fee in euros (stored as cents) added to the vet's price (10 = 10,00 €). `inherit` = label shown when nothing is set (omit to force a value). */
 export function CommissionInput({ pct, fixed, inherit, cur = "EUR", onSave }: { pct: number | null; fixed: number | null; inherit?: string; cur?: string; onSave: (b: CommissionBody) => void | Promise<void> }) {
   const start = fixed !== null && fixed !== undefined ? "fixed" : pct !== null && pct !== undefined ? "pct" : inherit ? "inherit" : "pct";
   const [mode, setMode] = useState<"inherit" | "pct" | "fixed">(start as "inherit" | "pct" | "fixed");
-  const [v, setV] = useState(start === "fixed" ? String(fixed) : start === "pct" ? String(pct) : "");
-  const n = Number(v), ok = mode === "inherit" || (v !== "" && Number.isFinite(n) && n >= 0 && (mode === "pct" ? n <= 100 : Number.isInteger(n)));
-  const save = () => onSave(mode === "inherit" ? { commission_pct: null, commission_fixed_cents: null } : mode === "pct" ? { commission_pct: n, commission_fixed_cents: null } : { commission_pct: null, commission_fixed_cents: n });
+  const [v, setV] = useState(start === "fixed" ? String((fixed as number) / 100) : start === "pct" ? String(pct) : "");
+  const n = Number(v), ok = mode === "inherit" || (v !== "" && Number.isFinite(n) && n >= 0 && (mode === "pct" ? n <= 100 : n <= 10000 && Math.abs(n * 100 - Math.round(n * 100)) < 1e-6));
+  const save = () => onSave(mode === "inherit" ? { commission_pct: null, commission_fixed_cents: null } : mode === "pct" ? { commission_pct: n, commission_fixed_cents: null } : { commission_pct: null, commission_fixed_cents: Math.round(n * 100) });
   return (
     <div className="adm-commission">
       <div className="adm-inline">
@@ -85,10 +85,10 @@ export function CommissionInput({ pct, fixed, inherit, cur = "EUR", onSave }: { 
           <option value="pct">Percentuale</option>
           <option value="fixed">Importo fisso</option>
         </select>
-        {mode !== "inherit" && <><input type="number" min={0} max={mode === "pct" ? 100 : undefined} step={mode === "pct" ? "0.5" : "1"} value={v} onChange={(e) => setV(e.target.value)} aria-label="Valore commissione" /><span>{mode === "pct" ? "%" : "cent"}</span></>}
+        {mode !== "inherit" && <><input type="number" min={0} max={mode === "pct" ? 100 : undefined} step={mode === "pct" ? "0.5" : "0.5"} value={v} onChange={(e) => setV(e.target.value)} aria-label="Valore commissione" /><span>{mode === "pct" ? "%" : "€"}</span></>}
         <button className="adm-btn" disabled={!ok} onClick={save}>Salva</button>
       </div>
-      {mode === "fixed" && <small className="adm-sub">{ok && v !== "" ? `= ${eur(n, cur)} in più sul prezzo del veterinario` : "In centesimi: 1000 = 10,00 €"}</small>}
+      {mode === "fixed" && <small className="adm-sub">{ok && v !== "" ? `Il cliente paga ${eur(n * 100, cur)} in più del prezzo del veterinario` : "In euro, es. 10 = 10,00 €"}</small>}
       {mode === "pct" && <small className="adm-sub">Trattenuta dal prezzo del veterinario</small>}
     </div>
   );

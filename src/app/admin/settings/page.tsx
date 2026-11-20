@@ -19,7 +19,7 @@ export default function Page() {
     <>
       <h1>Commissioni e registro</h1>
       <section className="adm-card"><h2>Commissione standard per paese</h2>
-        <p className="adm-hint">Puoi scegliere una percentuale (trattenuta dal prezzo del veterinario) oppure un importo fisso in centesimi che si AGGIUNGE al prezzo del veterinario (1000 = 10,00 €). Si applica quando né il veterinario né la clinica hanno una commissione propria (si impostano nella scheda della clinica o del veterinario). Vale per le prenotazioni pagate online (Stripe Connect o Mercado Pago) fatte da ora in poi.</p>
+        <p className="adm-hint">Puoi scegliere una percentuale (trattenuta dal prezzo del veterinario) oppure un importo fisso in euro che si AGGIUNGE al prezzo del veterinario (es. 10 = 10,00 €). Si applica quando né il veterinario né la clinica hanno una commissione propria (si impostano nella scheda della clinica o del veterinario). Vale per le prenotazioni pagate online (Stripe Connect o Mercado Pago) fatte da ora in poi.</p>
         <Err m={c.err} /><table className="adm-table nolink"><thead><tr><th>Paese</th><th>Valuta</th><th>Pagamenti</th><th>Commissione standard</th></tr></thead><tbody>{(c.data?.items ?? []).map((x) => <Row key={x.code} c={x} onSaved={c.reload} />)}</tbody></table></section>
       <section className="adm-card"><h2>Registro delle azioni</h2><Err m={a.err} />
         <div className="adm-scroll"><table className="adm-table nolink"><thead><tr><th>Quando</th><th>Chi</th><th>Azione</th><th>Su</th></tr></thead><tbody>{(a.data?.items ?? []).map((x) => <tr key={x.id}><td>{date(x.created_at)}</td><td>{x.actor}</td><td>{ACTION[x.action] ?? x.action}</td><td>{x.target_label ?? x.target_type}</td></tr>)}</tbody></table></div>
