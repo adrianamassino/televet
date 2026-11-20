@@ -2,6 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabaseBrowser, errText } from "@/lib/auth-client";
 import { H } from "@/lib/pet-health-copy";
+import { ocrText, stopOcr } from "@/lib/pet-ocr";
+import { parseBookletText } from "@/lib/pet-ocr-parse";
 import { daysUntil, RECORD_KINDS, type Proposal, type RecordKind } from "@/lib/pet-health";
 
 type Rec = { id: string; kind: RecordKind; name: string; done_on: string | null; next_due: string | null; vet_name: string | null; document_id: string | null };
@@ -27,7 +29,7 @@ export default function PetHealth({ lang, country, petId }: { lang: string; coun
   const [uid, setUid] = useState<string | null | undefined>(undefined), [pet, setPet] = useState<{ name: string; species: string } | null>(null);
   const [recs, setRecs] = useState<Rec[]>([]), [docs, setDocs] = useState<Doc[]>([]), [rows, setRows] = useState<Row[]>([]);
   const [busy, setBusy] = useState(""), [msg, setMsg] = useState(""), [form, setForm] = useState({ kind: "vaccine" as RecordKind, name: "", done_on: "", next_due: "", vet_name: "" });
-  const cam = useRef<HTMLInputElement>(null), pick = useRef<HTMLInputElement>(null);
+  const lastDocs = useRef<string[]>([]), cam = useRef<HTMLInputElement>(null), pick = useRef<HTMLInputElement>(null);
   const today = new Date().toISOString().slice(0, 10), base = `/${lang}/${country}`;
 
   const load = useCallback(async () => {
@@ -42,10 +44,10 @@ export default function PetHealth({ lang, country, petId }: { lang: string; coun
     if (docsList.length) { const { data: urls } = await sb.storage.from("pet-docs").createSignedUrls(docsList.map((x) => x.storage_path), 3600); docsList.forEach((x, i) => { x.url = urls?.[i]?.signedUrl ?? undefined; }); }
     setDocs(docsList);
   }, [sb, petId]);
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(); return () => stopOcr(); }, [load]);
 
   async function upload(files: FileList | null) {
-    if (!files?.length || !uid) return; setMsg(""); const found: Row[] = [];
+    if (!files?.length || !uid) return; setMsg(""); lastDocs.current = []; const found: Row[] = [];
     const list = Array.from(files).slice(0, 12);
     for (let i = 0; i < list.length; i++) {
       setBusy(`${t("reading")} (${t("page")} ${i + 1}/${list.length})`);
@@ -54,19 +56,36 @@ export default function PetHealth({ lang, country, petId }: { lang: string; coun
         const path = `${uid}/${petId}/${crypto.randomUUID()}.jpg`;
         const up = await sb.storage.from("pet-docs").upload(path, blob, { contentType: "image/jpeg" }); if (up.error) throw up.error;
         const { data: doc, error } = await sb.from("pet_documents").insert({ pet_id: petId, owner_id: uid, kind: "booklet", storage_path: path }).select("id").single(); if (error) throw error;
-        const { data: s } = await sb.auth.getSession();
-        const r = await fetch(`/api/owner/pets/${petId}/scan`, { method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${s.session?.access_token}` }, body: JSON.stringify({ documentId: doc.id }) });
-        if (r.status === 503) { setMsg(t("noScan")); continue; }
-        if (!r.ok) { setMsg(t("scanFail")); continue; }
-        const { proposals } = (await r.json()) as { proposals: Proposal[] };
-        if (!proposals.length) setMsg(t("nothing"));
+        setBusy(`${t("ocrLoad")} (${t("page")} ${i + 1}/${list.length})`);
+        let proposals: Proposal[] = [];
+        try { proposals = parseBookletText(await ocrText(blob, lang)); } catch { /* OCR unavailable: the photo is still saved */ }
+        if (!proposals.length) setMsg(t("ocrNone"));
+        lastDocs.current.push(doc.id);
         for (const p of proposals) {
-          const dup = recs.some((x) => x.kind === p.kind && x.name.toLowerCase() === p.name.toLowerCase() && x.done_on === p.done_on) || found.some((x) => x.kind === p.kind && x.name.toLowerCase() === p.name.toLowerCase() && x.done_on === p.done_on);
-          if (!dup) found.push({ ...p, key: crypto.randomUUID(), include: true, documentId: doc.id });
+          const same = (x: { kind: string; name: string; done_on: string | null }) => x.kind === p.kind && x.name.toLowerCase() === p.name.toLowerCase() && x.done_on === p.done_on;
+          if (!recs.some(same) && !found.some(same)) found.push({ ...p, key: crypto.randomUUID(), include: true, documentId: doc.id });
         }
       } catch (e) { setMsg(t("err") + errText(e)); }
     }
     setBusy(""); setRows((cur) => [...cur, ...found]); load();
+  }
+
+  /** Optional: sends the last uploaded photos to the external AI reader (handwriting). Only on the person's request. */
+  async function aiReread() {
+    const ids = [...lastDocs.current]; if (!ids.length) return; setMsg(""); const found: Row[] = [];
+    const { data: s } = await sb.auth.getSession();
+    for (let i = 0; i < ids.length; i++) {
+      setBusy(`${t("reading")} (${t("page")} ${i + 1}/${ids.length})`);
+      const r = await fetch(`/api/owner/pets/${petId}/scan`, { method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${s.session?.access_token}` }, body: JSON.stringify({ documentId: ids[i] }) }).catch(() => null);
+      if (!r || r.status === 503) { setMsg(t("noScan")); break; }
+      if (!r.ok) { setMsg(t("scanFail")); continue; }
+      const { proposals } = (await r.json()) as { proposals: Proposal[] };
+      for (const p of proposals) {
+        const same = (x: { kind: string; name: string; done_on: string | null }) => x.kind === p.kind && x.name.toLowerCase() === p.name.toLowerCase() && x.done_on === p.done_on;
+        if (!recs.some(same) && !rows.some(same) && !found.some(same)) found.push({ ...p, key: crypto.randomUUID(), include: true, documentId: ids[i] });
+      }
+    }
+    setBusy(""); setRows((cur) => [...cur, ...found]);
   }
 
   async function saveRows() {
@@ -106,6 +125,7 @@ export default function PetHealth({ lang, country, petId }: { lang: string; coun
         <input ref={pick} type="file" accept="image/*" multiple hidden onChange={(e) => { upload(e.target.files); e.target.value = ""; }} />
         <p><button className="btn" disabled={!!busy} onClick={() => cam.current?.click()}>{t("take")}</button>{" "}<button className="btn btn-ghost" disabled={!!busy} onClick={() => pick.current?.click()}>{t("pick")}</button></p>
         {busy && <p role="status">{busy}</p>}
+        {!busy && lastDocs.current.length > 0 && <p><button className="btn btn-ghost" onClick={aiReread}>{t("aiBtn")}</button><br /><small>{t("aiNote")}</small></p>}
         <small>{t("private")}</small>
         {rows.length > 0 && <div className="ph-review"><p><strong>{t("check")}</strong></p>
           {rows.map((r) => <div key={r.key} className="ph-row">
