@@ -1,7 +1,7 @@
 import { pick } from "@/lib/pick";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Activity, ArrowRight, Brain, Check, Clock, Leaf, MapPin, MessageCircle, Mic, PhoneOff, Salad, Siren, Bird, Cat, CalendarCheck, ClipboardList, Dog, FileText, Fish, Hospital, House, Rabbit, Rat, Search, ShieldCheck, Stethoscope, Turtle, Video, BellRing, HeartPulse, Syringe, Pill, Microscope, Bone, PawPrint, Sparkles, Heart, Cross, Thermometer } from "lucide-react";
+import { Globe, Activity, ArrowRight, Brain, Check, Clock, Leaf, MapPin, MessageCircle, Mic, PhoneOff, Salad, Siren, Bird, Cat, CalendarCheck, ClipboardList, Dog, FileText, Fish, Hospital, House, Rabbit, Rat, Search, ShieldCheck, Stethoscope, Turtle, Video, BellRing, HeartPulse, Syringe, Pill, Microscope, Bone, PawPrint, Sparkles, Heart, Cross, Thermometer } from "lucide-react";
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
 import { breadcrumbLd, faqLd, ldJson, organizationLd, pageMetadata, SITE } from "@/lib/seo";
@@ -39,20 +39,24 @@ export default async function OwnerHome({ params }: P) {
     <main className="tv">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson([organizationLd(), breadcrumbLd([{ name: "Televet", url: `${SITE}${base}/` }]), faqLd(A.faq), ...(["home", "video"] as const).map((k) => ({ "@context": "https://schema.org", "@type": "Service", name: (pick(FOCUS, lang, country))[k].h, description: (FOCUS[lang] ?? FOCUS.en)[k].p, serviceType: k === "home" ? "Veterinary home visit" : "Veterinary telemedicine", provider: { "@type": "Organization", name: "Televet", url: SITE }, areaServed: { "@type": "Country", name: COUNTRIES[cc].code }, url: `${SITE}${base}/${SERVICE_SLUGS[k][lang] ?? SERVICE_SLUGS[k].en}` }))]) }} />
       <section className="tv-hero" aria-labelledby="tv-h1">
-        <div className="tv-bg" aria-hidden><span className="tv-orb o1" /><span className="tv-orb o2" /><svg className="tv-ecg" viewBox="0 0 900 120" preserveAspectRatio="none"><path d="M0 60h250l22-36 26 78 24-60 16 18h120l20-34 24 70 20-52 14 14H900" /></svg>{[1, 2, 3, 4, 5, 6].map((n) => <i key={n} className={`tv-dot d${n}`} />)}</div>
+        <div className="tv-bg" aria-hidden><span className="tv-orb o1" /><span className="tv-orb o2" /><svg className="tv-arc" viewBox="0 0 800 700" preserveAspectRatio="none"><path d="M640 -20C430 90 360 300 400 460C430 590 330 680 190 720" /></svg><svg className="tv-ecg" viewBox="0 0 900 120" preserveAspectRatio="none"><path d="M0 60h250l22-36 26 78 24-60 16 18h120l20-34 24 70 20-52 14 14H900" /></svg>{[1, 2, 3, 4, 5, 6].map((n) => <i key={n} className={`tv-dot d${n}`} />)}</div>
+        <div className="tv-hero-img" aria-hidden><img src="/brand/hero-pets.jpg" alt="" width={1218} height={1411} fetchPriority="high" /></div>
         <div className="tv-wrap tv-hero-grid">
           <div className="tv-hero-text">
-            <h1 id="tv-h1">{t.h1}</h1>
-            <p className="tv-lead">{t.lead}</p>
+            <p className="tv-kicker">{t.h1}</p>
+            <h1 id="tv-h1">{TVc.ha} <span className="tv-acc">{TVc.hb}</span></h1>
+            <p className="tv-lead">{TVc.lead}</p>
             <div className="tv-cta"><a className="tv-btn tv-btn-light" href={`${base}/recherche`}>{t.book}<ArrowRight aria-hidden /></a><a className="tv-btn tv-btn-ghost" href="#services">{TVc.discover}</a></div>
           </div>
-          <div className="tv-cluster" aria-hidden>
-            <figure className="tv-ph p1"><img src="/photos/vet-exam.jpg" alt="" width={733} height={1100} /></figure>
-            <figure className="tv-ph p2"><img src="/photos/vet-cat.jpg" alt="" width={1100} height={733} /></figure>
-            <figure className="tv-ph p3"><img src="/photos/vet-chihuahua.jpg" alt="" width={733} height={1100} /></figure>
-          </div>
         </div>
-        <div className="tv-wrap"><ul className="tv-strip">{t.trust.map((x, i) => { const Ic = [ShieldCheck, CalendarCheck, BellRing, FileText][i] ?? ShieldCheck; return <li key={x}><Ic aria-hidden /><span>{x}</span></li>; })}</ul></div>
+        <div className="tv-wrap"><ul className="tv-strip">{TVc.strip.map((x, i) => { const Ic = [Stethoscope, House, PawPrint, Globe][i] ?? Stethoscope; return <li key={x}><Ic aria-hidden /><span>{x}</span></li>; })}</ul></div>
+      </section>
+
+      <section className="tv-tm" aria-labelledby="tm-h">
+        <div className="tv-wrap tv-tm-grid">
+          <div><h2 id="tm-h">{TVc.tm[0]}<span className="tv-acc2">{TVc.tm[1]}</span>{TVc.tm[2]}</h2><p>{TVc.tmp}</p><a className="tv-link ul" href="#services">{TVc.discover}<ArrowRight aria-hidden /></a></div>
+          <div className="tv-tm-img" aria-hidden><img src="/brand/sleeping-pets.jpg" alt="" width={1168} height={812} loading="lazy" /></div>
+        </div>
       </section>
 
       <div className="tv-wrap">

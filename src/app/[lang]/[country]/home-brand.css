@@ -236,3 +236,80 @@ body:has(.tv) .site-footer::before{background:radial-gradient(520px 220px at 85%
 /* v4 gallery fills its grid; no ECG on phones */
 .tv-gallery .g1{grid-row:1/5}.tv-gallery .g3{grid-row:1/5}.tv-gallery .g4{grid-row:1/5}
 @media(max-width:640px){.tv-hero>.tv-bg .tv-ecg{display:none}.tv-gallery .g1{grid-row:1/4}.tv-gallery .g3{grid-row:3/5}.tv-gallery .g4{display:none}}
+
+/* v5: exact composition of the approved ChatGPT mockup (dark hero, big pets integrated in the gradient, glass strip, telemedicine band) */
+.tv-hero{min-height:clamp(640px,52vw,760px);padding-top:clamp(100px,11vw,130px);display:flex;flex-direction:column;justify-content:space-between}
+.tv-hero>.tv-bg{background:linear-gradient(115deg,#052a6e 0%,#0749b5 30%,#0a7fe0 58%,#17c1d9 82%,#2fd8c4 100%);background-size:100% 100%;animation:none;border-radius:0}
+.tv-arc{position:absolute;right:0;top:0;width:62%;height:100%;fill:none;stroke:rgba(255,255,255,.4);stroke-width:1.3;vector-effect:non-scaling-stroke}
+.tv-arc path{vector-effect:non-scaling-stroke}
+.tv-hero-img{position:absolute;right:0;top:0;bottom:0;width:min(56%,820px);z-index:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%);mask-image:linear-gradient(90deg,transparent 0,#000 30%)}
+.tv-hero-img img{position:absolute;right:0;top:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%}
+.tv-hero-grid{display:block;flex:1;padding-bottom:0}
+.tv-hero-text{max-width:600px}
+.tv-kicker{margin:0 0 16px;font:600 .8rem/1.3 var(--display);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.78)}
+.tv-hero h1{font-size:clamp(2.4rem,5.2vw,4.3rem);line-height:1.04;font-weight:500;letter-spacing:-.035em}
+.tv-acc{color:#3fe8d8;font-weight:500}
+.tv-strip{transform:none;margin:clamp(28px,4vw,48px) 0 clamp(28px,4vw,40px);background:rgba(255,255,255,.16);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.4)}
+.tv-strip li{font-weight:500}
+.tv-hero{border-radius:0}
+.tv-hero>.tv-wrap{position:relative;z-index:2}
+/* telemedicine band */
+.tv-tm{background:linear-gradient(180deg,#e7f4ff,#f3f9ff);padding:clamp(40px,6vw,72px) 0 0;overflow:hidden}
+.tv-tm-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.tv-tm h2{font-size:clamp(2rem,4vw,3.2rem);font-weight:500;line-height:1.08;color:var(--tv-navy);margin:0 0 .5em}
+.tv-acc2{background:linear-gradient(90deg,#0f6df0,#13c9b3);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tv-tm p{margin:0 0 1.4em;color:var(--tv-ink);font-size:1.15rem;line-height:1.6;max-width:28em}
+.tv-link.ul{border-bottom:2px solid var(--tv-blue);padding-bottom:4px}
+.tv-tm-img{border-radius:var(--tv-r-lg) var(--tv-r-lg) 0 0;overflow:hidden;margin-bottom:0;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%);mask-image:linear-gradient(90deg,transparent 0,#000 18%)}
+.tv-tm-img img{display:block;width:100%;height:auto}
+.tv-search{padding-top:44px;margin-top:0}
+@media(max-width:1000px){.tv-hero-img{width:70%}.tv-tm-grid{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .tv-hero{min-height:0;padding-top:88px}
+  .tv-hero-img{position:relative;order:3;width:72%;height:300px;margin:-10px 0 0 auto;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 25%);mask-image:linear-gradient(90deg,transparent 0,#000 25%)}
+  .tv-hero-img img{object-position:55% 30%}
+  .tv-hero h1{font-size:2.2rem}.tv-kicker{font-size:.7rem}
+  .tv-hero-text{max-width:none}
+  .tv-hero>.tv-wrap:last-child{order:4}
+  .tv-hero-img{position:absolute;right:0;top:auto;bottom:210px;height:300px}
+  .tv-hero-grid{padding-bottom:230px}
+  .tv-strip{grid-template-columns:repeat(4,1fr);border-radius:var(--tv-r-md);margin-top:0}
+  .tv-strip li{padding:12px 4px;font-size:.7rem;gap:5px}.tv-strip li svg{width:22px;height:22px}
+  .tv-strip li:nth-child(n+3){border-top:0}.tv-strip li:nth-child(even){border-left:1px solid rgba(255,255,255,.28)}
+}
+
+/* v6 alignment + image proportions as in the mockup */
+.tv-hero>.tv-wrap{width:100%}
+.tv-hero-img{width:52%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24%);mask-image:linear-gradient(90deg,transparent 0,#000 24%)}
+.tv-hero-img img{width:auto;height:100%;max-width:none;object-fit:cover;object-position:left top}
+.tv-strip{background:rgba(7,40,110,.28)}
+.tv-hero h1{font-size:clamp(2.4rem,4.8vw,4rem)}
+@media(max-width:1000px){.tv-hero-img{width:64%}}
+
+/* v7 mobile: light composition as in the approved phone mockup */
+@media(max-width:640px){
+  .tv-hero{background:linear-gradient(180deg,#eef7ff 0%,#cfe9ff 55%,#aee3f5 100%);color:var(--tv-navy);padding-top:88px;min-height:0}
+  .tv-hero>.tv-bg{background:radial-gradient(420px 360px at 100% 20%,rgba(0,150,235,.55),transparent 70%),radial-gradient(380px 300px at 100% 70%,rgba(0,213,190,.45),transparent 70%),linear-gradient(180deg,#eef7ff,#cfe9ff)}
+  .tv-arc,.tv-dot{display:none}
+  .tv-hero>.tv-bg .tv-ecg{display:block;top:36%;opacity:.9;height:90px;-webkit-mask-image:linear-gradient(90deg,transparent 40%,#000 70%);mask-image:linear-gradient(90deg,transparent 40%,#000 70%)}
+  body:has(.tv) .brand img{filter:none}
+  .tv-hero h1{color:var(--tv-deep);font-size:2.3rem;font-weight:600}.tv-acc{color:var(--tv-blue)}
+  .tv-kicker{color:var(--tv-muted)}
+  .tv-lead{color:var(--tv-ink)}
+  .tv-cta{flex-direction:column;align-items:flex-start}.tv-cta .tv-btn{width:auto}
+  .tv-btn-light{background:linear-gradient(120deg,#0647b9,#0a6fe0);color:#fff}
+  .tv-btn-ghost{display:none}
+  .tv-hero-img{position:absolute;right:0;top:auto;bottom:150px;width:48%;height:280px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 35%);mask-image:linear-gradient(90deg,transparent 0,#000 35%)}
+  .tv-hero-img img{height:100%;width:auto;object-position:left top}
+  .tv-hero-grid{padding-bottom:300px}
+  .tv-strip{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.8);backdrop-filter:blur(10px)}
+  .tv-strip li{color:var(--tv-deep)}.tv-strip li svg{color:var(--tv-blue)}
+}
+
+/* v8 soft left edge applied on the image itself */
+.tv-hero-img{-webkit-mask-image:none;mask-image:none}
+.tv-hero-img img{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 32%);mask-image:linear-gradient(90deg,transparent 0,#000 32%)}
+@media(max-width:640px){.tv-hero-img img{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 40%);mask-image:linear-gradient(90deg,transparent 0,#000 40%)}}
+
+/* v9 mobile image container wide enough to show the soft fade */
+@media(max-width:640px){.tv-hero-img{width:68%;height:290px;bottom:150px}.tv-hero-img img{position:absolute;right:0;left:auto}}
