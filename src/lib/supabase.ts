@@ -29,7 +29,9 @@ export function handle(fn: (req: Request, ctx: { params: Promise<Record<string, 
     catch (e) {
       if (e instanceof HttpError) return json({ error: e.message }, e.status);
       console.error(e);
-      return json({ error: "internal_error" }, 500);
+      // Admin routes only run this branch after the staff check: show the cause to help set up the platform.
+      const admin = new URL(req.url).pathname.startsWith("/api/admin");
+      return json(admin ? { error: "internal_error", detail: e instanceof Error ? e.message : String(e) } : { error: "internal_error" }, 500);
     }
   };
 }

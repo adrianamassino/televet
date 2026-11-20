@@ -23,7 +23,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const api = useCallback<Api>(async (p, init) => {
     const r = await fetch(p, { method: init?.method ?? "GET", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: init?.body === undefined ? undefined : JSON.stringify(init.body) });
     const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(r.status === 403 ? "Accesso riservato al team Televet." : (j as { error?: string }).error ?? `Errore ${r.status}`);
+    if (!r.ok) throw new Error(r.status === 403 ? "Accesso riservato al team Televet." : (() => { const e = j as { error?: string; detail?: string }; return e.detail ? `${e.error}: ${e.detail}` : e.error ?? `Errore ${r.status}`; })());
     return j;
   }, [token]);
   const value = useMemo(() => ({ api, email }), [api, email]);
