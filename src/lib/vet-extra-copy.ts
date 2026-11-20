@@ -1,0 +1,17 @@
+/** Extra labels for the vet space (agenda week view, clients, setup checklist). Order: fr, it, en, es, pl. */
+export const X: Record<string, [string, string, string, string, string]> = {
+  nClients: ["Clients", "Clienti", "Clients", "Clientes", "Klienci"],
+  viewWeek: ["Semaine", "Settimana", "Week", "Semana", "Tydzień"], viewList: ["Liste", "Elenco", "List", "Lista", "Lista"], today: ["Aujourd'hui", "Oggi", "Today", "Hoy", "Dziś"],
+  noWeek: ["Aucun rendez-vous cette semaine.", "Nessun appuntamento questa settimana.", "No appointments this week.", "Ninguna cita esta semana.", "Brak wizyt w tym tygodniu."],
+  close: ["Fermer", "Chiudi", "Close", "Cerrar", "Zamknij"],
+  clientsEmpty: ["Aucun client pour le moment. Ils apparaissent ici dès leur première réservation.", "Ancora nessun cliente. Compaiono qui dalla loro prima prenotazione.", "No clients yet. They appear here after their first booking.", "Todavía no hay clientes. Aparecen aquí desde su primera reserva.", "Brak klientów. Pojawią się tutaj po pierwszej rezerwacji."],
+  clientSearch: ["Chercher un client ou un animal", "Cerca un cliente o un animale", "Search a client or a pet", "Buscar un cliente o una mascota", "Szukaj klienta lub zwierzęcia"],
+  cClient: ["Client", "Cliente", "Client", "Cliente", "Klient"], cPets: ["Animaux", "Animali", "Pets", "Mascotas", "Zwierzęta"], cVisits: ["Rendez-vous", "Appuntamenti", "Appointments", "Citas", "Wizyty"],
+  cSpent: ["Dépensé", "Speso", "Spent", "Gastado", "Wydano"], cLast: ["Dernier rendez-vous", "Ultimo appuntamento", "Last appointment", "Última cita", "Ostatnia wizyta"], cTypes: ["Types", "Tipi", "Types", "Tipos", "Rodzaje"],
+  cContact: ["Contact", "Contatti", "Contact", "Contacto", "Kontakt"], cTotal: ["clients", "clienti", "clients", "clientes", "klientów"],
+  obTitle: ["Terminez de configurer votre profil", "Completa la configurazione del tuo profilo", "Finish setting up your profile", "Termina de configurar tu perfil", "Dokończ konfigurację profilu"],
+  obSub: ["Vos clients pourront réserver dès que ces étapes sont faites.", "I tuoi clienti potranno prenotare appena questi passaggi sono completati.", "Clients can book you as soon as these steps are done.", "Tus clientes podrán reservar en cuanto completes estos pasos.", "Klienci będą mogli rezerwować, gdy wykonasz te kroki."],
+  stepAccount: ["Compte", "Account", "Account", "Cuenta", "Konto"], stepProfile: ["Profil", "Profilo", "Profile", "Perfil", "Profil"], stepServices: ["Consultations et horaires", "Visite e orari", "Consultations & hours", "Consultas y horarios", "Konsultacje i godziny"], stepPay: ["Paiements", "Pagamenti", "Payments", "Pagos", "Płatności"],
+  signupLead: ["Créez votre compte en 30 secondes avec votre e-mail. Vous complétez votre profil ensuite, à votre rythme.", "Crea il tuo account in 30 secondi con la tua e-mail. Completi il profilo dopo, con calma.", "Create your account in 30 seconds with your e-mail. You complete your profile afterwards, at your own pace.", "Crea tu cuenta en 30 segundos con tu e-mail. Completas tu perfil después, a tu ritmo.", "Załóż konto w 30 sekund, używając e-maila. Profil uzupełnisz później, we własnym tempie."],
+  tabNew: ["Créer mon compte", "Crea il mio account", "Create my account", "Crear mi cuenta", "Załóż konto"], tabLogin: ["J'ai déjà un compte", "Ho già un account", "I already have an account", "Ya tengo cuenta", "Mam już konto"],
+};

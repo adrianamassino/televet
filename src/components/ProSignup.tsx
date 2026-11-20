@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Hospital, House, Stethoscope } from "lucide-react";
 import { errText, signInWithEmail, signInWithProvider, signUpWithEmail, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
+import { X } from "@/lib/vet-extra-copy";
 
 /**
  * Vet / clinic sign-up in two light stages so nobody is lost on a long form:
@@ -46,6 +47,7 @@ const slugify = (x: string) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]
 
 export default function ProSignup({ lang, country, currency, languages, timezone, provider }: { lang: string; country: string; currency: string; languages: string[]; timezone: string; provider: "stripe" | "mercadopago" }) {
   const t = T[lang as keyof typeof T] ?? T.en;
+  const xi = ["fr", "it", "en", "es", "pl"].indexOf(lang) < 0 ? 2 : ["fr", "it", "en", "es", "pl"].indexOf(lang), x = (k: string) => X[k][xi];
   const [step, setStep] = useState(0), [busy, setBusy] = useState(false), [msg, setMsg] = useState(""), [practiceId, setPracticeId] = useState("");
   const [login, setLogin] = useState(false), [name, setName] = useState(""), [email, setEmail] = useState(""), [pass, setPass] = useState("");
   const [kind, setKind] = useState<Kind>("vet"), [pname, setPname] = useState(""), [headline, setHeadline] = useState(""), [address, setAddress] = useState(""), [postal, setPostal] = useState(""), [phone, setPhone] = useState("");
@@ -152,14 +154,15 @@ export default function ProSignup({ lang, country, currency, languages, timezone
   return (
     <div>
       <h1>{t.title}</h1>
+      <ol className="su-steps" aria-label="Progress">{[x("stepAccount"), x("stepProfile"), x("stepServices"), x("stepPay")].map((l, i) => <li key={i} className={i === Math.min(step, 3) ? "on" : i < step ? "done" : ""} aria-current={i === Math.min(step, 3) ? "step" : undefined}>{i < step ? "✓ " : `${i + 1}. `}{l}</li>)}</ol>
       {step === 0 && <section>
-        <h2>{t.account}</h2>
+        <div className="su-tabs" role="tablist"><button role="tab" aria-selected={!login} onClick={() => { setLogin(false); setMsg(""); }}>{x("tabNew")}</button><button role="tab" aria-selected={login} onClick={() => { setLogin(true); setMsg(""); }}>{x("tabLogin")}</button></div>
+        {!login && <p>{x("signupLead")}</p>}
         <button className="btn btn-ghost" onClick={() => signInWithProvider("google", here)}>{t.google}</button>
         {!login && <><label className="label">{t.name}</label><input className="field" value={name} onChange={(e) => setName(e.target.value)} /></>}
         <label className="label">{t.email}</label><input className="field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <label className="label">{t.pass}</label><input className="field" type="password" value={pass} onChange={(e) => setPass(e.target.value)} />
-        <p><button className="btn" disabled={busy || !email || !pass || (!login && !name)} onClick={account}>{login ? t.login : t.create}</button>{" "}
-          <button className="btn btn-quiet" onClick={() => { setLogin(!login); setMsg(""); }}>{login ? t.create : t.have}</button></p>
+        <p><button className="btn" disabled={busy || !email || !pass || (!login && !name)} onClick={account}>{login ? t.login : t.create}</button></p>
       </section>}
       {step === 1 && <section>
         <h2>{t.prac}</h2>

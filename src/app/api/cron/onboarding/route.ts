@@ -1,5 +1,6 @@
 import { adminClient } from "@/lib/supabase";
-import { checklist, REMINDER_DAYS, sendOnboardingReminder } from "@/lib/onboarding";
+import { checklist, sendOnboardingReminder } from "@/lib/onboarding";
+import { REMINDER_DAYS } from "@/lib/onboarding-copy";
 
 /** Daily check-up: finds vet profiles that are not fully set up and e-mails reminders (after 1, 3, 7, 14 and 30 days), until they finish. */
 export async function GET(req: Request) {

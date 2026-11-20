@@ -6,6 +6,11 @@ import { ZERO_DECIMAL } from "@/lib/countries";
 import { VI } from "@/components/VI";
 import { pc } from "@/lib/profile-copy";
 import { zonedToUtc, addDays } from "@/lib/time";
+import { X } from "@/lib/vet-extra-copy";
+import AgendaWeek from "@/components/vet/AgendaWeek";
+import ClientsList from "@/components/vet/ClientsList";
+import OnboardingBanner from "@/components/vet/OnboardingBanner";
+import type { Missing } from "@/lib/onboarding-copy";
 
 /**
  * Vet space — same features as the old app.televet.co: clinic profile, vets (photo, public info, hours, consultations,
@@ -61,7 +66,7 @@ const S: Record<string, [string, string, string, string, string]> = {
   remTitle: ["E-mails de rappel aux propriétaires", "E-mail di promemoria ai proprietari", "Reminder e-mails to owners", "E-mails de recordatorio a los propietarios", "E-maile z przypomnieniem dla właścicieli"], rem24: ["Rappel 24 h avant le rendez-vous", "Promemoria 24 ore prima", "Reminder 24 h before", "Recordatorio 24 h antes", "Przypomnienie 24 h przed"], rem2: ["Rappel 2 h avant le rendez-vous", "Promemoria 2 ore prima", "Reminder 2 h before", "Recordatorio 2 h antes", "Przypomnienie 2 h przed"], emailLang: ["Langue des e-mails", "Lingua delle e-mail", "E-mail language", "Idioma de los e-mails", "Język e-maili"],
 };
 
-type Tab = "agenda" | "clinic" | "vets" | "settings" | "reminders";
+type Tab = "agenda" | "clients" | "clinic" | "vets" | "settings" | "reminders";
 type Sub = "menu" | "info" | "hours" | "services" | "holidays" | "video" | "cal";
 type Booking = { id: string; starts_at: string; ends_at: string; type: string; status: string; address: string | null; motive: string | null; access_notes: string | null; price_cents: number; currency: string; video_room: string | null; owners: { full_name: string; phone: string | null } | null; pets: { name: string; species: string } | null };
 type Practice = { id: string; slug: string; name: string; headline: string | null; about: string | null; address: string | null; postal_code: string | null; phone: string | null; email: string | null; languages: string[]; auto_confirm: boolean; published: boolean; stripe_status: string; mp_status: string; timezone: string; logo_url: string | null; booking_enabled: boolean; widget_title: string | null; email_language: string | null; reminders: { e24: boolean; e2: boolean }; city: string | null; website: string | null; founded_year: number | null; facilities: string[]; payment_methods: string[]; access_info: string | null; species: string[] };
@@ -76,13 +81,13 @@ const initials = (n: string) => n.replace(/^(dr|dott|dra)\.?\s+/i, "").split(/\s
 
 export default function VetDashboard({ lang, country, currency, languages, provider }: { lang: string; country: string; currency: string; languages: string[]; provider: "stripe" | "mercadopago" }) {
   const li = Math.max(0, (LANGS as readonly string[]).indexOf(lang)), en = LANGS.indexOf("en");
-  const t = (k: string) => (S[k]?.[(LANGS as readonly string[]).includes(lang) ? li : en]) ?? k;
+  const t = (k: string) => ((S[k] ?? X[k])?.[(LANGS as readonly string[]).includes(lang) ? li : en]) ?? k;
   const sb = useMemo(() => supabaseBrowser(), []);
   const PCt = pc(lang);
   const toggle = (arr: string[], k: string, on: boolean) => (on ? [...arr, k] : arr.filter((x) => x !== k));
   const Checks = ({ keys, labels, value, onChange }: { keys: string[]; labels: Record<string, string>; value: string[]; onChange: (v: string[]) => void }) => <div className="days">{keys.map((k) => <label key={k}><input type="checkbox" checked={value.includes(k)} onChange={(e) => onChange(toggle(value, k, e.target.checked))} />{labels[k] ?? k}</label>)}</div>;
   const slugOf = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const [ready, setReady] = useState(false), [signed, setSigned] = useState(false), [uid, setUid] = useState(""), [tab, setTab] = useState<Tab>("agenda"), [sub, setSub] = useState<Sub>("menu");
+  const [ready, setReady] = useState(false), [signed, setSigned] = useState(false), [uid, setUid] = useState(""), [tab, setTab] = useState<Tab>("agenda"), [sub, setSub] = useState<Sub>("menu"), [agView, setAgView] = useState<"week" | "list">("week"), [obKey, setObKey] = useState(0);
   const [toast, setToast] = useState<{ m: string; bad?: boolean } | null>(null), [email, setEmail] = useState(""), [pass, setPass] = useState("");
   const [p, setP] = useState<Practice | null>(null), [vets, setVets] = useState<Vet[]>([]), [vetId, setVetId] = useState<string>(""), [svcs, setSvcs] = useState<Svc[]>([]), [rules, setRules] = useState<Rule[]>([]), [blocks, setBlocks] = useState<Block[]>([]), [conns, setConns] = useState<Conn[]>([]), [feed, setFeed] = useState("");
   const [bookings, setBookings] = useState<Booking[]>([]), [replyFor, setReplyFor] = useState<string | null>(null), [reply, setReply] = useState("");
@@ -195,21 +200,26 @@ export default function VetDashboard({ lang, country, currency, languages, provi
   return (
     <div className="app">
       <aside className="side">
-        <a className="brand" href={`/${lang}/${country.toLowerCase()}/`}><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 29C6 21.6 2 17.2 2 11.6 2 7.4 5.2 4.5 9 4.5c2.6 0 5 1.4 7 4 2-2.6 4.4-4 7-4 3.8 0 7 2.9 7 7.1 0 5.6-4 10-14 17.4Z" /></svg>televet</a>
-        <Pill k="agenda" label={t("nAgenda")} I={CalendarDays} /><Pill k="clinic" label={t("nClinic")} I={Hospital} /><Pill k="vets" label={t("nVets")} I={Stethoscope} /><Pill k="settings" label={t("nSettings")} I={Settings} /><Pill k="reminders" label={t("nReminders")} I={BellRing} />
+        <a className="brand" href={`/${lang}/${country.toLowerCase()}/`} aria-label="Televet"><img src="/logo.svg" alt="Televet" height={34} style={{ height: 34, width: "auto" }} /></a>
+        <Pill k="agenda" label={t("nAgenda")} I={CalendarDays} /><Pill k="clients" label={t("nClients")} I={Users} /><Pill k="clinic" label={t("nClinic")} I={Hospital} /><Pill k="vets" label={t("nVets")} I={Stethoscope} /><Pill k="settings" label={t("nSettings")} I={Settings} /><Pill k="reminders" label={t("nReminders")} I={BellRing} />
         <div className="who">{p.name}<br /><button onClick={async () => { await signOut(); setSigned(false); }}>{t("out")}</button></div>
       </aside>
       <div className="main">
+        <OnboardingBanner lang={lang} t={t} token={token} refreshKey={`${obKey}-${p.phone}-${p.postal_code}-${svcs.length}-${rules.length}-${payState}`} go={(m: Missing) => { if (m === "profile") { setTab("clinic"); setSub("menu"); } else if (m === "payments") { setTab("settings"); setSub("menu"); } else { setTab("vets"); if (vets[0]) { setVetId(vets[0].id); setSub(m === "hours" ? "hours" : "services"); } } window.scrollTo({ top: 0 }); }} />
         <p style={{ margin: "0 0 18px" }}>{p.published ? <span className="chip ok">{t("live")}</span> : <span className="chip wait">{t("review")}</span>}</p>
+
+        {tab === "clients" && <ClientsList lang={lang} tz={p.timezone} t={t} money={money} token={token} />}
 
         {tab === "agenda" && <section><h1>{t("nAgenda")}</h1>
           <div className="stats">
             <div className="stat t-sun" style={{ ["--tile" as string]: "var(--sun-bg)" }}><span className="ico t-sun"><VI n="clock" size={34} /></span><div><b>{pending.length}</b><span>{t("pending")}</span></div></div>
             <div className="stat t-sky" style={{ ["--tile" as string]: "var(--sky-bg)" }}><span className="ico t-sky"><VI n="calendar" size={34} /></span><div><b>{upcoming.length}</b><span>{t("upcoming")}</span></div></div>
             <div className="stat t-mint" style={{ ["--tile" as string]: "var(--mint-bg)" }}><span className="ico t-mint"><VI n="vet" size={34} /></span><div><b>{vets.length}</b><span>{t("nVets")}</span></div></div></div>
+          <div className="ag-toggle" role="tablist"><button role="tab" aria-selected={agView === "week"} onClick={() => setAgView("week")}>{t("viewWeek")}</button><button role="tab" aria-selected={agView === "list"} onClick={() => setAgView("list")}>{t("viewList")}</button></div>
+          {agView === "week" && <AgendaWeek lang={lang} tz={p.timezone} t={t} money={money} token={token} onAct={async (id, what) => { await act(id, what); }} />}
           {pending.length > 0 && <><h2>{t("pending")}</h2>{pending.map((b) => row(b, true))}</>}
-          <h2>{t("upcoming")}</h2>{upcoming.length ? upcoming.map((b) => row(b, false)) : <p>{t("none")}</p>}
-          {past.length > 0 && <><h2>{t("past")}</h2>{past.slice(0, 30).map((b) => row(b, false))}</>}</section>}
+          {agView === "list" && <><h2>{t("upcoming")}</h2>{upcoming.length ? upcoming.map((b) => row(b, false)) : <p>{t("none")}</p>}
+          {past.length > 0 && <><h2>{t("past")}</h2>{past.slice(0, 30).map((b) => row(b, false))}</>}</>}</section>}
 
         {tab === "clinic" && <section><h1>{t("clinicProfile")}</h1>
           <PhotoPick src={p.logo_url} name={p.name} onFile={(u) => saveP({ logo_url: u })} />

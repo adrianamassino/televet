@@ -7,9 +7,13 @@ export const GET = handle(async (req) => {
   const db = adminClient();
   const { data: practice } = await db.from("practices").select("id").eq("owner_user_id", user.id).maybeSingle();
   if (!practice) return json({ bookings: [] });
-  const since = new Date(Date.now() - 30 * 86400000).toISOString();
-  const { data } = await db.from("bookings")
+  const u = new URL(req.url), okDate = (v: string | null) => (v && !Number.isNaN(Date.parse(v)) ? new Date(v).toISOString() : null);
+  const from = okDate(u.searchParams.get("from")), to = okDate(u.searchParams.get("to"));
+  const since = from ?? new Date(Date.now() - 30 * 86400000).toISOString();
+  let q = db.from("bookings")
     .select("id, starts_at, ends_at, type, status, address, motive, access_notes, price_cents, currency, payment_status, video_room, owners(full_name, phone), pets(name, species), services(custom_name, catalog_code)")
     .eq("practice_id", practice.id).gte("starts_at", since).order("starts_at", { ascending: true }).limit(300);
+  if (to) q = q.lt("starts_at", to);
+  const { data } = await q;
   return json({ bookings: data ?? [] });
 });
