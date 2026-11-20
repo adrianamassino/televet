@@ -1,7 +1,7 @@
 "use client";
-import { Badge, date, Err, KIND, Moneys, REVIEW, TYPE, useLoad, type Stat } from "@/components/admin/ui";
+import { Badge, countryName, date, eur, Err, KIND, Moneys, REVIEW, TYPE, useLoad, type Stat } from "@/components/admin/ui";
 
-type O = { owners: number; pets: number; practices: number; pending: number; approved: number; rejected: number; suspended: number; vetsPending: number; newOwners: number; newPractices: number; claims: number; chats: number; bookings: Stat; pendingList: { id: string; name: string; kind: string; country: string; created_at: string; review_status: string }[] };
+type O = { owners: number; pets: number; practices: number; pending: number; approved: number; rejected: number; suspended: number; vetsPending: number; newOwners: number; newPractices: number; claims: number; chats: number; bookings: Stat; byCountry: { country: string; practices: number; pending: number; owners: number; bookings: number; revenue: Record<string, number> }[]; pendingList: { id: string; name: string; kind: string; country: string; created_at: string; review_status: string }[] };
 
 export default function Overview() {
   const { data: o, err, busy } = useLoad<O>("/api/admin/overview");
@@ -19,10 +19,15 @@ export default function Overview() {
           <Tile n={o.bookings.patients} l="Pazienti passati da Televet" sub={`${o.bookings.clients} clienti`} />
           <Tile n={<Moneys m={o.bookings.revenue} k="gross" />} l="Incassato (pagamenti online)" sub={<>Commissioni Televet: <Moneys m={o.bookings.revenue} k="commission" /></>} />
         </div>
+        <h2>Per paese</h2>
+        {o.byCountry.length === 0 ? <p className="adm-empty">Ancora nessun dato.</p> :
+          <div className="adm-scroll"><table className="adm-table"><thead><tr><th>Paese</th><th>Cliniche e veterinari</th><th>Da approvare</th><th>Proprietari</th><th>Appuntamenti</th><th>Incassato</th></tr></thead><tbody>
+            {o.byCountry.map((c) => <tr key={c.country} onClick={() => { try { localStorage.setItem("adm-country", c.country); } catch {} location.href = "/admin/practices"; }}><td><a href="/admin/practices" onClick={() => { try { localStorage.setItem("adm-country", c.country); } catch {} }}>{countryName(c.country)}</a></td><td>{c.practices}</td><td>{c.pending || "—"}</td><td>{c.owners}</td><td>{c.bookings}</td><td>{Object.entries(c.revenue).map(([cur, v]) => eur(v, cur)).join(" + ") || "—"}</td></tr>)}
+          </tbody></table></div>}
         <h2>Ultime iscrizioni da approvare</h2>
         {o.pendingList.length === 0 ? <p className="adm-empty">Nessuna iscrizione in attesa.</p> :
           <table className="adm-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Paese</th><th>Iscritta il</th><th>Stato</th></tr></thead><tbody>
-            {o.pendingList.map((p) => <tr key={p.id} onClick={() => (location.href = `/admin/practices/${p.id}`)}><td><a href={`/admin/practices/${p.id}`}>{p.name}</a></td><td>{KIND[p.kind]}</td><td>{p.country}</td><td>{date(p.created_at)}</td><td><Badge s={p.review_status} label={REVIEW[p.review_status]} /></td></tr>)}
+            {o.pendingList.map((p) => <tr key={p.id} onClick={() => (location.href = `/admin/practices/${p.id}`)}><td><a href={`/admin/practices/${p.id}`}>{p.name}</a></td><td>{KIND[p.kind]}</td><td>{countryName(p.country)}</td><td>{date(p.created_at)}</td><td><Badge s={p.review_status} label={REVIEW[p.review_status]} /></td></tr>)}
           </tbody></table>}
       </>}
     </>

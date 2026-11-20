@@ -30,3 +30,37 @@ export function useLoad<T>(url: string) {
   return { data, err, busy, reload: load };
 }
 export const Err = ({ m }: { m: string }) => (m ? <p role="alert" className="adm-err">{m}</p> : null);
+
+/** Country names in Italian, in the order they appear in the country filter. */
+export const COUNTRY_NAMES: Record<string, string> = { FR: "Francia", IT: "Italia", ES: "Spagna", PT: "Portogallo", BE: "Belgio", CH: "Svizzera", DE: "Germania", AT: "Austria", PL: "Polonia", GB: "Regno Unito", US: "Stati Uniti", AU: "Australia", MX: "Messico", AR: "Argentina", UY: "Uruguay", CL: "Cile", BR: "Brasile" };
+export const countryName = (c?: string | null) => (c ? COUNTRY_NAMES[c] ?? c : "—");
+
+/** Country selector shared by every list: the choice is remembered between pages. */
+export function useCountry(initial?: string | null) {
+  const [country, set] = useState<string>(() => {
+    if (initial) return initial;
+    try { return localStorage.getItem("adm-country") ?? ""; } catch { return ""; }
+  });
+  const setCountry = (c: string) => { set(c); try { localStorage.setItem("adm-country", c); } catch {} };
+  return [country, setCountry] as const;
+}
+export function CountrySelect({ value, onChange }: { value: string; onChange: (c: string) => void }) {
+  return (
+    <select value={value} onChange={(e) => onChange(e.target.value)} aria-label="Paese">
+      <option value="">Tutti i paesi</option>
+      {Object.entries(COUNTRY_NAMES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+    </select>
+  );
+}
+
+/** Downloads the rows currently shown as a CSV file that opens in Excel (UTF-8 with BOM, ';' separator). */
+export function CsvButton({ name, rows }: { name: string; rows: (string | number | null | undefined)[][] }) {
+  const go = () => {
+    const esc = (v: string | number | null | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const blob = new Blob(["\ufeff" + rows.map((r) => r.map(esc).join(";")).join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = `${name}-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  return <button type="button" className="adm-btn" onClick={go} disabled={rows.length < 2}>Esporta CSV</button>;
+}
