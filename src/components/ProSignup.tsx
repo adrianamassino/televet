@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Hospital, House, Stethoscope } from "lucide-react";
-import { signInWithEmail, signInWithProvider, signUpWithEmail, supabaseBrowser } from "@/lib/auth-client";
+import { errText, signInWithEmail, signInWithProvider, signUpWithEmail, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
 
 /**
@@ -63,7 +63,7 @@ export default function ProSignup({ lang, country, currency, languages, timezone
         if (data.session) { await supabaseBrowser().from("owners").upsert({ id: data.user!.id, full_name: name, country, language: lang }, { onConflict: "id", ignoreDuplicates: true }); setStep(1); }
         else setMsg(t.checkMail);
       }
-    } catch (e) { setMsg(t.err + (e instanceof Error ? e.message : String(e))); }
+    } catch (e) { setMsg(t.err + errText(e)); }
     setBusy(false);
   }
 
@@ -89,7 +89,7 @@ export default function ProSignup({ lang, country, currency, languages, timezone
         if (e4) throw e4;
       }
       setStep(3);
-    } catch (e) { setMsg(t.err + (e instanceof Error ? e.message : String(e))); }
+    } catch (e) { setMsg(t.err + errText(e)); }
     setBusy(false);
   }
 

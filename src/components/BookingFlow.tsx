@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { VI } from "@/components/VI";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { signInWithEmail, signInWithProvider, signUpWithEmail, supabaseBrowser } from "@/lib/auth-client";
+import { errText, signInWithEmail, signInWithProvider, signUpWithEmail, supabaseBrowser } from "@/lib/auth-client";
 import { ZERO_DECIMAL } from "@/lib/countries";
 
 /** Owner booking: service → time → account → pet & reason → payment. Server re-checks availability, zone and payment (/api/bookings). */
@@ -90,7 +90,7 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
         const { data, error } = await signUpWithEmail(email, pass, name); if (error) throw error;
         if (data.session) { await ensureOwnerAndPets(data.user!.id, name); setSignedIn(true); setStep("details"); } else setMsg(t.checkMail);
       }
-    } catch (e) { err(e instanceof Error ? e.message : String(e)); }
+    } catch (e) { errerrText(e); }
     setBusy(false);
   }
   async function submit() {
@@ -110,7 +110,7 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
       if (!j.payment) setStep("done");
       else if (j.payment.provider === "stripe") { setSecret(j.payment.clientSecret); setPrice(svc.price); setStep("pay"); }
       else window.location.href = j.payment.redirectUrl;
-    } catch (e) { err(e instanceof Error ? e.message : String(e)); }
+    } catch (e) { errerrText(e); }
     setBusy(false);
   }
 

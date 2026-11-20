@@ -28,3 +28,13 @@ export const signInWithEmail = (email: string, password: string) =>
   supabaseBrowser().auth.signInWithPassword({ email, password });
 
 export const signOut = () => supabaseBrowser().auth.signOut();
+
+/** Readable text for any thrown value (Supabase errors are plain objects, not Error instances). */
+export function errText(e: unknown): string {
+  if (e instanceof Error) return e.message;
+  if (e && typeof e === "object") {
+    const o = e as { message?: string; details?: string; hint?: string; code?: string };
+    return [o.message, o.details, o.hint].filter(Boolean).join(" — ") || JSON.stringify(e);
+  }
+  return String(e);
+}
