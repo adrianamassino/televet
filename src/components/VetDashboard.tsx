@@ -1,4 +1,5 @@
 "use client";
+import JoinVideo from "@/components/JoinVideo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BellRing, CalendarCheck, CalendarDays, Clock, Hospital, Settings, Stethoscope, Users } from "lucide-react";
 import { signInWithEmail, signInWithProvider, signOut, supabaseBrowser } from "@/lib/auth-client";
@@ -189,7 +190,7 @@ export default function VetDashboard({ lang, country, currency, languages, provi
     <div>{t("t_" + b.type).split(" (")[0]} · {money(b.price_cents, b.currency)}</div>
     <div>{b.owners?.full_name}{b.owners?.phone ? ` · ${b.owners.phone}` : ""}{b.pets?.name ? ` — ${b.pets.name}` : ""}</div>
     {b.motive && <small>{b.motive}</small>}{b.address && <div><small>{b.address}{b.access_notes ? ` · ${b.access_notes}` : ""}</small></div>}
-    {b.status === "confirmed" && b.video_room && b.type === "video" && <div><a href={`/visio/${b.id}`}>{t("join")}</a></div>}
+    {b.status === "confirmed" && b.video_room && b.type === "video" && <div style={{ marginTop: 6 }}><JoinVideo bookingId={b.id} lang={lang} /></div>}
     {actions && <div style={{ marginTop: 10 }}>{replyFor === b.id && <input className="field" style={{ marginBottom: 8 }} placeholder={t("reason")} value={reply} onChange={(e) => setReply(e.target.value)} />}
       <button className="btn" onClick={() => act(b.id, "confirm")}>{t("accept")}</button>{" "}<button className="btn btn-ghost" onClick={() => (replyFor === b.id ? act(b.id, "decline") : setReplyFor(b.id))}>{t("decline")}</button></div>}
   </div>;

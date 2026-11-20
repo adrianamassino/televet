@@ -1,4 +1,5 @@
 "use client";
+import JoinVideo from "@/components/JoinVideo";
 import { useEffect, useState } from "react";
 import { signInWithProvider, signOut, supabaseBrowser } from "@/lib/auth-client";
 import { VI } from "@/components/VI";
@@ -10,7 +11,7 @@ const T = {
   es: { title: "Mi cuenta", login: "Entra para ver tus citas", google: "Continuar con Google", apple: "Continuar con Apple", bookings: "Mis citas", none: "Aún no hay citas.", pets: "Mis mascotas", noPets: "No hay mascotas guardadas.", add: "Añadir", name: "Nombre", out: "Cerrar sesión", st: { pending: "Pendiente", confirmed: "Confirmada", declined: "Rechazada", cancelled: "Cancelada" }, sp: { dog: "Perro", cat: "Gato", rabbit: "Conejo", ferret: "Hurón", bird: "Ave", horse: "Caballo", other: "Otro" } },
 } as const;
 type L = keyof typeof T;
-interface B { id: string; starts_at: string; type: string; status: keyof typeof T["fr"]["st"]; practices: { name: string } | null; pets: { name: string } | null }
+interface B { id: string; starts_at: string; ends_at: string; type: string; status: keyof typeof T["fr"]["st"]; practices: { name: string } | null; pets: { name: string } | null }
 interface P { id: string; name: string; species: string }
 const CARNET: Record<string, string> = { fr: "Carnet de santé", it: "Libretto sanitario", en: "Health record", es: "Cartilla sanitaria" };
 const ICON: Record<string, string> = { video: "monitor", home: "housePaw", clinic: "clinic", expertise: "stethoscope" };
@@ -28,7 +29,7 @@ export default function OwnerAccount({ lang }: { lang: string }) {
     if (!u.user) return setUser(false);
     setUser(true);
     const [b, p] = await Promise.all([
-      sb.from("bookings").select("id, starts_at, type, status, practices(name), pets(name)").order("starts_at", { ascending: false }).limit(50),
+      sb.from("bookings").select("id, starts_at, ends_at, type, status, practices(name), pets(name)").order("starts_at", { ascending: false }).limit(50),
       sb.from("pets").select("id, name, species").order("created_at"),
     ]);
     setBookings((b.data as unknown as B[]) ?? []); setPets(p.data ?? []);
@@ -49,7 +50,7 @@ export default function OwnerAccount({ lang }: { lang: string }) {
       {bookings.length === 0 ? <p>{t.none}</p> : <ul className="acct-list">{bookings.map((b) => <li key={b.id}>
         <span className="ico sm"><VI n={ICON[b.type] ?? "calendar"} size={30} /></span>
         <span><strong>{b.practices?.name}</strong><br /><small>{fmt(b.starts_at)}{b.pets?.name ? ` · ${b.pets.name}` : ""}</small></span>
-        <span className={`pill st-${b.status}`}>{t.st[b.status]}</span></li>)}</ul>}
+        <span className={`pill st-${b.status}`}>{t.st[b.status]}</span>{b.status === "confirmed" && (b.type === "video" || b.type === "expertise") && new Date(b.ends_at).getTime() + 3600000 > Date.now() && <JoinVideo bookingId={b.id} lang={lang} />}</li>)}</ul>}
     </section>
     <section><h2>{t.pets}</h2>
       {pets.length === 0 ? <p>{t.noPets}</p> : <ul className="acct-list">{pets.map((p) => <li key={p.id}><span className="ico sm"><VI n={PET[p.species] ?? "paw"} size={30} /></span><span><strong>{p.name}</strong><br /><small>{(t.sp as Record<string, string>)[p.species]}</small></span><a className="btn btn-ghost" style={{ marginLeft: "auto" }} href={`/${lang}/${typeof window !== "undefined" ? window.location.pathname.split("/")[2] || lang : lang}/compte/animal/${p.id}`}>{CARNET[lang] ?? CARNET.en}</a></li>)}</ul>}
