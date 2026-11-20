@@ -37,3 +37,13 @@ test("Brazilian Portuguese derivation", () => {
   assert.equal(brazilian("A casa e a mulher"), "A casa e a mulher"); // no false positives on plain articles
   assert.deepEqual(brazilian({ a: ["os seus cães"] }), { a: ["seus cachorros"] });
 });
+
+import { validate } from "../scripts/import-legacy-practices";
+test("legacy practice import validation", () => {
+  const ok = { kind: "clinic" as const, name: "Lilas", owner_email: "a@b.fr", country: "fr", stripe_account_id: "acct_1AbC" };
+  assert.deepEqual(validate(ok), []);
+  assert.ok(validate({ ...ok, owner_email: "x" }).length);
+  assert.ok(validate({ ...ok, country: "ZZ" }).length);
+  assert.ok(validate({ ...ok, stripe_account_id: "sk_live_x" }).length); // never accept a secret key by mistake
+  assert.ok(validate({ ...ok, services: [{ type: "home", duration_min: 1, price_cents: 100 }] }).length);
+});

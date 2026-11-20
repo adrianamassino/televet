@@ -20,6 +20,7 @@ Backend di produzione di Televet: database, sicurezza, disponibilità, prenotazi
 | iCal: feed privato per Apple Calendario / Outlook + importazione di un URL .ics (ricorrenze incluse) | ✅ testato |
 | Vetup, VetIt, Petbooqz | ⏳ connettori pronti: da riprendere dal codice attuale di app.televet.co (vedi sotto) |
 | Migrazione delle sincronizzazioni esistenti | ✅ `scripts/import-legacy-connections.ts` |
+| Migrazione di cliniche, veterinari e account Stripe dal vecchio Televet | ✅ `scripts/import-legacy-practices.ts` (prova a secco senza `--apply`) |
 | Interfacce proprietari e veterinari (web + app iOS/Android) | ⏳ prossima fase, da costruire sopra queste API |
 
 Verifiche eseguite: `npm run typecheck` (0 errori), `npm test` (9/9), `npm run build` (ok).
