@@ -131,7 +131,7 @@ export default function ProSignup({ lang, country, currency, languages, timezone
         {(Object.keys(svc) as Svc[]).map((k) => <div key={k} className="panel">
           <label><input type="checkbox" checked={svc[k].on} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], on: e.target.checked } })} /> <strong>{t.svcName[k]}</strong></label>
           {svc[k].on && <div className="grid2" style={{ marginTop: 8 }}>
-            <div style={{ flex: 1 }}><small>{t.price} ({currency})</small><input className="field" inputMode="decimal" value={svc[k].price} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], price: e.target.value.replace(",", ".") } })} /></div>
+            <div style={{ flex: 1 }}><small>{t.price} ({currency})</small><input className="field" inputMode="decimal" value={svc[k].price} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], price: e.target.value.replace(",", ".").replace(/[^0-9.]/g, "") } })} /></div>
             <div style={{ flex: 1 }}><small>{t.dur}</small><input className="field" inputMode="numeric" value={svc[k].dur} onChange={(e) => setSvc({ ...svc, [k]: { ...svc[k], dur: e.target.value } })} /></div></div>}
         </div>)}
         <h2>{t.hours}</h2>

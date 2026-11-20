@@ -90,7 +90,7 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
         const { data, error } = await signUpWithEmail(email, pass, name); if (error) throw error;
         if (data.session) { await ensureOwnerAndPets(data.user!.id, name); setSignedIn(true); setStep("details"); } else setMsg(t.checkMail);
       }
-    } catch (e) { errerrText(e); }
+    } catch (e) { err(errText(e)); }
     setBusy(false);
   }
   async function submit() {
@@ -110,7 +110,7 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
       if (!j.payment) setStep("done");
       else if (j.payment.provider === "stripe") { setSecret(j.payment.clientSecret); setPrice(svc.price); setStep("pay"); }
       else window.location.href = j.payment.redirectUrl;
-    } catch (e) { errerrText(e); }
+    } catch (e) { err(errText(e)); }
     setBusy(false);
   }
 
