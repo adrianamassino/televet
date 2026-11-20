@@ -1,5 +1,5 @@
-import "@fontsource-variable/bricolage-grotesque";
-import "@fontsource-variable/figtree";
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/inter";
 import "./globals.css";
 import ChatWidget from "@/components/ChatWidget";
 export const metadata = { title: "Televet", description: "Trouvez un vétérinaire et réservez en ligne" };
