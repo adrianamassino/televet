@@ -64,3 +64,32 @@ export function CsvButton({ name, rows }: { name: string; rows: (string | number
   };
   return <button type="button" className="adm-btn" onClick={go} disabled={rows.length < 2}>Esporta CSV</button>;
 }
+
+/** Plain-words description of a commission rule (percentage taken from the vet's price, or a fixed fee added on top). */
+export const ruleLabel = (pct: number | null | undefined, fixed: number | null | undefined, cur = "EUR") =>
+  fixed !== null && fixed !== undefined ? `${eur(fixed, cur)} fissi in più` : pct !== null && pct !== undefined ? `${pct}%` : "—";
+
+export type CommissionBody = { commission_pct: number | null; commission_fixed_cents: number | null };
+/** Commission editor: percentage OR fixed fee in cents added to the vet's price (1000 = 10,00). `inherit` = label shown when nothing is set (omit to force a value). */
+export function CommissionInput({ pct, fixed, inherit, cur = "EUR", onSave }: { pct: number | null; fixed: number | null; inherit?: string; cur?: string; onSave: (b: CommissionBody) => void | Promise<void> }) {
+  const start = fixed !== null && fixed !== undefined ? "fixed" : pct !== null && pct !== undefined ? "pct" : inherit ? "inherit" : "pct";
+  const [mode, setMode] = useState<"inherit" | "pct" | "fixed">(start as "inherit" | "pct" | "fixed");
+  const [v, setV] = useState(start === "fixed" ? String(fixed) : start === "pct" ? String(pct) : "");
+  const n = Number(v), ok = mode === "inherit" || (v !== "" && Number.isFinite(n) && n >= 0 && (mode === "pct" ? n <= 100 : Number.isInteger(n)));
+  const save = () => onSave(mode === "inherit" ? { commission_pct: null, commission_fixed_cents: null } : mode === "pct" ? { commission_pct: n, commission_fixed_cents: null } : { commission_pct: null, commission_fixed_cents: n });
+  return (
+    <div className="adm-commission">
+      <div className="adm-inline">
+        <select value={mode} onChange={(e) => setMode(e.target.value as "inherit" | "pct" | "fixed")} aria-label="Tipo di commissione">
+          {inherit && <option value="inherit">{inherit}</option>}
+          <option value="pct">Percentuale</option>
+          <option value="fixed">Importo fisso</option>
+        </select>
+        {mode !== "inherit" && <><input type="number" min={0} max={mode === "pct" ? 100 : undefined} step={mode === "pct" ? "0.5" : "1"} value={v} onChange={(e) => setV(e.target.value)} aria-label="Valore commissione" /><span>{mode === "pct" ? "%" : "cent"}</span></>}
+        <button className="adm-btn" disabled={!ok} onClick={save}>Salva</button>
+      </div>
+      {mode === "fixed" && <small className="adm-sub">{ok && v !== "" ? `= ${eur(n, cur)} in più sul prezzo del veterinario` : "In centesimi: 1000 = 10,00 €"}</small>}
+      {mode === "pct" && <small className="adm-sub">Trattenuta dal prezzo del veterinario</small>}
+    </div>
+  );
+}

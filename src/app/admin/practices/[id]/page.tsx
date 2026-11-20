@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Badge, date, day, eur, Err, KIND, Moneys, PAY, REVIEW, STATUS, TYPE, Types, useLoad, type Stat } from "@/components/admin/ui";
+import { Badge, CommissionInput, date, day, eur, Err, KIND, Moneys, PAY, REVIEW, STATUS, TYPE, Types, useLoad, type Stat } from "@/components/admin/ui";
 import { useAdmin } from "@/components/admin/AdminShell";
 
-type Vet = { id: string; display_name: string; title: string | null; active: boolean; approved: boolean; commission_pct: number | null; stats: Stat | null };
+type Vet = { id: string; display_name: string; title: string | null; active: boolean; approved: boolean; commission_pct: number | null; commission_fixed_cents: number | null; stats: Stat | null };
 type D = {
-  practice: { id: string; name: string; kind: string; country: string; address: string | null; postal_code: string | null; city: string | null; email: string | null; phone: string | null; website: string | null; slug: string; review_status: string; review_note: string | null; reviewed_by: string | null; reviewed_at: string | null; published: boolean; booking_enabled: boolean; commission_pct: number | null; stripe_status: string; mp_status: string; ownerEmail: string | null; created_at: string };
-  country: { default_commission_pct: number; currency: string; payment_provider: string } | null; vets: Vet[]; stats: Stat | null;
+  practice: { id: string; name: string; kind: string; country: string; address: string | null; postal_code: string | null; city: string | null; email: string | null; phone: string | null; website: string | null; slug: string; review_status: string; review_note: string | null; reviewed_by: string | null; reviewed_at: string | null; published: boolean; booking_enabled: boolean; commission_pct: number | null; commission_fixed_cents: number | null; stripe_status: string; mp_status: string; ownerEmail: string | null; created_at: string };
+  country: { default_commission_pct: number; default_commission_fixed_cents: number | null; currency: string; payment_provider: string } | null; vets: Vet[]; stats: Stat | null;
   patients: { pet: string; species: string; client: string; visits: number; last: string }[];
   bookings: { id: string; starts_at: string; type: string; status: string; payment_status: string; price_cents: number; commission_cents: number; currency: string; vet: string; client: string; clientPhone: string; pet: string; species: string; service: string }[];
 };
@@ -15,9 +15,9 @@ type D = {
 export default function Detail() {
   const { id } = useParams<{ id: string }>(), router = useRouter(), { api } = useAdmin();
   const { data: d, err, reload } = useLoad<D>(`/api/admin/practices/${id}`);
-  const [msg, setMsg] = useState(""), [note, setNote] = useState(""), [pct, setPct] = useState<string | null>(null), [tab, setTab] = useState<"vets" | "patients" | "bookings">("vets");
+  const [msg, setMsg] = useState(""), [note, setNote] = useState(""), [tab, setTab] = useState<"vets" | "patients" | "bookings">("vets");
   if (!d) return <><h1>Clinica</h1><Err m={err} /></>;
-  const p = d.practice, std = Number(d.country?.default_commission_pct ?? 0), eff = p.commission_pct ?? std;
+  const p = d.practice, stdLabel = d.country?.default_commission_fixed_cents != null ? `${d.country.default_commission_fixed_cents / 100} € fissi` : `${Number(d.country?.default_commission_pct ?? 0)}%`, effLabel = p.commission_fixed_cents != null ? `${p.commission_fixed_cents / 100} € fissi in più sul prezzo` : p.commission_pct != null ? `${p.commission_pct}%` : stdLabel;
   const run = async (fn: () => Promise<unknown>, ok?: string) => { setMsg(""); try { await fn(); if (ok) setMsg(ok); await reload(); } catch (e) { setMsg((e as Error).message); } };
   const patch = (body: object, ok?: string) => run(() => api(`/api/admin/practices/${id}`, { method: "PATCH", body }), ok);
   const vet = (vid: string, body: object, ok?: string) => run(() => api(`/api/admin/practitioners/${vid}`, { method: "PATCH", body }), ok);
@@ -50,10 +50,8 @@ export default function Detail() {
         </dl>{p.published && <p><a href={`/${p.country === "AR" ? "es" : p.country === "IT" ? "it" : "fr"}/${p.country.toLowerCase()}/veterinaire/${p.slug}`} target="_blank">Apri la pagina pubblica ↗</a></p>}</section>
 
         <section className="adm-card"><h2>Commissione Televet</h2>
-          <p>Commissione su ogni prenotazione pagata online. <b>Attuale: {eff}%</b> {p.commission_pct === null ? `(standard del paese ${d.practice.country})` : "(impostata per questa clinica)"}.</p>
-          <div className="adm-inline"><input type="number" min={0} max={100} step="0.5" value={pct ?? (p.commission_pct ?? "")} placeholder={`${std} (standard)`} onChange={(e) => setPct(e.target.value)} aria-label="Commissione clinica %" /><span>%</span>
-            <button className="adm-btn primary" onClick={() => patch({ commission_pct: pct === null || pct === "" ? null : Number(pct) }, "✓ Commissione salvata (vale per le prossime prenotazioni)").then(() => setPct(null))}>Salva</button>
-            {p.commission_pct !== null && <button className="adm-btn" onClick={() => patch({ commission_pct: null }, "✓ Tornata allo standard del paese").then(() => setPct(null))}>Usa standard</button>}</div>
+          <p>Commissione su ogni prenotazione pagata online. <b>Attuale: {effLabel}</b> {p.commission_pct === null && p.commission_fixed_cents === null ? `(standard del paese ${d.practice.country})` : "(impostata per questa clinica)"}.</p>
+          <CommissionInput pct={p.commission_pct} fixed={p.commission_fixed_cents} inherit={`Standard del paese (${stdLabel})`} cur={d.country?.currency ?? "EUR"} onSave={(b) => patch(b, "✓ Commissione salvata (vale per le prossime prenotazioni)")} />
           <p className="adm-hint">Regola: se un veterinario ha una commissione sua vale quella; altrimenti quella della clinica; altrimenti lo standard del paese. Le prenotazioni già fatte non cambiano.</p>
           <button className="adm-btn" onClick={() => confirm("Togliere le commissioni personalizzate di tutti i veterinari? Tutti seguiranno la commissione della clinica.") && patch({ clearVetOverrides: true }, "✓ Tutti i veterinari ora seguono la clinica")}>Stessa commissione per tutti i veterinari</button>
         </section>
@@ -69,7 +67,7 @@ export default function Detail() {
       <div className="adm-tabs" role="tablist">{([["vets", `Veterinari (${d.vets.length})`], ["patients", `Pazienti (${d.patients.length})`], ["bookings", `Appuntamenti (${d.bookings.length})`]] as const).map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{l}</button>)}</div>
 
       {tab === "vets" && <div className="adm-scroll"><table className="adm-table"><thead><tr><th>Veterinario</th><th>Stato</th><th>Appuntamenti</th><th>Pazienti</th><th>Incassato</th><th>Commissione propria</th><th></th></tr></thead><tbody>
-        {d.vets.map((v) => <VetRow key={v.id} v={v} eff={eff} onSave={(x) => vet(v.id, { commission_pct: x }, "✓ Commissione veterinario salvata")} onApprove={() => vet(v.id, { approved: !v.approved }, v.approved ? "✓ Approvazione revocata" : "✓ Veterinario approvato")} onActive={() => vet(v.id, { active: !v.active })}
+        {d.vets.map((v) => <VetRow key={v.id} v={v} inherit={`Come la clinica (${effLabel})`} cur={d.country?.currency ?? "EUR"} onSave={(b) => vet(v.id, b, "✓ Commissione veterinario salvata")} onApprove={() => vet(v.id, { approved: !v.approved }, v.approved ? "✓ Approvazione revocata" : "✓ Veterinario approvato")} onActive={() => vet(v.id, { active: !v.active })}
           onDelete={async () => { if (!confirm(`Eliminare ${v.display_name}?`)) return; try { await api(`/api/admin/practitioners/${v.id}`, { method: "DELETE" }); reload(); } catch (e) { const m = (e as Error).message; setMsg(m.startsWith("has_bookings") ? `Ha ${m.split(":")[1]} appuntamenti nello storico: non eliminabile, disattivalo.` : m); } }} />)}
       </tbody></table></div>}
 
@@ -80,14 +78,13 @@ export default function Detail() {
   );
 }
 
-function VetRow({ v, eff, onSave, onApprove, onActive, onDelete }: { v: Vet; eff: number; onSave: (x: number | null) => void; onApprove: () => void; onActive: () => void; onDelete: () => void }) {
-  const [x, setX] = useState<string>(v.commission_pct === null ? "" : String(v.commission_pct));
+function VetRow({ v, inherit, cur, onSave, onApprove, onActive, onDelete }: { v: Vet; inherit: string; cur: string; onSave: (b: { commission_pct: number | null; commission_fixed_cents: number | null }) => void; onApprove: () => void; onActive: () => void; onDelete: () => void }) {
   return (
     <tr>
       <td>{v.display_name}{v.title && <small className="adm-sub">{v.title}</small>}</td>
       <td>{v.approved ? <Badge s="approved" label="Approvato" /> : <Badge s="pending" label="Da approvare" />}{!v.active && <Badge s="cancelled" label="Disattivo" />}</td>
       <td>{v.stats?.total ?? 0}<small className="adm-sub"><Types s={v.stats} /></small></td><td>{v.stats?.patients ?? 0}</td><td><Moneys m={v.stats?.revenue} /></td>
-      <td><div className="adm-inline"><input type="number" min={0} max={100} step="0.5" value={x} placeholder={`${eff} (clinica)`} onChange={(e) => setX(e.target.value)} aria-label={`Commissione ${v.display_name}`} /><span>%</span><button className="adm-btn" onClick={() => onSave(x === "" ? null : Number(x))}>Salva</button></div></td>
+      <td><CommissionInput pct={v.commission_pct} fixed={v.commission_fixed_cents} inherit={inherit} cur={cur} onSave={onSave} /></td>
       <td><div className="adm-rowact"><button className={`adm-btn ${v.approved ? "" : "ok"}`} onClick={onApprove}>{v.approved ? "Revoca" : "Approva"}</button><button className="adm-btn" onClick={onActive}>{v.active ? "Disattiva" : "Attiva"}</button><button className="adm-btn danger" onClick={onDelete}>Elimina</button></div></td>
     </tr>
   );

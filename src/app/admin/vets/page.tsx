@@ -1,22 +1,22 @@
 "use client";
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Badge, CountrySelect, CsvButton, Err, Moneys, Types, countryName, useCountry, useLoad, type Stat } from "@/components/admin/ui";
+import { Badge, CommissionInput, CountrySelect, CsvButton, Err, Moneys, Types, countryName, useCountry, useLoad, type Stat } from "@/components/admin/ui";
 import { useAdmin } from "@/components/admin/AdminShell";
 
-type V = { id: string; display_name: string; email: string; active: boolean; approved: boolean; commission_pct: number | null; countryCommission: number; practices: { id: string; name: string; country: string; email: string | null; phone: string | null; city: string | null; commission_pct: number | null } | null; stats: Stat | null };
+type V = { id: string; display_name: string; email: string; active: boolean; approved: boolean; commission_pct: number | null; commission_fixed_cents: number | null; countryCommission: number; countryFixed: number | null; practices: { id: string; name: string; country: string; email: string | null; phone: string | null; city: string | null; commission_pct: number | null; commission_fixed_cents: number | null } | null; stats: Stat | null };
 
 function Row({ v, onChange }: { v: V; onChange: () => void }) {
   const { api } = useAdmin();
-  const [x, setX] = useState(v.commission_pct === null ? "" : String(v.commission_pct)), [e, setE] = useState("");
-  const eff = v.commission_pct ?? v.practices?.commission_pct ?? v.countryCommission;
+  const [e, setE] = useState("");
+  const inheritFrom = v.practices?.commission_fixed_cents != null ? `Come la clinica (${v.practices.commission_fixed_cents / 100} € fissi)` : v.practices?.commission_pct != null ? `Come la clinica (${v.practices.commission_pct}%)` : v.countryFixed != null ? `Standard paese (${v.countryFixed / 100} € fissi)` : `Standard paese (${v.countryCommission}%)`;
   const patch = async (body: object) => { try { await api(`/api/admin/practitioners/${v.id}`, { method: "PATCH", body }); onChange(); } catch (er) { setE((er as Error).message); } };
   return (
     <tr>
       <td>{v.display_name}<small className="adm-sub">{v.email}</small></td><td>{countryName(v.practices?.country)}<small className="adm-sub">{v.practices?.city}</small></td><td>{v.practices ? <a href={`/admin/practices/${v.practices.id}`}>{v.practices.name}</a> : "—"}<small className="adm-sub">{[v.practices?.email, v.practices?.phone].filter(Boolean).join(" · ")}</small></td>
       <td>{v.approved ? <Badge s="approved" label="Approvato" /> : <Badge s="pending" label="Da approvare" />}{!v.active && <Badge s="cancelled" label="Disattivo" />}</td>
       <td>{v.stats?.total ?? 0}<small className="adm-sub"><Types s={v.stats} /></small></td><td>{v.stats?.patients ?? 0}</td><td><Moneys m={v.stats?.revenue} /></td>
-      <td><div className="adm-inline"><input type="number" min={0} max={100} step="0.5" value={x} placeholder={`${eff}`} onChange={(ev) => setX(ev.target.value)} aria-label="Commissione %" /><span>%</span><button className="adm-btn" onClick={() => patch({ commission_pct: x === "" ? null : Number(x) })}>Salva</button></div>{e && <small className="adm-err">{e}</small>}</td>
+      <td><CommissionInput pct={v.commission_pct} fixed={v.commission_fixed_cents} inherit={inheritFrom} onSave={(b) => patch(b)} />{e && <small className="adm-err">{e}</small>}</td>
       <td><button className={`adm-btn ${v.approved ? "" : "ok"}`} onClick={() => patch({ approved: !v.approved })}>{v.approved ? "Revoca" : "Approva"}</button></td>
     </tr>
   );

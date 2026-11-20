@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminClient, handle, HttpError, json } from "@/lib/supabase";
 import { requireStaff } from "@/lib/admin";
-import { audit, bookingStats, parsePct } from "@/lib/admin-data";
+import { audit, bookingStats, parsePct, parseFixed } from "@/lib/admin-data";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -9,9 +9,9 @@ type Ctx = { params: Promise<{ id: string }> };
 export const GET = handle(async (req, ctx) => {
   await requireStaff(req);
   const { id } = await (ctx as Ctx).params, db = adminClient();
-  const { data: p, error } = await db.from("practices").select("*, practitioners(id, display_name, title, photo_url, active, approved, approved_at, commission_pct, slug, user_id)").eq("id", id).single();
+  const { data: p, error } = await db.from("practices").select("*, practitioners(id, display_name, title, photo_url, active, approved, approved_at, commission_pct, commission_fixed_cents, slug, user_id)").eq("id", id).single();
   if (error || !p) throw new HttpError(404, "not found");
-  const { data: country } = await db.from("countries").select("default_commission_pct, currency, payment_provider").eq("code", p.country).single();
+  const { data: country } = await db.from("countries").select("default_commission_pct, default_commission_fixed_cents, currency, payment_provider").eq("code", p.country).single();
   const { data: owner } = await db.auth.admin.getUserById(p.owner_user_id);
   const { byPractice, byVet } = await bookingStats(db, id);
   const { data: rows } = await db.from("bookings")
@@ -34,6 +34,7 @@ const Patch = z.object({
   action: z.enum(["approve", "reject", "suspend", "reopen"]).optional(),
   note: z.string().max(1000).optional(),
   commission_pct: z.union([z.number(), z.string(), z.null()]).optional(),
+  commission_fixed_cents: z.union([z.number(), z.string(), z.null()]).optional(),
   clearVetOverrides: z.boolean().optional(),
   booking_enabled: z.boolean().optional(),
 });
@@ -50,12 +51,15 @@ export const PATCH = handle(async (req, ctx) => {
     const approved = b.action === "approve";
     Object.assign(upd, { review_status: b.action === "reopen" ? "pending" : approved ? "approved" : b.action === "reject" ? "rejected" : "suspended", published: approved, reviewed_at: new Date().toISOString(), reviewed_by: who, review_note: b.note ?? null });
   }
-  if (b.commission_pct !== undefined) { try { upd.commission_pct = parsePct(b.commission_pct); } catch (e) { throw new HttpError(400, (e as Error).message); } }
+  if (b.commission_pct !== undefined || b.commission_fixed_cents !== undefined) {
+    try { upd.commission_pct = parsePct(b.commission_pct ?? null); upd.commission_fixed_cents = parseFixed(b.commission_fixed_cents ?? null); } catch (e) { throw new HttpError(400, (e as Error).message); }
+    if (upd.commission_pct !== null && upd.commission_fixed_cents !== null) throw new HttpError(400, "choose either a percentage or a fixed fee");
+  }
   if (b.booking_enabled !== undefined) upd.booking_enabled = b.booking_enabled;
   if (Object.keys(upd).length) { const { error } = await db.from("practices").update(upd).eq("id", id); if (error) throw new Error(error.message); }
   if (b.action === "approve") await db.from("practitioners").update({ approved: true, approved_at: new Date().toISOString() }).eq("practice_id", id).eq("approved", false);
-  if (b.clearVetOverrides) await db.from("practitioners").update({ commission_pct: null }).eq("practice_id", id);
-  await audit(db, who, b.action ?? (b.commission_pct !== undefined ? "set_commission" : "update"), { type: "practice", id, label: p.name }, { ...b });
+  if (b.clearVetOverrides) await db.from("practitioners").update({ commission_pct: null, commission_fixed_cents: null }).eq("practice_id", id);
+  await audit(db, who, b.action ?? ((b.commission_pct !== undefined || b.commission_fixed_cents !== undefined) ? "set_commission" : "update"), { type: "practice", id, label: p.name }, { ...b });
   return json({ ok: true });
 });
 

@@ -48,6 +48,7 @@ export async function audit(db: SupabaseClient, actor: string, action: string, t
 }
 
 /** Percentage guard: null clears the override (inherit), otherwise 0–100 with two decimals. */
+export { parseFixed } from "./commission";
 export function parsePct(v: unknown): number | null {
   if (v === null || v === "" || v === undefined) return null;
   const n = Number(v);

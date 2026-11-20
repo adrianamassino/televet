@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
+import { clientPricer } from "@/lib/client-price";
 import { VI } from "@/components/VI";
 import { PhotoStrip } from "@/components/PhotoStrip";
 import { Animals, Avatar, Chips, Hours, Section, mapsUrl } from "@/components/ProfileParts";
@@ -17,7 +18,7 @@ async function load(lang: string, country: string, slug: string) {
   const cc = country.toUpperCase();
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) return null;
   const { data } = await adminClient().from("practices")
-    .select("id, name, slug, kind, headline, about, address, postal_code, city, phone, website, cover_url, logo_url, languages, species, facilities, payment_methods, access_info, founded_year, timezone, country, booking_enabled, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, active), practitioners(id, approved, slug, title, display_name, photo_url, specialties, active, opening_rules(weekday, start_time, end_time))")
+    .select("id, name, slug, kind, headline, about, address, postal_code, city, phone, website, cover_url, logo_url, languages, species, facilities, payment_methods, access_info, founded_year, timezone, country, booking_enabled, commission_pct, commission_fixed_cents, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, online_payment, active), practitioners(id, approved, commission_pct, commission_fixed_cents, slug, title, display_name, photo_url, specialties, active, opening_rules(weekday, start_time, end_time))")
     .eq("slug", slug).eq("country", cc).eq("published", true).maybeSingle();
   return data ? { cc, p: data } : null;
 }
@@ -38,6 +39,7 @@ export default async function ClinicPage({ params }: P) {
   const d = await load(lang, country, slug);
   if (!d) notFound();
   const { p } = d, t = pc(lang);
+  const priceOf = await clientPricer(adminClient(), p);
   const services = (p.services ?? []).filter((s) => s.active);
   const team = (p.practitioners ?? []).filter((v) => v.active && v.approved);
   const rules = team.flatMap((v) => v.opening_rules ?? []);
@@ -83,7 +85,7 @@ export default async function ClinicPage({ params }: P) {
           {services.length > 0 && <Section id="services" title={t.services}><ul className="svc-list">{services.map((s, i) => (
             <li key={i} className="svc"><span className="ico"><VI n={SI[s.type as keyof typeof SI] ?? "stethoscope"} size={38} /></span>
               <div><strong>{s.custom_name ?? t.types[s.type]}</strong><small>{s.custom_name ? `${t.types[s.type]} · ` : ""}{s.duration_min} {t.min}</small>{s.description && <p>{s.description}</p>}</div>
-              <span className="price">{money(s.price_cents, s.currency)}</span></li>))}</ul></Section>}
+              <span className="price">{money(s.online_payment ? priceOf(s.price_cents, s.practitioner_id ? p.practitioners?.find((x: { id: string }) => x.id === s.practitioner_id) : null) : s.price_cents, s.currency)}</span></li>))}</ul></Section>}
           <PhotoStrip set="c" />
           {rules.length > 0 && <Section id="hours" title={t.hours}><Hours t={t} rules={rules} /></Section>}
           {(addr || p.access_info) && <Section id="access" title={t.access}>

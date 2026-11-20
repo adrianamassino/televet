@@ -4,7 +4,7 @@ import { requireStaff } from "@/lib/admin";
 /** GET /api/admin/countries — default commission and payment provider per country. */
 export const GET = handle(async (req) => {
   await requireStaff(req);
-  const { data, error } = await adminClient().from("countries").select("code, currency, payment_provider, default_commission_pct, published").order("code");
+  const { data, error } = await adminClient().from("countries").select("code, currency, payment_provider, default_commission_pct, default_commission_fixed_cents, published").order("code");
   if (error) throw new Error(error.message);
   return json({ items: data ?? [] });
 });

@@ -6,7 +6,7 @@ import { bookingStats } from "@/lib/admin-data";
 export const GET = handle(async (req) => {
   await requireStaff(req);
   const u = new URL(req.url), db = adminClient();
-  let q = db.from("practitioners").select("id, display_name, title, active, approved, commission_pct, practice_id, user_id, practices(id, name, country, email, phone, city, review_status, commission_pct)").limit(1000);
+  let q = db.from("practitioners").select("id, display_name, title, active, approved, commission_pct, commission_fixed_cents, practice_id, user_id, practices(id, name, country, email, phone, city, review_status, commission_pct, commission_fixed_cents)").limit(1000);
   const a = u.searchParams.get("approved"); if (a === "true" || a === "false") q = q.eq("approved", a === "true");
   const text = (u.searchParams.get("q") ?? "").trim().slice(0, 80).replace(/[,()%]/g, " ");
   if (text) q = q.ilike("display_name", `%${text}%`);
@@ -21,7 +21,8 @@ export const GET = handle(async (req) => {
     if ((l?.users.length ?? 0) < 200) break;
   }
   const { byVet } = await bookingStats(db);
-  const { data: countries } = await db.from("countries").select("code, default_commission_pct");
+  const { data: countries } = await db.from("countries").select("code, default_commission_pct, default_commission_fixed_cents");
   const def = Object.fromEntries((countries ?? []).map((c) => [c.code, Number(c.default_commission_pct)]));
-  return json({ items: data.map((v: any) => ({ ...v, email: emails.get(v.user_id) ?? "", countryCommission: def[v.practices?.country] ?? 0, stats: byVet.get(v.id) ?? null })) });
+  const defFixed = Object.fromEntries((countries ?? []).map((c) => [c.code, c.default_commission_fixed_cents as number | null]));
+  return json({ items: data.map((v: any) => ({ ...v, email: emails.get(v.user_id) ?? "", countryCommission: def[v.practices?.country] ?? 0, countryFixed: defFixed[v.practices?.country] ?? null, stats: byVet.get(v.id) ?? null })) });
 });

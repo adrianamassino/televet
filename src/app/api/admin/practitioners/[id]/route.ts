@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { adminClient, handle, HttpError, json } from "@/lib/supabase";
 import { requireStaff } from "@/lib/admin";
-import { audit, parsePct } from "@/lib/admin-data";
+import { audit, parsePct, parseFixed } from "@/lib/admin-data";
 
 type Ctx = { params: Promise<{ id: string }> };
-const Patch = z.object({ approved: z.boolean().optional(), active: z.boolean().optional(), commission_pct: z.union([z.number(), z.string(), z.null()]).optional() });
+const Patch = z.object({ approved: z.boolean().optional(), active: z.boolean().optional(), commission_pct: z.union([z.number(), z.string(), z.null()]).optional(), commission_fixed_cents: z.union([z.number(), z.string(), z.null()]).optional() });
 
 /** PATCH — approve a vet, switch on/off, set the vet's own commission (null = follow the clinic). */
 export const PATCH = handle(async (req, ctx) => {
@@ -16,7 +16,10 @@ export const PATCH = handle(async (req, ctx) => {
   const upd: Record<string, unknown> = {};
   if (b.approved !== undefined) { upd.approved = b.approved; upd.approved_at = b.approved ? new Date().toISOString() : null; }
   if (b.active !== undefined) upd.active = b.active;
-  if (b.commission_pct !== undefined) { try { upd.commission_pct = parsePct(b.commission_pct); } catch (e) { throw new HttpError(400, (e as Error).message); } }
+  if (b.commission_pct !== undefined || b.commission_fixed_cents !== undefined) {
+    try { upd.commission_pct = parsePct(b.commission_pct ?? null); upd.commission_fixed_cents = parseFixed(b.commission_fixed_cents ?? null); } catch (e) { throw new HttpError(400, (e as Error).message); }
+    if (upd.commission_pct !== null && upd.commission_fixed_cents !== null) throw new HttpError(400, "choose either a percentage or a fixed fee");
+  }
   const { error } = await db.from("practitioners").update(upd).eq("id", id);
   if (error) throw new Error(error.message);
   await audit(db, staff.email ?? "staff", b.approved !== undefined ? (b.approved ? "approve_vet" : "unapprove_vet") : "update_vet", { type: "practitioner", id, label: v.display_name }, { ...b });

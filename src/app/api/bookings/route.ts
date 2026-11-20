@@ -4,7 +4,7 @@ import { computeSlots, filterWeekdays } from "@/lib/availability";
 import { busyFor } from "@/lib/busy";
 import { extractPostalCode, geocode, matchZones, type ServiceZone } from "@/lib/zones";
 import { localDay } from "@/lib/time";
-import { commissionCents } from "@/lib/commission";
+import { amounts, resolveRule } from "@/lib/commission";
 import { createBookingPayment } from "@/lib/payments/stripe";
 import { createPreference } from "@/lib/payments/mercadopago";
 import { providerFor, toProviderAmount } from "@/lib/payments";
@@ -29,13 +29,13 @@ export const POST = handle(async (req) => {
   const db = adminClient();
 
   const { data: svc } = await db.from("services")
-    .select("id, type, duration_min, price_cents, currency, online_payment, custom_name, catalog_code, practice_id, active, weekdays, practices(id, country, timezone, published, booking_enabled, commission_pct, stripe_account_id, stripe_status, mp_status, name)")
+    .select("id, type, duration_min, price_cents, currency, online_payment, custom_name, catalog_code, practice_id, active, weekdays, practices(id, country, timezone, published, booking_enabled, commission_pct, commission_fixed_cents, stripe_account_id, stripe_status, mp_status, name)")
     .eq("id", body.serviceId).single();
-  type P = { id: string; country: string; timezone: string; published: boolean; booking_enabled: boolean; commission_pct: number | null; stripe_account_id: string | null; stripe_status: string; mp_status: string; name: string };
+  type P = { id: string; country: string; timezone: string; published: boolean; booking_enabled: boolean; commission_pct: number | null; commission_fixed_cents: number | null; stripe_account_id: string | null; stripe_status: string; mp_status: string; name: string };
   const practice = (svc as unknown as { practices: P } | null)?.practices;
   if (!svc || !svc.active || !practice?.published || !practice.booking_enabled) throw new HttpError(404, "service not found");
 
-  const { data: pr } = await db.from("practitioners").select("id, practice_id, commission_pct, active, approved, lead_time_min").eq("id", body.practitionerId).single();
+  const { data: pr } = await db.from("practitioners").select("id, practice_id, commission_pct, commission_fixed_cents, active, approved, lead_time_min").eq("id", body.practitionerId).single();
   if (!pr || pr.practice_id !== practice.id || !pr.active || !pr.approved) throw new HttpError(400, "invalid practitioner");
 
   // 1) slot still free?
@@ -58,9 +58,11 @@ export const POST = handle(async (req) => {
   }
 
   // 3) create booking (the exclusion constraint prevents races / double booking)
-  const { data: country } = await db.from("countries").select("default_commission_pct").eq("code", practice.country).single();
-  const price = svc.price_cents + extraFee;
-  const fee = commissionCents(price, { practitioner: pr.commission_pct, practice: practice.commission_pct, country: Number(country?.default_commission_pct ?? 0) });
+  const { data: country } = await db.from("countries").select("default_commission_pct, default_commission_fixed_cents").eq("code", practice.country).single();
+  const rule = resolveRule({ practitioner: { pct: pr.commission_pct, fixed: pr.commission_fixed_cents }, practice: { pct: practice.commission_pct, fixed: practice.commission_fixed_cents }, country: { pct: country?.default_commission_pct, fixed: country?.default_commission_fixed_cents } });
+  // fixed fee: the client pays the vet's price + the fee; percentage: taken out of the vet's price
+  const base = svc.price_cents + extraFee;
+  const { total: price, fee } = svc.online_payment || rule.mode === "pct" ? amounts(base, rule) : { total: base, fee: 0 }; // a fixed fee is only charged on online payments
   const provider = providerFor(practice.country);
   const { data: booking, error } = await db.from("bookings").insert({
     practice_id: practice.id, practitioner_id: pr.id, service_id: svc.id, owner_id: user.id, pet_id: body.petId ?? null,
@@ -77,7 +79,7 @@ export const POST = handle(async (req) => {
     if (practice.stripe_status !== "active" || !practice.stripe_account_id) throw new HttpError(409, "payments_not_enabled");
     const pi = await createBookingPayment({ amount: price, currency: svc.currency, feeAmount: fee, destination: practice.stripe_account_id, bookingId: booking.id, customerEmail: user.email });
     await db.from("bookings").update({ payment_ref: pi.id }).eq("id", booking.id);
-    return json({ bookingId: booking.id, payment: { provider, clientSecret: pi.client_secret } });
+    return json({ bookingId: booking.id, payment: { provider, clientSecret: pi.client_secret }, total: price });
   }
   const { data: sec } = await db.from("practice_secrets").select("mp_access_token").eq("practice_id", practice.id).single();
   if (practice.mp_status !== "active" || !sec?.mp_access_token) throw new HttpError(409, "payments_not_enabled");

@@ -108,7 +108,7 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
       const j = await r.json();
       if (!r.ok) { setBusy(false); return setMsg(j.error === "slot_unavailable" ? t.taken : j.error === "out_of_zone" ? t.zone : j.error === "payments_not_enabled" ? t.nopay : t.err + (j.error ?? r.status)); }
       if (!j.payment) setStep("done");
-      else if (j.payment.provider === "stripe") { setSecret(j.payment.clientSecret); setPrice(svc.price); setStep("pay"); }
+      else if (j.payment.provider === "stripe") { setSecret(j.payment.clientSecret); setPrice(typeof j.total === "number" ? j.total : svc.price); setStep("pay"); }
       else window.location.href = j.payment.redirectUrl;
     } catch (e) { err(errText(e)); }
     setBusy(false);
