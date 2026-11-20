@@ -4,7 +4,15 @@ import { fetchBusy } from "./ical";
 import { ADAPTERS } from "./pims";
 
 interface Conn { id: string; practitioner_id: string; provider: "google" | "ical" | "vetup" | "vetit" | "petbooqz"; external_calendar_id: string | null }
-interface Secret { access_token: string | null; refresh_token: string | null; expires_at: string | null; api_key: string | null; ical_url: string | null }
+export interface Secret { access_token: string | null; refresh_token: string | null; expires_at: string | null; api_key: string | null; ical_url: string | null }
+
+/** Valid Google access token for a connection (refreshes and stores it when expired). */
+export async function googleToken(connId: string, s: Secret): Promise<string> {
+  if (s.access_token && s.expires_at && new Date(s.expires_at).getTime() >= Date.now() + 60000) return s.access_token;
+  const t = await google.refresh(s.refresh_token!);
+  await adminClient().from("connection_secrets").update({ access_token: t.access_token, expires_at: new Date(Date.now() + t.expires_in * 1000).toISOString() }).eq("connection_id", connId);
+  return t.access_token;
+}
 
 /** Replaces the cached busy intervals of one connection for the next `days` days. */
 export async function syncConnection(conn: Conn, days = 60) {
@@ -15,12 +23,7 @@ export async function syncConnection(conn: Conn, days = 60) {
   let busy: { start: Date; end: Date; uid?: string }[] = [];
 
   if (conn.provider === "google") {
-    let token = s.access_token!;
-    if (!s.expires_at || new Date(s.expires_at).getTime() < Date.now() + 60000) {
-      const t = await google.refresh(s.refresh_token!);
-      token = t.access_token;
-      await db.from("connection_secrets").update({ access_token: token, expires_at: new Date(Date.now() + t.expires_in * 1000).toISOString() }).eq("connection_id", conn.id);
-    }
+    const token = await googleToken(conn.id, s);
     busy = await google.freeBusy(token, conn.external_calendar_id ?? "primary", from, to);
   } else if (conn.provider === "ical") {
     busy = await fetchBusy(s.ical_url!, from, to);

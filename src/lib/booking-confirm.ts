@@ -1,5 +1,6 @@
 import { adminClient } from "@/lib/supabase";
 import { capturePayment } from "@/lib/payments/stripe";
+import { pushBookingToGoogle } from "@/lib/calendar/push";
 import { ensureRoom, loadBooking, sendConfirmation } from "@/lib/booking-mail";
 
 /**
@@ -17,6 +18,7 @@ export async function confirmBooking(id: string): Promise<boolean> {
   const full = await loadBooking(id);
   if (full) {
     await ensureRoom(full).catch((e) => console.error("video room", e));
+    await pushBookingToGoogle(full);
     await sendConfirmation(full).catch((e) => console.error("confirmation email", e));
   }
   return true;
