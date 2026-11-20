@@ -17,7 +17,7 @@ async function load(lang: string, country: string, slug: string) {
   const cc = country.toUpperCase();
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) return null;
   const { data } = await adminClient().from("practices")
-    .select("id, name, slug, kind, headline, about, address, postal_code, city, phone, website, cover_url, logo_url, languages, species, facilities, payment_methods, access_info, founded_year, timezone, country, booking_enabled, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, active), practitioners(id, slug, title, display_name, photo_url, specialties, active, opening_rules(weekday, start_time, end_time))")
+    .select("id, name, slug, kind, headline, about, address, postal_code, city, phone, website, cover_url, logo_url, languages, species, facilities, payment_methods, access_info, founded_year, timezone, country, booking_enabled, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, active), practitioners(id, approved, slug, title, display_name, photo_url, specialties, active, opening_rules(weekday, start_time, end_time))")
     .eq("slug", slug).eq("country", cc).eq("published", true).maybeSingle();
   return data ? { cc, p: data } : null;
 }
@@ -39,7 +39,7 @@ export default async function ClinicPage({ params }: P) {
   if (!d) notFound();
   const { p } = d, t = pc(lang);
   const services = (p.services ?? []).filter((s) => s.active);
-  const team = (p.practitioners ?? []).filter((v) => v.active);
+  const team = (p.practitioners ?? []).filter((v) => v.active && v.approved);
   const rules = team.flatMap((v) => v.opening_rules ?? []);
   const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(lang, { style: "currency", currency: cur }).format(ZERO_DECIMAL.has(cur) ? c : c / 100); } catch { return `${c} ${cur}`; } };
   const names = (l: string[]) => l.map((x) => { try { return new Intl.DisplayNames([lang], { type: "language" }).of(x) ?? x; } catch { return x; } }).join(", ");

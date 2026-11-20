@@ -9,6 +9,10 @@
       "schedule": "*/15 * * * *"
     },
     {
+      "path": "/api/cron/reviews",
+      "schedule": "*/30 * * * *"
+    },
+    {
       "path": "/api/cron/purge-chats",
       "schedule": "0 3 * * *"
     }

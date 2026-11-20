@@ -13,7 +13,8 @@ export const GET = handle(async (req) => {
   const { data: svc } = await db.from("services").select("duration_min, practice_id, active, weekdays, practices(timezone, published, booking_enabled)").eq("id", serviceId).single();
   const practice = (svc as unknown as { practices: { timezone: string; published: boolean; booking_enabled: boolean } } | null)?.practices;
   if (!svc || !svc.active || !practice?.published || !practice.booking_enabled) throw new HttpError(404, "service not found");
-  const { data: prac } = await db.from("practitioners").select("lead_time_min").eq("id", practitionerId).single();
+  const { data: prac } = await db.from("practitioners").select("lead_time_min, approved").eq("id", practitionerId).single();
+  if (!prac?.approved) throw new HttpError(404, "service not found");
   const { data: rules } = await db.from("opening_rules").select("weekday, start_time, end_time, slot_min").eq("practitioner_id", practitionerId);
   const to = new Date(from.getTime() + (days + 1) * 86400000);
   const slots = filterWeekdays(computeSlots({

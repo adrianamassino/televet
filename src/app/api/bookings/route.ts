@@ -35,8 +35,8 @@ export const POST = handle(async (req) => {
   const practice = (svc as unknown as { practices: P } | null)?.practices;
   if (!svc || !svc.active || !practice?.published || !practice.booking_enabled) throw new HttpError(404, "service not found");
 
-  const { data: pr } = await db.from("practitioners").select("id, practice_id, commission_pct, active, lead_time_min").eq("id", body.practitionerId).single();
-  if (!pr || pr.practice_id !== practice.id || !pr.active) throw new HttpError(400, "invalid practitioner");
+  const { data: pr } = await db.from("practitioners").select("id, practice_id, commission_pct, active, approved, lead_time_min").eq("id", body.practitionerId).single();
+  if (!pr || pr.practice_id !== practice.id || !pr.active || !pr.approved) throw new HttpError(400, "invalid practitioner");
 
   // 1) slot still free?
   const start = new Date(body.start), end = new Date(start.getTime() + svc.duration_min * 60000);

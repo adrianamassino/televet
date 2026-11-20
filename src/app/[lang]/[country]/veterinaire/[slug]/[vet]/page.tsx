@@ -15,9 +15,9 @@ async function load(lang: string, country: string, slug: string, vet: string) {
   const cc = country.toUpperCase();
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) return null;
   const { data: p } = await adminClient().from("practices")
-    .select("id, name, slug, address, postal_code, city, languages, booking_enabled, country, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, active), practitioners(id, slug, title, display_name, photo_url, bio, specialties, languages, species, school, experience_years, active, opening_rules(weekday, start_time, end_time))")
+    .select("id, name, slug, address, postal_code, city, languages, booking_enabled, country, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, active), practitioners(id, approved, slug, title, display_name, photo_url, bio, specialties, languages, species, school, experience_years, active, opening_rules(weekday, start_time, end_time))")
     .eq("slug", slug).eq("country", cc).eq("published", true).maybeSingle();
-  const v = p?.practitioners?.find((x) => x.active && x.slug === vet);
+  const v = p?.practitioners?.find((x) => x.active && x.approved && x.slug === vet);
   return p && v ? { cc, p, v } : null;
 }
 
@@ -40,7 +40,7 @@ export default async function VetPage({ params }: P) {
   const name = [v.title, v.display_name].filter(Boolean).join(" ");
   const services = (p.services ?? []).filter((s) => s.active && (!s.practitioner_id || s.practitioner_id === v.id));
   const rules = v.opening_rules ?? [];
-  const colleagues = (p.practitioners ?? []).filter((x) => x.active && x.id !== v.id && x.slug);
+  const colleagues = (p.practitioners ?? []).filter((x) => x.active && x.approved && x.id !== v.id && x.slug);
   const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(lang, { style: "currency", currency: cur }).format(ZERO_DECIMAL.has(cur) ? c : c / 100); } catch { return `${c} ${cur}`; } };
   const names = (l: string[]) => l.map((x) => { try { return new Intl.DisplayNames([lang], { type: "language" }).of(x) ?? x; } catch { return x; } }).join(", ");
   const addr = [p.address, [p.postal_code, p.city].filter(Boolean).join(" ")].filter(Boolean).join(", ");
