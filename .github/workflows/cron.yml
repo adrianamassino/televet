@@ -5,6 +5,7 @@ on:
   schedule:
     - cron: "*/15 * * * *"   # promemoria + sincronizzazione calendari (GitHub non garantisce la puntualità al minuto)
     - cron: "0 3 * * *"      # pulizia chat
+    - cron: "0 8 * * *"      # controllo dei profili incompleti + e-mail di sollecito ai veterinari
   workflow_dispatch: {}
 jobs:
   run:
@@ -20,4 +21,5 @@ jobs:
           [ -n "$APP_URL" ] || { echo "APP_URL non impostato"; exit 1; }
           call() { curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/$1"; echo; }
           if [ "$SCHEDULE" = "0 3 * * *" ]; then call purge-chats
+          elif [ "$SCHEDULE" = "0 8 * * *" ]; then call onboarding
           else call reminders; call sync-calendars; call reviews; fi

@@ -13,6 +13,10 @@
       "schedule": "*/30 * * * *"
     },
     {
+      "path": "/api/cron/onboarding",
+      "schedule": "0 8 * * *"
+    },
+    {
       "path": "/api/cron/purge-chats",
       "schedule": "0 3 * * *"
     }
