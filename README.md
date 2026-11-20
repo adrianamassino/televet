@@ -28,7 +28,7 @@ Verifiche eseguite: `npm run typecheck` (0 errori), `npm test` (9/9), `npm run b
 ## Avvio in 8 passi
 
 1. **Supabase** → crea un progetto su supabase.com, poi esegui nell'editor SQL, in ordine, `supabase/migrations/0001` … `0005` (tutti e cinque, non solo il primo).
-2. **Stripe** → attiva Connect (tipo Express), crea un endpoint webhook verso `https://TUO-DOMINIO/api/webhooks/stripe` con gli eventi `account.updated`, `payment_intent.*`, `charge.refunded`.
+2. **Stripe** → attiva Connect (tipo Express), crea DUE endpoint webhook verso `https://TUO-DOMINIO/api/webhooks/stripe`: uno per gli eventi del tuo account (`payment_intent.*`, `charge.refunded`) con segreto in `STRIPE_WEBHOOK_SECRET`, uno "Connect" per i conti collegati (`account.updated`) con segreto in `STRIPE_CONNECT_WEBHOOK_SECRET`.
 3. **Mercado Pago** → per ogni paese (AR, UY, CL, MX, BR) crea un'applicazione nel pannello sviluppatori, attiva il modello marketplace e imposta il redirect `https://TUO-DOMINIO/api/connect/mercadopago/callback` e le notifiche verso `/api/webhooks/mercadopago`.
 4. **Google Cloud** → crea un client OAuth (redirect `/api/calendar/google/callback`), abilita Calendar API e Geocoding API, e avvia subito la **verifica dell'app** (richiede alcune settimane).
 5. **Email** → crea un account Resend (o altro provider) e verifica il dominio televet.co.

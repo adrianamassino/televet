@@ -5,9 +5,12 @@ import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature") ?? "";
-  let event: Stripe.Event;
-  try { event = stripe().webhooks.constructEvent(await req.text(), sig, process.env.STRIPE_WEBHOOK_SECRET!); }
-  catch { return new Response("bad signature", { status: 400 }); }
+  // Stripe signs platform events (payments) and Connect events (account.updated of connected accounts) with different secrets.
+  const body = await req.text();
+  const secrets = [process.env.STRIPE_WEBHOOK_SECRET, process.env.STRIPE_CONNECT_WEBHOOK_SECRET].filter((x): x is string => !!x);
+  let event: Stripe.Event | null = null;
+  for (const secret of secrets) { try { event = stripe().webhooks.constructEvent(body, sig, secret); break; } catch { /* try the next secret */ } }
+  if (!event) return new Response("bad signature", { status: 400 });
   const db = adminClient();
   switch (event.type) {
     case "account.updated": {
