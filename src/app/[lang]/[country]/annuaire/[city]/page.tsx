@@ -14,8 +14,12 @@ type P = { params: Promise<{ lang: string; country: string; city: string }> };
 async function load(country: string, city: string) {
   const cc = country.toUpperCase();
   if (!COUNTRIES[cc]) return null;
-  const { data } = await adminClient().from("directory_listings").select("id, name, address, postal_code, city, status, slug, practice_id, source")
-    .eq("country", cc).neq("status", "removed").limit(2000);
+  const db = adminClient();
+  const { data: c } = await db.from("cities").select("id, name").eq("country", cc).eq("slug", city).maybeSingle();
+  // narrow on the server (a country holds thousands of clinics), then keep exact matches of the city slug
+  const pattern = c?.name ?? city.replace(/-/g, "%");
+  const { data } = await db.from("directory_listings").select("id, name, address, postal_code, city, status, slug, practice_id, source")
+    .eq("country", cc).neq("status", "removed").ilike("city", pattern).order("name").limit(1000);
   const list = (data ?? []).filter((d) => slugify(d.city ?? "") === city).sort((a, b) => Number(b.status === "claimed") - Number(a.status === "claimed"));
   return { cc, list, cityName: list[0]?.city ?? city };
 }
@@ -43,7 +47,7 @@ export default async function DirectoryCity({ params }: P) {
       <ul className="vet-list">{d.list.map((x) => (
         <li key={x.id} className={x.status === "claimed" ? "is-online" : ""}>
           <span className="ico" aria-hidden><VI n={x.status === "claimed" ? "pawHeart" : "clinic"} size={34} /></span>
-          <div><h3>{x.status === "claimed" ? <a href={`${rel}/veterinaire/${x.slug}`}>{x.name}</a> : x.name}</h3>
+          <div><h3><a href={`${rel}/annuaire/${city}/${x.slug}`}>{x.name}</a></h3>
             <small>{[x.address, x.postal_code, x.city].filter(Boolean).join(", ")}</small>
             <p className={x.status === "claimed" ? "ok-p" : "muted-p"}>{x.status === "claimed" ? t.online : `${t.offline} · ${t.claim}`}</p></div>
           {x.status === "claimed" && <a className="btn btn-ghost" href={`${rel}/reserver/${x.slug}`}>{t.book}</a>}

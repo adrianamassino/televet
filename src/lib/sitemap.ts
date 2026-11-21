@@ -6,8 +6,8 @@
 import { COUNTRIES } from "./countries";
 import { SERVICE_SLUGS, SITE, slugify } from "./seo";
 
-export type Kind = "pages" | "services" | "cities" | "clinics" | "vets" | "directory" | "blog";
-export const KINDS: Kind[] = ["pages", "services", "cities", "clinics", "vets", "directory", "blog"];
+export type Kind = "pages" | "services" | "cities" | "clinics" | "vets" | "directory" | "listings" | "blog";
+export const KINDS: Kind[] = ["pages", "services", "cities", "clinics", "vets", "directory", "listings", "blog"];
 /** Below Google's limit of 50,000 URLs per file, with room for the hreflang links. */
 export const PER_FILE = 45000;
 
@@ -42,7 +42,7 @@ export interface SitemapData {
   blog: { lang: string; posts: { slug: string; modified?: string }[] }[];
   practices: { id: string; slug: string; country: string; city: string | null; updated_at?: string | null;
     services: { type: string; active: boolean }[]; practitioners: { slug: string | null; active: boolean; approved: boolean }[] }[];
-  directoryCities: { country: string; city: string }[];
+  directoryCities: { country: string; city: string; slug?: string | null; address?: string | null; postal_code?: string | null; status?: string; updated_at?: string | null }[];
 }
 
 /** Every indexable URL of the site, grouped as translations of the same page. Pure: the caller loads the data. */
@@ -97,6 +97,9 @@ export function buildEntries(d: SitemapData): Entry[] {
     if (!city) continue;
     dirCountries.add(x.country);
     if (!dirCities.has(`${x.country}|${city}`)) { dirCities.add(`${x.country}|${city}`); out.push(...group("directory", versionsOf([x.country], (l, c) => `/${l}/${c}/annuaire/${city}`))); }
+    // the clinic's own directory page, when it has a full public address (same rule as the page's index tag);
+    // a claimed listing is replaced by the clinic's profile, already listed under "clinics"
+    if (x.slug && x.address && x.postal_code && x.status !== "claimed") out.push(...group("listings", versionsOf([x.country], (l, c) => `/${l}/${c}/annuaire/${city}/${x.slug}`), x.updated_at ?? undefined));
   }
   for (const cc of dirCountries) out.push(...group("directory", versionsOf([cc], (l, c) => `/${l}/${c}/annuaire`)));
 

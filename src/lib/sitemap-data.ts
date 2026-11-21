@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { adminClient } from "./supabase";
+import { fetchAll } from "./fetch-all";
 import { faqLanguages } from "./faq";
 import { blogLanguages, listPosts } from "./blog";
 import { buildEntries, splitFiles, type Entry, type SitemapData } from "./sitemap";
@@ -9,11 +10,11 @@ async function load(): Promise<SitemapData> {
   const [{ data: countries }, { data: practices }, dir] = await Promise.all([
     db.from("countries").select("code").eq("published", true),
     (async () => {
-      const q = (cols: string) => db.from("practices").select(cols).eq("published", true).limit(50000);
+      const q = (cols: string) => fetchAll((f, t) => db.from("practices").select(cols).eq("published", true).order("id").range(f, t));
       const r = await q("id, slug, country, city, updated_at, services(type, active), practitioners(slug, active, approved)");
       return r.error ? await q("id, slug, country, city, services(type, active), practitioners(slug, active, approved)") : r; // before migration 0017
     })(),
-    db.from("directory_listings").select("country, city").neq("status", "removed").not("city", "is", null).limit(100000),
+    fetchAll((f, t) => db.from("directory_listings").select("country, city, slug, address, postal_code, status, updated_at").neq("status", "removed").not("city", "is", null).order("id").range(f, t)),
   ]);
   return {
     countries: (countries ?? []).map((c) => c.code),

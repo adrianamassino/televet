@@ -1,0 +1,33 @@
+name: Import directory (France)
+# Fills the clinic directory with every active veterinary establishment in France (public SIRENE data),
+# one department at a time. Run it by hand from the Actions tab ("Run workflow"); it also refreshes on the 1st of each month.
+on:
+  workflow_dispatch:
+    inputs:
+      departments:
+        description: "Departments (space-separated), empty = all"
+        required: false
+        default: ""
+  schedule:
+    - cron: "0 4 1 * *"
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Import
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          APP_URL: ${{ vars.APP_URL }}
+          DEPS: ${{ github.event.inputs.departments }}
+        run: |
+          ALL="$(seq -w 1 95 | grep -v '^20$') 2A 2B 971 972 973 974 976"
+          for d in ${DEPS:-$ALL}; do
+            p=1
+            while [ -n "$p" ] && [ "$p" != "null" ]; do
+              r=$(curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/import-directory?dep=$d&page=$p") || { echo "dep $d page $p failed"; break; }
+              echo "$r"
+              p=$(echo "$r" | sed -n 's/.*"next":\([0-9]*\).*/\1/p')
+            done
+          done
+          curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/seo-sync"; echo

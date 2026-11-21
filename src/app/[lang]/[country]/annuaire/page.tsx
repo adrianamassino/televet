@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
+import { fetchAll } from "@/lib/fetch-all";
 import { COUNTRIES } from "@/lib/countries";
 import { VI } from "@/components/VI";
 import { PhotoStrip } from "@/components/PhotoStrip";
@@ -19,7 +20,7 @@ export default async function DirectoryIndex({ params }: P) {
   const { lang, country } = await params; const cc = country.toUpperCase(), t = DIR[lang] ?? DIR.en, base = `/${lang}/${country}`;
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) notFound();
   let rows: { city: string | null; status: string }[] = [];
-  try { const { data } = await adminClient().from("directory_listings").select("city, status").eq("country", cc).neq("status", "removed").limit(5000); rows = data ?? []; } catch { /* none yet */ }
+  try { rows = (await fetchAll<{ city: string | null; status: string }>((f, t) => adminClient().from("directory_listings").select("city, status").eq("country", cc).neq("status", "removed").order("id").range(f, t))).data; } catch { /* none yet */ }
   const m = new Map<string, { name: string; n: number; online: number }>();
   for (const r of rows) { if (!r.city) continue; const k = slugify(r.city); const c = m.get(k) ?? { name: r.city, n: 0, online: 0 }; c.n++; if (r.status === "claimed") c.online++; m.set(k, c); }
   const cities = [...m.entries()].sort((a, b) => b[1].online - a[1].online || b[1].n - a[1].n).slice(0, 120);
