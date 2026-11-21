@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { VI } from "@/components/VI";
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES, ZERO_DECIMAL } from "@/lib/countries";
-import { pageMetadata, SERVICE_SLUGS } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import { nextSlot } from "@/lib/next-slot";
 import { clientPricer } from "@/lib/client-price";
 import { extractPostalCode, locate, matchZones, type ServiceZone } from "@/lib/zones";
@@ -51,77 +51,110 @@ export default async function Results({ params, searchParams }: P) {
   });
 
   const pricer = await clientPricer(db, { country: cc });
-  const rows = await Promise.all(hits.slice(0, 30).map(async (p) => {
-    const prc = await clientPricer(db, p).catch(() => pricer);
-    const svcs = (p.services ?? []).filter((x) => x.active && (!type || x.type === type));
-    const prices = svcs.map((x) => ({ c: x.online_payment ? prc(x.price_cents) : x.price_cents, cur: x.currency })).sort((a, b) => a.c - b.c);
-    const next = p.booking_enabled !== false ? await nextSlot(p.id, p.timezone, type || undefined).catch(() => null) : null;
-    return { p, from: prices[0], next, kinds: TYPES.filter((k) => offers(p, k)), goesHome: !!q && offers(p, "home") && covers(p) };
-  }));
-  rows.sort((a, b) => (a.next ? Date.parse(a.next.start) : Infinity) - (b.next ? Date.parse(b.next.start) : Infinity));
+  type Card = { p: Row; from?: { c: number; cur: string }; next: { start: string } | null; kinds: string[]; goesHome: boolean };
+  const build = async (ps: Row[], k: string, max: number): Promise<Card[]> => {
+    const out = await Promise.all(ps.slice(0, max).map(async (p) => {
+      const prc = await clientPricer(db, p).catch(() => pricer);
+      const svcs = (p.services ?? []).filter((x) => x.active && (!k || x.type === k));
+      const prices = svcs.map((x) => ({ c: x.online_payment ? prc(x.price_cents) : x.price_cents, cur: x.currency })).sort((a, b) => a.c - b.c);
+      const next = p.booking_enabled !== false ? await nextSlot(p.id, p.timezone, k || undefined).catch(() => null) : null;
+      return { p, from: prices[0], next, kinds: TYPES.filter((t2) => offers(p, t2)), goesHome: !!q && offers(p, "home") && covers(p) };
+    }));
+    return out.sort((a, b) => (a.next ? Date.parse(a.next.start) : Infinity) - (b.next ? Date.parse(b.next.start) : Infinity));
+  };
+  // no service chosen: telemedicine first, then home visits near the place, then clinics (only for a place)
+  const inPlace = (p: Row) => !q || textHit(p);
+  const groups = type
+    ? [{ k: type, cards: await build(hits, type, 30) }]
+    : [
+        { k: "video", cards: await build(list.filter((p) => offers(p, "video")), "video", 6) },
+        { k: "home", cards: q ? await build(list.filter((p) => offers(p, "home") && (covers(p) || textHit(p))), "home", 8) : [] },
+        { k: "clinic", cards: q ? await build(list.filter((p) => offers(p, "clinic") && inPlace(p)), "clinic", 6) : [] },
+      ];
+  const total = groups.reduce((n, g) => n + g.cards.length, 0);
 
   const loc = `${lang}-${cc}`;
   const money = (c: number, cur: string) => { try { return new Intl.NumberFormat(loc, { style: "currency", currency: cur, maximumFractionDigits: 0 }).format(ZERO_DECIMAL.has(cur) ? c : c / 100); } catch { return `${c} ${cur}`; } };
-  const when = (iso: string, tz: string) => { const d = new Date(iso); const f = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(loc, { timeZone: tz, ...o }).format(d);
-    const day = f({ year: "numeric", month: "2-digit", day: "2-digit" }), today = new Intl.DateTimeFormat(loc, { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-    const rtf = new Intl.RelativeTimeFormat(lang, { numeric: "auto" }), diff = Math.round((Date.parse(day.split("/").reverse().join("-")) - Date.parse(today.split("/").reverse().join("-"))) / 86400000);
-    const label = Number.isFinite(diff) && diff >= 0 && diff <= 1 ? rtf.format(diff, "day") : f({ weekday: "short", day: "numeric", month: "short" });
-    return `${label.charAt(0).toUpperCase()}${label.slice(1)} · ${f({ hour: "2-digit", minute: "2-digit" })}`; };
+  const ymd = (d: Date, tz: string) => new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+  const when = (iso: string, tz: string) => {
+    const d = new Date(iso), diff = Math.round((Date.parse(ymd(d, tz)) - Date.parse(ymd(new Date(), tz))) / 86400000);
+    const f = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(loc, { timeZone: tz, ...o }).format(d);
+    const label = diff >= 0 && diff <= 1 ? new Intl.RelativeTimeFormat(lang, { numeric: "auto" }).format(diff, "day") : f({ weekday: "short", day: "numeric", month: "short" });
+    return `${label.charAt(0).toUpperCase()}${label.slice(1)} · ${f({ hour: "2-digit", minute: "2-digit" })}`;
+  };
   const langNames = (l: string[]) => l.map((x) => { try { return new Intl.DisplayNames([lang], { type: "language" }).of(x) ?? x; } catch { return x; } }).join(", ");
   const link = (k: string) => `${base}/recherche?${new URLSearchParams({ ...(raw ? { q: raw } : {}), ...(k ? { type: k } : {}) })}`;
-  const where = raw && type !== "video" ? `${s.near} ${raw}` : s.anywhere;
-  const city = raw.replace(/\d+/g, "").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "");
+  const city = raw.replace(/\d+/g, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "");
+  const SEC: Record<string, [string, string]> = { video: [s.secV, s.secVd], home: [s.secH, s.secHd], clinic: [s.secC, ""] };
+
+  const card = ({ p, from, next, kinds, goesHome }: Card, i: number, k: string) => (
+    <li key={p.id} className={`sr-card${k === "clinic" ? " compact" : ""}`} style={{ ["--i" as string]: i }}>
+      <a className="sr-media" href={`${base}/veterinaire/${p.slug}`} tabIndex={-1} aria-hidden>
+        {p.logo_url || p.cover_url ? <img src={(p.logo_url || p.cover_url)!} alt="" loading="lazy" /> : <span className="sr-mono">{p.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase()}</span>}
+      </a>
+      <div className="sr-main">
+        <h3 className="sr-name"><a href={`${base}/veterinaire/${p.slug}`}>{p.name}</a></h3>
+        <p className="sr-meta">{[t.kind[p.kind] ?? t.kind.vet, k !== "video" ? [p.postal_code, p.city].filter(Boolean).join(" ") : ""].filter(Boolean).join(" · ")}</p>
+        {p.headline && k !== "clinic" && <p className="sr-head">{p.headline}</p>}
+        <ul className="sr-chips">
+          {kinds.map((x) => <li key={x} className={x === k ? "on" : ""}><VI n={ICON[x]} size={16} />{t.tabs[x as "home"]}</li>)}
+          {goesHome && k !== "video" && <li className="ok"><VI n="check" size={16} />{s.covers}</li>}
+          {p.languages?.length && k !== "clinic" ? <li>{s.langs} {langNames(p.languages)}</li> : null}
+        </ul>
+      </div>
+      <div className="sr-side">
+        {from && <p className="sr-price"><small>{s.from}</small> {money(from.c, from.cur)}</p>}
+        {next ? <a className="sr-slot" href={`${base}/reserver/${p.slug}`}><small><i className="sr-live" aria-hidden />{s.next}</small><b>{when(next.start, p.timezone)}</b></a> : <p className="sr-noslot">{s.noSlot}</p>}
+        {p.booking_enabled !== false ? <a className="sr-book" href={`${base}/reserver/${p.slug}`}>{s.book} <span aria-hidden>→</span></a> : <a className="sr-book ghost" href={`${base}/veterinaire/${p.slug}`}>{s.profile}</a>}
+      </div>
+    </li>
+  );
 
   return (
     <main className="sr">
       <section className="sr-top">
+        <svg className="sr-waves" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden>
+          <path className="w1" d="M0 210 C 240 150 420 270 720 210 S 1200 140 1440 200 L1440 320 L0 320 Z" />
+          <path className="w2" d="M0 250 C 300 200 520 300 820 240 S 1260 200 1440 250 L1440 320 L0 320 Z" />
+          <path className="ecg" d="M0 120 H 980 l 18 -34 l 20 66 l 18 -48 l 12 16 H 1440" />
+        </svg>
         <div className="sr-in">
           <nav aria-label="breadcrumb" className="sr-crumb"><a href={`${base}/`}>Televet</a> › {t.results}</nav>
+          <h1 className="sr-h1">{s.h1a} <span className="sr-grad">{s.h1b}</span></h1>
+          <p className="sr-lead">{s.lead}</p>
           <form className="sr-search" action={`${base}/recherche`} method="get" role="search">
-            <div className="sr-tabs" role="radiogroup" aria-label={t.results}>
-              {TYPES.map((k) => <label key={k}><input type="radio" name="type" value={k} defaultChecked={type === k} /><span><VI n={ICON[k]} size={20} />{t.tabs[k]}</span></label>)}
+            <div className="sr-pick" role="radiogroup" aria-label={t.results}>
+              {(["video", "home"] as const).map((k) => <label key={k} className="big"><input type="radio" name="type" value={k} defaultChecked={type === k} />
+                <span><i className="sr-ico"><VI n={ICON[k]} size={30} tone="white" /></i><b>{t.tabs[k]}</b><small>{k === "video" ? s.vPitch : s.hPitch}</small></span></label>)}
+              <label className="small"><input type="radio" name="type" value="clinic" defaultChecked={type === "clinic"} /><span><VI n="clinic" size={18} tone="white" />{s.cSmall}</span></label>
             </div>
             <div className="sr-row">
-              <span className="sr-field"><VI n="pin" size={22} /><input name="q" type="search" defaultValue={raw} placeholder={t.ph} aria-label={t.ph} autoComplete="address-level2" /></span>
+              <span className="sr-field"><VI n="pin" size={22} /><input name="q" type="search" defaultValue={raw} placeholder={s.optional} aria-label={s.optional} autoComplete="address-level2" /></span>
               <button className="sr-go" type="submit">{t.go} <span aria-hidden>→</span></button>
             </div>
           </form>
-          <h1 className="sr-title">{s.found(rows.length)} <span className="sr-grad">{type ? t.tabs[type as "home"].toLowerCase() : ""} {where}</span></h1>
-          {rows.length > 1 && <p className="sr-sub">{s.sortNext}</p>}
         </div>
       </section>
 
       <div className="sr-in sr-body">
-        {rows.length ? <ol className="sr-list">{rows.map(({ p, from, next, kinds, goesHome }) => (
-          <li key={p.id} className="sr-card">
-            <a className="sr-media" href={`${base}/veterinaire/${p.slug}`} tabIndex={-1} aria-hidden>
-              {p.logo_url || p.cover_url ? <img src={(p.logo_url || p.cover_url)!} alt="" loading="lazy" /> : <span className="sr-mono">{p.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase()}</span>}
-            </a>
-            <div className="sr-main">
-              <h2 className="sr-name"><a href={`${base}/veterinaire/${p.slug}`}>{p.name}</a></h2>
-              <p className="sr-meta">{[t.kind[p.kind] ?? t.kind.vet, kinds.length && type !== "video" ? [p.postal_code, p.city].filter(Boolean).join(" ") : ""].filter(Boolean).join(" · ")}</p>
-              {p.headline && <p className="sr-head">{p.headline}</p>}
-              <ul className="sr-chips">
-                {kinds.map((k) => <li key={k} className={type === k ? "on" : ""}><VI n={ICON[k]} size={16} />{t.tabs[k]}</li>)}
-                {goesHome && <li className="ok"><VI n="check" size={16} />{s.covers}</li>}
-                {p.languages?.length ? <li>{s.langs} {langNames(p.languages)}</li> : null}
-              </ul>
-            </div>
-            <div className="sr-side">
-              {from && <p className="sr-price"><small>{s.from}</small> {money(from.c, from.cur)}</p>}
-              {next ? <a className="sr-slot" href={`${base}/reserver/${p.slug}`}><small>{s.next}</small><b>{when(next.start, p.timezone)}</b></a>
-                : <p className="sr-noslot">{s.noSlot}</p>}
-              {p.booking_enabled !== false ? <a className="sr-book" href={`${base}/reserver/${p.slug}`}>{s.book} <span aria-hidden>→</span></a>
-                : <a className="sr-book ghost" href={`${base}/veterinaire/${p.slug}`}>{s.profile}</a>}
-            </div>
-          </li>))}</ol>
-          : <div className="sr-empty"><VI n="magnifier" size={56} /><h2>{s.emptyTitle}</h2><p>{s.emptyText}</p>
-              <p className="sr-empty-links">{TYPES.filter((k) => k !== type).map((k) => <a key={k} href={link(k)}>{t.tabs[k]}</a>)}</p></div>}
-
+        <div className="sr-results">
+          {total === 0 && <div className="sr-empty"><VI n="magnifier" size={56} /><h2>{s.emptyTitle}</h2><p>{s.emptyText}</p>
+            <p className="sr-empty-links">{TYPES.filter((k) => k !== type).map((k) => <a key={k} href={link(k)}>{t.tabs[k]}</a>)}</p></div>}
+          {groups.map((g) => {
+            if (!type && g.k === "clinic" && !g.cards.length) return null;
+            const [title, desc] = SEC[g.k];
+            return <section key={g.k} className={`sr-sec sr-sec-${g.k}`}>
+              <header className="sr-sec-head"><span className="sr-sec-ico"><VI n={ICON[g.k]} size={26} tone="white" /></span>
+                <div><h2>{title} <em>{g.cards.length ? s.found(g.cards.length) : ""}{g.k !== "video" && raw ? ` · ${s.near} ${raw}` : ""}</em></h2>{desc && <p>{desc}</p>}</div>
+                {!type && g.cards.length > 0 && <a className="sr-all" href={link(g.k)}>{s.seeAll} →</a>}</header>
+              {g.cards.length ? <ol className="sr-list">{g.cards.map((c, i) => card(c, i, g.k))}</ol>
+                : <p className="sr-none">{g.k === "video" ? s.noVideo : s.noHome}</p>}
+            </section>;
+          })}
+        </div>
         <aside className="sr-aside">
-          {type !== "video" && <div className="sr-promo"><VI n="monitor" size={40} tone="white" /><h3>{s.videoTitle}</h3><p>{s.videoText}</p><a href={link("video")}>{s.videoBtn} <span aria-hidden>→</span></a></div>}
+          {type && type !== "video" && <div className="sr-promo"><VI n="monitor" size={40} tone="white" /><h3>{s.videoTitle}</h3><p>{s.videoText}</p><a href={link("video")}>{s.videoBtn} <span aria-hidden>→</span></a></div>}
           {city && <div className="sr-note"><h3>{s.dirTitle}</h3><p>{s.dirText}</p><a href={`${base}/annuaire/${city}`}>{s.dirBtn} →</a></div>}
-          {SERVICE_SLUGS.home[lang] && null}
           <p className="sr-urgent"><VI n="cross" size={20} />{s.urgent}</p>
         </aside>
       </div>
