@@ -1375,3 +1375,12 @@ body:has(.app)::before, body:has(.app)::after { display: none !important; }
 }
 @media (prefers-reduced-motion: reduce) { .sr-pick .big span { transition: none; } }
 .sr-sec-video, .sr-sec-home { background: linear-gradient(160deg, #ffffff, #f1f7ff); }
+
+/* v55 — the place is asked only after choosing a home visit or a clinic (not needed for video) */
+.sr-search .sr-field { max-width: 0; min-width: 0; flex: 0 0 0; padding: 0; opacity: 0; overflow: hidden; transition: max-width .45s ease, flex-basis .45s ease, opacity .3s ease, padding .3s; }
+.sr-search:has(input[name="type"][value="home"]:checked) .sr-field,
+.sr-search:has(input[name="type"][value="clinic"]:checked) .sr-field { max-width: 100%; flex: 1 1 220px; padding: 0 14px; opacity: 1; }
+.sr-search .sr-row { justify-content: flex-end; }
+.sr-search:has(input[name="type"][value="video"]:checked) .sr-go, .sr-search:not(:has(input[name="type"]:checked)) .sr-go { flex: 1; }
+@supports not selector(:has(*)) { .sr-search .sr-field { max-width: 100%; flex: 1 1 220px; padding: 0 14px; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sr-search .sr-field { transition: none; } }

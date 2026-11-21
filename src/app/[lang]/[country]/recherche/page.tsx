@@ -129,7 +129,7 @@ export default async function Results({ params, searchParams }: P) {
               <label className="small"><input type="radio" name="type" value="clinic" defaultChecked={type === "clinic"} /><span><VI n="clinic" size={18} tone="white" />{s.cSmall}</span></label>
             </div>
             <div className="sr-row">
-              <span className="sr-field"><VI n="pin" size={22} /><input name="q" type="search" defaultValue={raw} placeholder={s.optional} aria-label={s.optional} autoComplete="address-level2" /></span>
+              <span className="sr-field"><VI n="pin" size={22} /><input name="q" type="search" defaultValue={type === "video" ? "" : raw} placeholder={t.ph} aria-label={t.ph} autoComplete="address-level2" /></span>
               <button className="sr-go" type="submit">{t.go} <span aria-hidden>→</span></button>
             </div>
           </form>
