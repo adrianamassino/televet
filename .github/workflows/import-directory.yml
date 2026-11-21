@@ -25,6 +25,7 @@ jobs:
           DEPS: ${{ github.event.inputs.departments }}
         run: |
           token() { curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=televet-cron" | jq -r .value; }
+          echo "site check: $(curl -s -o /dev/null -w '%{http_code}' "$APP_URL/") / robots $(curl -s -o /dev/null -w '%{http_code}' "$APP_URL/robots.txt") / headers:"; curl -sI "$APP_URL/api/cron/import-directory?dep=75" | head -12
           ALL="$(seq -w 1 95 | grep -v '^20$') 2A 2B 971 972 973 974 976"
           fails=0
           for d in ${DEPS:-$ALL}; do
