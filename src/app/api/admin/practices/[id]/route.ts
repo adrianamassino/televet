@@ -1,3 +1,4 @@
+import { syncPractice } from "@/lib/seo-sync";
 import { z } from "zod";
 import { adminClient, handle, HttpError, json } from "@/lib/supabase";
 import { requireStaff } from "@/lib/admin";
@@ -58,6 +59,7 @@ export const PATCH = handle(async (req, ctx) => {
   if (b.booking_enabled !== undefined) upd.booking_enabled = b.booking_enabled;
   if (Object.keys(upd).length) { const { error } = await db.from("practices").update(upd).eq("id", id); if (error) throw new Error(error.message); }
   if (b.action === "approve") await db.from("practitioners").update({ approved: true, approved_at: new Date().toISOString() }).eq("practice_id", id).eq("approved", false);
+  if (b.action === "approve") await syncPractice(db, id).catch((e) => console.error("seo sync", e)); // located, tied to its city, vets linked: its pages are ready at once
   if (b.clearVetOverrides) await db.from("practitioners").update({ commission_pct: null, commission_fixed_cents: null }).eq("practice_id", id);
   await audit(db, who, b.action ?? ((b.commission_pct !== undefined || b.commission_fixed_cents !== undefined) ? "set_commission" : "update"), { type: "practice", id, label: p.name }, { ...b });
   return json({ ok: true });

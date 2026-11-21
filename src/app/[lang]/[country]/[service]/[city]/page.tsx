@@ -47,7 +47,8 @@ async function load(lang: string, country: string, service: string, city: string
   const list = (data ?? []).filter((p) => svc === "video" || inCity(p)
     || (p.service_zones ?? []).some((z: { postal_codes: string[] }) => (z.postal_codes ?? []).some((pc) => slugify(pc) === city)));
   // the city as written by the clinics themselves (accents, capitals), not rebuilt from the address
-  const named = list.find((p) => p.city && slugify(p.city) === city)?.city;
+  const { data: c } = await db.from("cities").select("name, names").eq("country", cc).eq("slug", city).maybeSingle(); // absent before migration 0018: falls back
+  const named = (c?.names as Record<string, string> | null)?.[lang.split("-")[0]] ?? c?.name ?? list.find((p) => p.city && slugify(p.city) === city)?.city;
   return { cc, svc, list, cityName: named ?? city.replace(/-/g, " ").replace(/\b\p{L}/gu, (m) => m.toUpperCase()) };
 }
 
