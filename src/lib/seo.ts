@@ -22,11 +22,13 @@ export function localeCombos(onlyCountry?: string) {
     .flatMap((c) => c.languages.map((l) => ({ lang: l, country: c.code, hreflang: `${l}-${c.code}` })));
 }
 
-/** canonical + hreflang alternates (+ x-default) for a page available in every locale. */
+/** canonical + reciprocal hreflang alternates for a page (+ x-default on the home page only). */
 export function alternates(lang: string, country: string, pathFor: (lang: string, country: string) => string, onlyCountry?: string): Metadata["alternates"] {
   const languages: Record<string, string> = {};
   for (const c of localeCombos(onlyCountry)) languages[c.hreflang] = `${SITE}${pathFor(c.lang, c.country)}`;
-  languages["x-default"] = `${SITE}${pathFor("fr", "FR")}`;
+  // x-default only for pages that exist in every country: it points to "/", which sends each visitor to their country and language.
+  // A page of one country has no global version, so no x-default.
+  if (!onlyCountry && pathFor("fr", "FR") === "/fr/fr/") languages["x-default"] = `${SITE}/`;
   return { canonical: `${SITE}${pathFor(lang, country)}`, languages };
 }
 
@@ -62,7 +64,7 @@ export const breadcrumbLd = (items: { name: string; url: string }[]) => ({
 export const veterinaryCareLd = (p: { name: string; url: string; description?: string; address?: string; postalCode?: string; city?: string; country: string; phone?: string; languages?: string[]; image?: string; zones?: string[] }) => ({
   "@context": "https://schema.org", "@type": "VeterinaryCare", name: p.name, url: p.url, description: p.description, image: p.image, telephone: p.phone,
   address: p.address ? { "@type": "PostalAddress", streetAddress: p.address, postalCode: p.postalCode, addressLocality: p.city, addressCountry: p.country } : undefined,
-  knowsLanguage: p.languages, areaServed: p.zones?.map((z) => ({ "@type": "PostalCodeRangeSpecification", postalCodeBegin: z, postalCodeEnd: z })),
+  knowsLanguage: p.languages, areaServed: p.zones?.length ? p.zones : undefined, // postal codes or places served, as plain text
 });
 
 /** Safe JSON-LD for a <script type="application/ld+json"> (escapes "<"). */
