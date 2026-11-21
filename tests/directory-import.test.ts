@@ -41,3 +41,7 @@ test("sitemap: directory clinic pages only with a full address, not once claimed
   assert.ok(!e.some((p) => p.includes("clinique-b") || p.includes("clinique-c")));
   assert.ok(e.includes("/fr/fr/annuaire/paris") && e.includes("/fr/fr/annuaire"));
 });
+test("directory import: arrondissements belong to their city", () => {
+  const r = rowsFromCompany({ nom_raison_sociale: "SELARL X", nature_juridique: "5485", matching_etablissements: [{ siret: "9", activite_principale: "75.00Z", etat_administratif: "A", code_postal: "75011", libelle_commune: "PARIS 11", adresse: "1 RUE A 75011 PARIS 11" }] });
+  assert.equal(r[0].city, "Paris"); assert.equal(r[0].address, "1 Rue A");
+});

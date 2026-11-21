@@ -44,7 +44,8 @@ export function rowsFromCompany(c: ApiCompany) {
     const company = soleTrader ? "" : clean(c.nom_raison_sociale ?? c.nom_complet);
     const name = title(brand || company);
     if (!name || NON_DIFF.test(name) || NON_DIFF.test(e.adresse ?? "")) continue;
-    const city = title(clean(e.libelle_commune));
+    // "PARIS 11" / "LYON 3EME" / "MARSEILLE 8E ARRONDISSEMENT": the city is Paris, Lyon, Marseille (the district stays in the postcode)
+    const city = title(clean(e.libelle_commune).replace(/^(PARIS|LYON|MARSEILLE)\s+\d+.*$/i, "$1"));
     const postal = clean(e.code_postal);
     // the API address ends with "postal code + town": keep only the street part
     const street = title(clean((e.adresse ?? "").replace(new RegExp(`\\s*${postal}\\s+.*$`), "")));
