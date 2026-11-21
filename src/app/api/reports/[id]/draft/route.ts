@@ -1,3 +1,4 @@
+import { hasCronSecret } from "@/lib/cron-auth";
 import { adminClient, handle, HttpError, json, userFromRequest } from "@/lib/supabase";
 import { buildPrompt, draftWithAI, EMPTY_REPORT } from "@/lib/report";
 
@@ -10,7 +11,7 @@ import { buildPrompt, draftWithAI, EMPTY_REPORT } from "@/lib/report";
  */
 export const POST = handle(async (req, ctx) => {
   const { id } = await ctx.params;
-  const internal = req.headers.get("authorization") === `Bearer ${process.env.CRON_SECRET}`;
+  const internal = hasCronSecret(req); // never true when CRON_SECRET is not set
   const db = adminClient();
   const { data: b } = await db.from("bookings")
     .select("id, type, status, motive, transcript_consent, practices(owner_user_id, country), pets(name, species), owners(language)")

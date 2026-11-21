@@ -1,3 +1,4 @@
+import { isCronRequest } from "@/lib/cron-auth";
 import { adminClient } from "@/lib/supabase";
 import { rowsFromCompany, searchUrl, type ApiCompany } from "@/lib/directory-import";
 
@@ -10,7 +11,7 @@ export const maxDuration = 26;
  * "Import directory". Existing listings are updated (address, coordinates); claimed ones keep their status.
  */
 export async function GET(req: Request) {
-  if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) return new Response("unauthorized", { status: 401 });
+  if (!(await isCronRequest(req))) return new Response("unauthorized", { status: 401 });
   const q = new URL(req.url).searchParams;
   const dep = (q.get("dep") ?? "").toUpperCase(), start = Math.max(1, Number(q.get("page") ?? 1) || 1);
   if (!/^(\d{2}|2A|2B|97\d)$/.test(dep)) return Response.json({ error: "dep" }, { status: 400 });

@@ -1,6 +1,7 @@
 name: Import directory (France)
 # Fills the clinic directory with every active veterinary establishment in France (public SIRENE data),
-# one department at a time. Run it by hand from the Actions tab ("Run workflow"); it also refreshes on the 1st of each month.
+# one department at a time. Run by hand from the Actions tab ("Run workflow"); refreshes on the 1st of each month.
+# No secret needed: the run proves it is this repository's job with a short-lived GitHub token (OIDC).
 on:
   workflow_dispatch:
     inputs:
@@ -10,6 +11,9 @@ on:
         default: ""
   schedule:
     - cron: "0 4 1 * *"
+permissions:
+  id-token: write
+  contents: read
 jobs:
   import:
     runs-on: ubuntu-latest
@@ -17,17 +21,22 @@ jobs:
     steps:
       - name: Import
         env:
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          APP_URL: ${{ vars.APP_URL }}
+          APP_URL: ${{ vars.APP_URL || 'https://televet.netlify.app' }}
           DEPS: ${{ github.event.inputs.departments }}
         run: |
+          token() { curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=televet-cron" | jq -r .value; }
           ALL="$(seq -w 1 95 | grep -v '^20$') 2A 2B 971 972 973 974 976"
+          fails=0
           for d in ${DEPS:-$ALL}; do
             p=1
-            while [ -n "$p" ] && [ "$p" != "null" ]; do
-              r=$(curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/import-directory?dep=$d&page=$p") || { echo "dep $d page $p failed"; break; }
-              echo "$r"
-              p=$(echo "$r" | sed -n 's/.*"next":\([0-9]*\).*/\1/p')
+            while [ -n "$p" ]; do
+              T=$(token)   # tokens are short-lived: a fresh one per call
+              r=$(curl -sS -m 60 -w '\n%{http_code}' -H "Authorization: Bearer $T" "$APP_URL/api/cron/import-directory?dep=$d&page=$p")
+              code=$(echo "$r" | tail -1); body=$(echo "$r" | sed '$d')
+              echo "dep $d page $p → $code $body"
+              if [ "$code" != "200" ]; then fails=$((fails+1)); break; fi
+              p=$(echo "$body" | sed -n 's/.*"next":\([0-9][0-9]*\).*/\1/p')
             done
           done
-          curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/seo-sync"; echo
+          T=$(token); curl -sS -m 120 -H "Authorization: Bearer $T" "$APP_URL/api/cron/seo-sync"; echo
+          [ "$fails" = "0" ]

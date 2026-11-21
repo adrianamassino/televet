@@ -1,9 +1,10 @@
+import { isCronRequest } from "@/lib/cron-auth";
 import { adminClient } from "@/lib/supabase";
 import { loadBooking, sendReminder } from "@/lib/booking-mail";
 
 /** Every 15 minutes: 24 h and 2 h reminders (owner) + 2 h video link reminder (vet). */
 export async function GET(req: Request) {
-  if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) return new Response("unauthorized", { status: 401 });
+  if (!(await isCronRequest(req))) return new Response("unauthorized", { status: 401 });
   const db = adminClient();
   const now = Date.now();
   const sent: string[] = [];

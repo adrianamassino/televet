@@ -1,25 +1,30 @@
-# Scheduler indipendente dall'hosting: chiama gli endpoint cron del sito con il CRON_SECRET.
-# Serve in GitHub: Settings > Secrets and variables > Actions > Secrets: CRON_SECRET; Variables: APP_URL (es. https://televet.co)
+# Scheduler independent of the hosting: calls the site's cron endpoints.
+# No secret to configure: each run proves it is this repository's job with a short-lived GitHub token (OIDC).
+# Optional: variable APP_URL (default https://televet.netlify.app; set https://televet.co after the domain switch).
 name: cron
 on:
   schedule:
-    - cron: "*/15 * * * *"   # promemoria + sincronizzazione calendari (GitHub non garantisce la puntualità al minuto)
-    - cron: "0 3 * * *"      # pulizia chat
-    - cron: "0 8 * * *"      # controllo dei profili incompleti + e-mail di sollecito ai veterinari
+    - cron: "*/15 * * * *"   # reminders + calendar sync (GitHub does not guarantee the exact minute)
+    - cron: "0 3 * * *"      # chat clean-up + SEO sync
+    - cron: "0 8 * * *"      # incomplete profiles + pet reminders
   workflow_dispatch: {}
+permissions:
+  id-token: write
+  contents: read
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - name: Call cron endpoints
         env:
-          APP_URL: ${{ vars.APP_URL }}
+          APP_URL: ${{ vars.APP_URL || 'https://televet.netlify.app' }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           SCHEDULE: ${{ github.event.schedule }}
         run: |
           set -e
-          [ -n "$APP_URL" ] || { echo "APP_URL non impostato"; exit 1; }
-          call() { curl -fsS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/$1"; echo; }
+          TOKEN="$CRON_SECRET"
+          if [ -z "$TOKEN" ]; then TOKEN=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=televet-cron" | jq -r .value); fi
+          call() { curl -fsS -m 60 -H "Authorization: Bearer $TOKEN" "$APP_URL/api/cron/$1"; echo; }
           if [ "$SCHEDULE" = "0 3 * * *" ]; then call purge-chats; call seo-sync
           elif [ "$SCHEDULE" = "0 8 * * *" ]; then call onboarding; call pet-reminders
           else call reminders; call sync-calendars; call reviews; fi
