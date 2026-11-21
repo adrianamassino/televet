@@ -8,9 +8,11 @@ import { DEPARTMENTS, rowsFromCompany, searchUrl, type ApiCompany } from "../src
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 async function get(url: string): Promise<{ results?: ApiCompany[]; total_pages?: number }> {
-  for (let i = 0; i < 6; i++) {
-    const r = await fetch(url, { headers: { accept: "application/json", "user-agent": "Televet directory (contact@televet.co)" } });
-    if (r.ok) return r.json();
+  for (let i = 0; i < 8; i++) {
+    let r: Response;
+    try { r = await fetch(url, { headers: { accept: "application/json", "user-agent": "Televet directory (contact@televet.co)" } }); }
+    catch { await wait(2000 * (i + 1)); continue; } // connection reset: wait and try again
+    if (r.ok) { try { return await r.json(); } catch { await wait(1000); continue; } }
     if (r.status === 429 || r.status >= 500) { await wait(1500 * (i + 1)); continue; }
     throw new Error(`${r.status} ${url}`);
   }
