@@ -62,3 +62,88 @@ export function reminderEmail(d: MailData, forVet = false) {
   const t = pick(d.lang);
   return { subject: `${forVet ? t.vetRemind : t.remindS} · ${d.when}`, html: layout(t, t.remind, d) };
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// E-mail to the vet when a booking arrives (a request to answer, or an appointment already confirmed), and to the owner when a request is declined.
+
+type L7 = Record<Lang, string>;
+const V: Record<string, L7> = {
+  reqS: { fr: "Nouvelle demande de rendez-vous", it: "Nuova richiesta di appuntamento", en: "New appointment request", es: "Nueva solicitud de cita", pt: "Novo pedido de consulta", de: "Neue Terminanfrage", pl: "Nowa prośba o wizytę" },
+  bookedS: { fr: "Nouveau rendez-vous confirmé", it: "Nuovo appuntamento confermato", en: "New appointment booked", es: "Nueva cita confirmada", pt: "Nova consulta confirmada", de: "Neuer Termin bestätigt", pl: "Nowa wizyta potwierdzona" },
+  reqI: { fr: "Un client demande un rendez-vous. Acceptez ou refusez la demande depuis votre espace Televet.", it: "Un cliente chiede un appuntamento. Accetta o rifiuta la richiesta dalla tua area Televet.", en: "A client is asking for an appointment. Accept or decline the request in your Televet space.", es: "Un cliente solicita una cita. Acepta o rechaza la solicitud desde tu espacio Televet.", pt: "Um cliente pede uma consulta. Aceite ou recuse o pedido na sua área Televet.", de: "Ein Kunde fragt einen Termin an. Nehmen Sie die Anfrage in Ihrem Televet-Bereich an oder lehnen Sie sie ab.", pl: "Klient prosi o wizytę. Przyjmij lub odrzuć prośbę w swoim koncie Televet." },
+  bookedI: { fr: "Un rendez-vous vient d'être réservé et confirmé automatiquement.", it: "Un appuntamento è appena stato prenotato e confermato automaticamente.", en: "An appointment has just been booked and confirmed automatically.", es: "Se acaba de reservar una cita, confirmada automáticamente.", pt: "Uma consulta acabou de ser marcada e confirmada automaticamente.", de: "Ein Termin wurde soeben gebucht und automatisch bestätigt.", pl: "Właśnie zarezerwowano wizytę i potwierdzono ją automatycznie." },
+  client: { fr: "Client", it: "Cliente", en: "Client", es: "Cliente", pt: "Cliente", de: "Kunde", pl: "Klient" },
+  pet: { fr: "Animal", it: "Animale", en: "Pet", es: "Mascota", pt: "Animal", de: "Tier", pl: "Zwierzę" },
+  service: { fr: "Consultation", it: "Visita", en: "Consultation", es: "Consulta", pt: "Consulta", de: "Leistung", pl: "Konsultacja" },
+  motive: { fr: "Motif", it: "Motivo", en: "Reason", es: "Motivo", pt: "Motivo", de: "Anlass", pl: "Powód" },
+  access: { fr: "Accès", it: "Accesso", en: "Access", es: "Acceso", pt: "Acesso", de: "Zugang", pl: "Dojście" },
+  travel: { fr: "Trajet réservé", it: "Tragitto riservato", en: "Travel time kept free", es: "Trayecto reservado", pt: "Trajeto reservado", de: "Fahrzeit reserviert", pl: "Zarezerwowany dojazd" },
+  travelV: { fr: "{n} min avant et après", it: "{n} min prima e dopo", en: "{n} min before and after", es: "{n} min antes y después", pt: "{n} min antes e depois", de: "{n} Min. davor und danach", pl: "{n} min przed i po" },
+  price: { fr: "Prix", it: "Prezzo", en: "Price", es: "Precio", pt: "Preço", de: "Preis", pl: "Cena" },
+  maps: { fr: "Voir l'itinéraire dans Google Maps", it: "Apri l'itinerario in Google Maps", en: "Open directions in Google Maps", es: "Ver la ruta en Google Maps", pt: "Ver o percurso no Google Maps", de: "Route in Google Maps öffnen", pl: "Otwórz trasę w Mapach Google" },
+  reqCta: { fr: "Répondre à la demande", it: "Rispondi alla richiesta", en: "Answer the request", es: "Responder a la solicitud", pt: "Responder ao pedido", de: "Anfrage beantworten", pl: "Odpowiedz na prośbę" },
+  bookedCta: { fr: "Ouvrir mon agenda", it: "Apri la mia agenda", en: "Open my agenda", es: "Abrir mi agenda", pt: "Abrir a minha agenda", de: "Meinen Kalender öffnen", pl: "Otwórz kalendarz" },
+  decS: { fr: "Votre demande de rendez-vous n'a pas pu être acceptée", it: "La tua richiesta di appuntamento non è stata accettata", en: "Your appointment request could not be accepted", es: "Tu solicitud de cita no pudo ser aceptada", pt: "O seu pedido de consulta não pôde ser aceite", de: "Ihre Terminanfrage konnte nicht angenommen werden", pl: "Twoja prośba o wizytę nie została przyjęta" },
+  decI: { fr: "{practice} n'a pas pu accepter votre demande pour le {when}.", it: "{practice} non ha potuto accettare la tua richiesta per {when}.", en: "{practice} could not accept your request for {when}.", es: "{practice} no pudo aceptar tu solicitud para el {when}.", pt: "{practice} não pôde aceitar o seu pedido para {when}.", de: "{practice} konnte Ihre Anfrage für {when} nicht annehmen.", pl: "{practice} nie może przyjąć Twojej prośby na {when}." },
+  decPay: { fr: "Vous n'êtes pas débité : le montant bloqué sur votre carte est libéré (ou remboursé).", it: "Non ti viene addebitato nulla: l'importo bloccato sulla carta viene liberato (o rimborsato).", en: "You are not charged: the amount held on your card is released (or refunded).", es: "No se te cobra nada: el importe retenido en tu tarjeta se libera (o se reembolsa).", pt: "Não lhe é cobrado nada: o valor retido no cartão é libertado (ou reembolsado).", de: "Ihnen wird nichts berechnet: Der auf Ihrer Karte reservierte Betrag wird freigegeben (oder erstattet).", pl: "Nic nie płacisz: kwota zablokowana na karcie zostaje zwolniona (lub zwrócona)." },
+  decReply: { fr: "Message du vétérinaire", it: "Messaggio del veterinario", en: "Message from the vet", es: "Mensaje del veterinario", pt: "Mensagem do veterinário", de: "Nachricht der Tierarztpraxis", pl: "Wiadomość od weterynarza" },
+  decCta: { fr: "Choisir un autre horaire", it: "Scegli un altro orario", en: "Choose another time", es: "Elegir otro horario", pt: "Escolher outro horário", de: "Anderen Termin wählen", pl: "Wybierz inny termin" },
+};
+const langOf = (lang: string): Lang => ((lang in T ? lang : "en") as Lang);
+const TYPE_NAMES: Record<string, L7> = {
+  home: { fr: "Visite à domicile", it: "Visita a domicilio", en: "Home visit", es: "Visita a domicilio", pt: "Visita ao domicílio", de: "Hausbesuch", pl: "Wizyta domowa" },
+  video: { fr: "Téléconsultation", it: "Videoconsulto", en: "Video consultation", es: "Videoconsulta", pt: "Videoconsulta", de: "Videosprechstunde", pl: "Wideokonsultacja" },
+  clinic: { fr: "Consultation à la clinique", it: "Visita in clinica", en: "Clinic appointment", es: "Consulta en clínica", pt: "Consulta na clínica", de: "Termin in der Praxis", pl: "Wizyta w klinice" },
+  expertise: { fr: "Télé-expertise", it: "Tele-expertise", en: "Tele-expertise", es: "Teleexperticia", pt: "Tele-expertise", de: "Tele-Expertise", pl: "Teleekspertyza" },
+};
+/** Name of a consultation for an e-mail: the vet's own name for it, else the kind of appointment in the reader's language. */
+export const serviceLabel = (customName: string | null | undefined, type: string, lang: string) => customName?.trim() || TYPE_NAMES[type]?.[langOf(lang)] || type;
+const BTN = "display:inline-block;background:#053ABE;color:#fff;text-decoration:none;font-weight:bold;padding:14px 22px;border-radius:10px";
+
+/** Shared look of the newer e-mails: logo, greeting, intro, a table of facts, then free HTML (buttons, notes). */
+function frame(hello: string, intro: string, rows: [string, string][], after: string): string {
+  return `<!doctype html><html><body style="margin:0;background:#F6F8FB;font-family:Arial,Helvetica,sans-serif;color:#0F172A">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" style="max-width:520px;background:#fff;border:1px solid #E3E8EF;border-radius:14px" cellpadding="0" cellspacing="0"><tr><td style="padding:24px">
+<p style="margin:0 0 4px;font-size:20px;font-weight:bold;color:#053ABE">televet</p>
+<p style="margin:16px 0 8px;font-size:16px">${esc(hello)}</p>
+<p style="margin:0 0 16px;font-size:16px;line-height:1.5">${esc(intro)}</p>
+${rows.length ? `<table role="presentation" width="100%" style="background:#F6F8FB;border-radius:10px" cellpadding="10">${rows.map(([k, v]) => `<tr><td style="font-size:13px;color:#526077;width:110px;vertical-align:top">${esc(k)}</td><td style="font-size:15px;font-weight:bold">${esc(v).replace(/\n/g, "<br>")}</td></tr>`).join("")}</table>` : ""}
+${after}
+</td></tr></table></td></tr></table></body></html>`;
+}
+
+export interface VetMailData {
+  lang: string; kind: "request" | "booked"; vetName: string; when: string; client: string; phone?: string | null; pet?: string | null;
+  service: string; motive?: string | null; price?: string | null;
+  /** home visits only */
+  address?: string | null; accessNotes?: string | null; mapsUrl?: string | null; travelMin?: number | null;
+  dashboardUrl: string;
+}
+
+/** To the vet: a new request to accept or decline, or a new appointment confirmed automatically. Home visits carry the address and a directions link. */
+export function vetBookingEmail(d: VetMailData) {
+  const l = langOf(d.lang), t = T[l], v = (k: string) => V[k][l], request = d.kind === "request";
+  const rows: [string, string][] = [
+    [t.when, d.when], [v("client"), [d.client, d.phone].filter(Boolean).join(" · ")],
+    ...(d.pet ? [[v("pet"), d.pet] as [string, string]] : []), [v("service"), d.service],
+    ...(d.motive ? [[v("motive"), d.motive] as [string, string]] : []),
+    ...(d.address ? [[t.where, d.address] as [string, string]] : []),
+    ...(d.address && d.accessNotes ? [[v("access"), d.accessNotes] as [string, string]] : []),
+    ...(d.address && d.travelMin ? [[v("travel"), v("travelV").replace("{n}", String(d.travelMin))] as [string, string]] : []),
+    ...(d.price ? [[v("price"), d.price] as [string, string]] : []),
+  ];
+  const after = `${d.address && d.mapsUrl ? `<p style="margin:18px 0 0"><a href="${esc(d.mapsUrl)}" style="color:#053ABE;font-weight:bold;font-size:15px">${esc(v("maps"))} →</a></p>` : ""}
+<p style="margin:22px 0 0"><a href="${esc(d.dashboardUrl)}" style="${BTN}">${esc(v(request ? "reqCta" : "bookedCta"))}</a></p>`;
+  return { subject: `${v(request ? "reqS" : "bookedS")} · ${d.when}`, html: frame(`${t.hello} ${d.vetName},`, v(request ? "reqI" : "bookedI"), rows, after) };
+}
+
+/** To the owner when the vet declines a request: what happened, the vet's message if any, and a way to pick another time. */
+export function declinedEmail(d: { lang: string; name: string; practice: string; when: string; reply?: string | null; paidOnline: boolean; againUrl: string }) {
+  const l = langOf(d.lang), t = T[l], v = (k: string) => V[k][l];
+  const after = `${d.reply ? `<p style="margin:16px 0 4px;font-size:13px;color:#526077">${esc(v("decReply"))}</p><p style="margin:0;font-size:15px;line-height:1.5">${esc(d.reply).replace(/\n/g, "<br>")}</p>` : ""}
+${d.paidOnline ? `<p style="margin:16px 0 0;font-size:14px;color:#344054">${esc(v("decPay"))}</p>` : ""}
+<p style="margin:22px 0 0"><a href="${esc(d.againUrl)}" style="${BTN}">${esc(v("decCta"))}</a></p>`;
+  return { subject: v("decS"), html: frame(`${t.hello} ${d.name},`, v("decI").replace("{practice}", d.practice).replace("{when}", d.when), [], after) };
+}
+

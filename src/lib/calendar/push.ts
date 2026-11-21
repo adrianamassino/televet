@@ -1,3 +1,4 @@
+import { directionsUrl } from "../travel";
 import { adminClient } from "../supabase";
 import * as google from "./google";
 import { googleToken, type Secret } from "./sync";
@@ -25,7 +26,7 @@ export async function pushBookingToGoogle(b: BookingCtx): Promise<void> {
     await google.insertEvent(await googleToken(conn.id, s), conn.external_calendar_id ?? "primary", {
       id: b.id,
       summary: `Televet · ${p?.pets?.name ?? b.owner.name} (${LABEL[b.type] ?? b.type})`,
-      description: [`Client : ${b.owner.name}`, p?.pets ? `Animal : ${p.pets.name} (${p.pets.species})` : "", p?.motive ? `Motif : ${p.motive}` : "", video ? `Visio : ${video}` : "", `Réservé via Televet`].filter(Boolean).join("\n"),
+      description: [`Client : ${b.owner.name}`, p?.pets ? `Animal : ${p.pets.name} (${p.pets.species})` : "", p?.motive ? `Motif : ${p.motive}` : "", video ? `Visio : ${video}` : "", b.address ? `Itinéraire : ${directionsUrl(b.address)}` : "", `Réservé via Televet`].filter(Boolean).join("\n"),
       location: b.address ?? undefined, start: new Date(b.starts_at), end: new Date(b.ends_at),
     });
   } catch (e) {

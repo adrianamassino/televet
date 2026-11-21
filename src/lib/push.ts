@@ -66,15 +66,6 @@ export async function pushBooking(bookingId: string, kind: Exclude<PushKind, "ow
   } catch (e) { console.error("push booking", e); }
 }
 
-/** Tells the vet about a booking that just became visible to them: a request to accept, or an appointment already confirmed automatically. */
-export async function notifyVetNewBooking(bookingId: string): Promise<void> {
-  try {
-    const { data } = await adminClient().from("bookings").select("status").eq("id", bookingId).maybeSingle();
-    if (data?.status === "pending") await pushBooking(bookingId, "vet_request");
-    else if (data?.status === "confirmed") await pushBooking(bookingId, "vet_booked");
-  } catch (e) { console.error("push new booking", e); }
-}
-
 /** Vaccine / treatment reminder for one owner (first item, plus how many more). */
 export async function pushPetDue(ownerId: string, items: { pet: string; name: string; due: string }[]): Promise<void> {
   if (!items.length) return;

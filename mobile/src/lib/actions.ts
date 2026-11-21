@@ -1,5 +1,5 @@
 import * as WebBrowser from "expo-web-browser";
-import { Linking, Platform } from "react-native";
+import { Linking } from "react-native";
 import type { CopyKey } from "@/copy";
 import { api, ApiError } from "./api";
 import { dateTime } from "./format";
@@ -22,7 +22,8 @@ export async function openWeb(url: string): Promise<void> {
 }
 export const callPhone = (phone: string) => Linking.openURL(`tel:${phone.replace(/[^\d+]/g, "")}`).catch(() => {});
 export const sendMail = (email: string) => Linking.openURL(`mailto:${email}`).catch(() => {});
-export const openMap = (address: string) => Linking.openURL(Platform.OS === "ios" ? `maps:?q=${encodeURIComponent(address)}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`).catch(() => {});
+/** Opens directions to the address in Google Maps (the app if installed, otherwise the browser). */
+export const openMap = (address: string) => Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address.trim())}`).catch(() => {});
 
 /**
  * Opens the video room of a booking. Returns nothing when it opened, otherwise the sentence to show

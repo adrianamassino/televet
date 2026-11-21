@@ -87,6 +87,9 @@ async function mock(page, { signedIn, lang }) {
     if (p === "/api/availability") return json(route, { slots: slots() });
     if (p === "/api/pro/bookings") return json(route, { bookings: proBookings });
     if (p === "/api/pro/clients") return json(route, { clients });
+    if (p === "/api/pro/home-visits") return json(route, { ready: true, country: "IT", currency: "EUR", autoConfirm: false, vets: [
+      { id: "v1", name: "Dr. Giulia Rossi", travelMin: 30, hasHomeService: true, calendarConnected: true, zone: { mode: "radius", label: "Via Torino 40, 20123 Milano", lat: 45.46, lng: 9.18, km: 12, extended: { km: 25, feeCents: 1500 } } },
+      { id: "v2", name: "Dr. Marco Bianchi", travelMin: 20, hasHomeService: true, calendarConnected: false, zone: null }] });
     if (/\/api\/bookings\/[^/]+\/video$/.test(p)) return json(route, { ok: false, reason: "too_early", opensAt: iso(0, 23, 0) });
     if (p === "/api/bookings") return json(route, { bookingId: "e0000000-0000-4000-8000-0000000000aa", payment: null });
     return json(route, { ok: true });

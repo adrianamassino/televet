@@ -1,8 +1,8 @@
 import type Stripe from "stripe";
 import { adminClient } from "@/lib/supabase";
-import { statusFromAccount, stripe } from "@/lib/payments/stripe";
+import { cancelPayment, statusFromAccount, stripe } from "@/lib/payments/stripe";
 import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
-import { notifyVetNewBooking } from "@/lib/push";
+import { notifyVetNewBooking } from "@/lib/vet-notify";
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature") ?? "";
@@ -20,17 +20,27 @@ export async function POST(req: Request) {
       break;
     }
     case "payment_intent.amount_capturable_updated": {
-      // bookings that were not yet authorized: the vet hears about them now (a webhook delivered twice must not notify twice)
-      const { data: fresh } = await db.from("bookings").select("id").eq("payment_ref", event.data.object.id).eq("payment_status", "pending");
-      const { data: rows } = await db.from("bookings").update({ payment_status: "authorized" }).eq("payment_ref", event.data.object.id).select("id");
-      for (const r of rows ?? []) await autoConfirmIfEnabled(r.id);   // no-op when the vet confirms by hand
-      for (const r of fresh ?? []) await notifyVetNewBooking(r.id);
+      const pi = event.data.object.id;
+      const { data: rows } = await db.from("bookings").select("id, status").eq("payment_ref", pi);
+      for (const r of rows ?? []) {
+        if (r.status !== "pending") {
+          // The time was given back before the payment went through (finished too late, or the request was withdrawn): nothing is kept on the card.
+          if (r.status !== "confirmed") { await cancelPayment(pi).catch(() => undefined); await db.from("bookings").update({ payment_status: "refunded" }).eq("id", r.id); }
+          continue;
+        }
+        // only the first delivery of this event finds the payment still "pending": the vet is told once
+        const { data: first } = await db.from("bookings").update({ payment_status: "authorized" }).eq("id", r.id).in("payment_status", ["pending", "failed"]).select("id");
+        await autoConfirmIfEnabled(r.id);   // confirmed at once when the vet's calendar is synced or automatic confirmation is on
+        if (first?.length) await notifyVetNewBooking(r.id);
+      }
       break;
     }
     case "payment_intent.succeeded":
       await db.from("bookings").update({ payment_status: "captured" }).eq("payment_ref", event.data.object.id); break;
     case "payment_intent.payment_failed":
-      await db.from("bookings").update({ payment_status: "failed", status: "cancelled" }).eq("payment_ref", event.data.object.id); break;
+      // A refused card is not the end: the client can try another one on the same page. The booking keeps its time for a while
+      // and is released by expireUnpaid() if no payment succeeds.
+      break;
     case "charge.refunded":
       if (typeof event.data.object.payment_intent === "string")
         await db.from("bookings").update({ payment_status: "refunded" }).eq("payment_ref", event.data.object.payment_intent);

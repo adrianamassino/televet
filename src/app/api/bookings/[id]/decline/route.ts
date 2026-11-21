@@ -2,6 +2,7 @@ import { adminClient, handle, HttpError, json, userFromRequest } from "@/lib/sup
 import { cancelPayment } from "@/lib/payments/stripe";
 import { refund } from "@/lib/payments/mercadopago";
 import { pushBooking } from "@/lib/push";
+import { sendDeclined } from "@/lib/booking-mail";
 
 /** POST /api/bookings/:id/decline — vet declines; owner is never charged (Stripe) or refunded (Mercado Pago). */
 export const POST = handle(async (req, ctx) => {
@@ -21,5 +22,6 @@ export const POST = handle(async (req, ctx) => {
   }
   await db.from("bookings").update({ status: "declined", vet_reply: reply?.slice(0, 300) ?? null, payment_status }).eq("id", id);
   await pushBooking(id, "owner_declined");
+  await sendDeclined(id, reply?.slice(0, 300) ?? null, b.provider !== null); // by e-mail too: not every owner uses the app
   return json({ ok: true });
 });

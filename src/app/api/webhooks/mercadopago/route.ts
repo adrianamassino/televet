@@ -1,7 +1,7 @@
 import { adminClient } from "@/lib/supabase";
-import { getPayment } from "@/lib/payments/mercadopago";
+import { getPayment, refund } from "@/lib/payments/mercadopago";
 import { autoConfirmIfEnabled } from "@/lib/booking-confirm";
-import { notifyVetNewBooking } from "@/lib/push";
+import { notifyVetNewBooking } from "@/lib/vet-notify";
 
 /**
  * Mercado Pago notifications. We never trust the payload: the payment is re-read
@@ -18,7 +18,13 @@ export async function POST(req: Request) {
   if (!sec?.mp_access_token) return new Response("no token");
   const p = await getPayment(sec.mp_access_token, body.data.id);
   const map: Record<string, string> = { approved: "captured", refunded: "refunded", rejected: "failed", cancelled: "failed", in_process: "pending", pending: "pending" };
-  const { data: before } = await db.from("bookings").select("payment_status").eq("id", p.external_reference).eq("practice_id", practice.id).maybeSingle();
+  const { data: before } = await db.from("bookings").select("payment_status, status").eq("id", p.external_reference).eq("practice_id", practice.id).maybeSingle();
+  if (before && map[p.status] === "captured" && (before.status === "cancelled" || before.status === "declined")) {
+    // paid after the time was given back (payment finished too late) or after the vet declined: the money goes straight back
+    await refund(sec.mp_access_token, String(p.id)).catch((e) => console.error("mp late refund", e));
+    await db.from("bookings").update({ payment_ref: String(p.id), payment_status: "refunded" }).eq("id", p.external_reference).eq("practice_id", practice.id);
+    return new Response("refunded");
+  }
   await db.from("bookings").update({ payment_ref: String(p.id), payment_status: map[p.status] ?? "pending" })
     .eq("id", p.external_reference).eq("practice_id", practice.id);
   if (map[p.status] === "captured") {

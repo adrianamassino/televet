@@ -1,6 +1,7 @@
 import { adminClient } from "./supabase";
 import { sendEmail } from "./notify";
-import { confirmationEmail, reminderEmail, type MailData } from "./email/templates";
+import { confirmationEmail, declinedEmail, reminderEmail, serviceLabel, type MailData } from "./email/templates";
+import { COUNTRIES } from "./countries";
 import { createRoom, signedVisioLink } from "./video";
 import { pushBooking } from "./push";
 
@@ -9,7 +10,7 @@ const VIDEO_TYPES = new Set(["video", "expertise"]);
 export interface BookingCtx {
   id: string; type: string; starts_at: string; ends_at: string; status: string; address: string | null;
   video_room: string | null; video_url: string | null;
-  practice: { name: string; timezone: string; email: string | null; address: string | null; country: string; reminders: { e24?: boolean; e2?: boolean } };
+  practice: { name: string; slug: string; timezone: string; email: string | null; address: string | null; country: string; reminders: { e24?: boolean; e2?: boolean } };
   practitioner: { id: string; display_name: string; video_link: string | null };
   service: { custom_name: string | null; catalog_code: string; confirmation_note: string | null; reminder_note: string | null };
   owner: { name: string; email: string | null; language: string };
@@ -18,7 +19,7 @@ export interface BookingCtx {
 export async function loadBooking(id: string): Promise<BookingCtx | null> {
   const db = adminClient();
   const { data } = await db.from("bookings")
-    .select("id, type, starts_at, ends_at, status, address, video_room, video_url, owner_id, practices(name, timezone, email, address, country, reminders), practitioners(id, display_name, video_link), services(custom_name, catalog_code, confirmation_note, reminder_note)")
+    .select("id, type, starts_at, ends_at, status, address, video_room, video_url, owner_id, practices(name, slug, timezone, email, address, country, reminders), practitioners(id, display_name, video_link), services(custom_name, catalog_code, confirmation_note, reminder_note)")
     .eq("id", id).single();
   if (!data) return null;
   const r = data as unknown as Record<string, unknown> & { owner_id: string };
@@ -51,7 +52,7 @@ function mailData(b: BookingCtx, forVet: boolean, note: string | null): MailData
     lang, when, appUrl, note,
     name: forVet ? b.practitioner.display_name : b.owner.name,
     withName: forVet ? b.owner.name : b.practitioner.display_name,
-    service: b.service.custom_name ?? b.service.catalog_code,
+    service: serviceLabel(b.service.custom_name, b.type, lang),
     address: isVideo(b) ? null : b.type === "home" ? b.address : b.practice.address,
     joinUrl: isVideo(b) ? signedVisioLink(appUrl, b.id, forVet ? "vet" : "owner") : null,
   };
@@ -74,3 +75,17 @@ export async function sendReminder(b: BookingCtx, kind: "24h" | "2h") {
   await pushBooking(b.id, kind === "24h" ? "owner_reminder_24h" : "owner_reminder_2h");
   if (kind === "2h" && isVideo(b)) await pushBooking(b.id, "vet_video_soon");
 }
+
+/** Tells the owner by e-mail that the vet declined the request (the app sends a notification too). Never throws. */
+export async function sendDeclined(bookingId: string, reply: string | null, paidOnline: boolean): Promise<void> {
+  try {
+    const b = await loadBooking(bookingId);
+    if (!b?.owner.email) return;
+    const c = COUNTRIES[b.practice.country], lang = b.owner.language;
+    const pathLang = c?.languages.includes(lang) ? lang : c?.languages[0] ?? "en"; // the page must exist in that country
+    const when = new Intl.DateTimeFormat(`${lang}-${b.practice.country}`, { dateStyle: "full", timeStyle: "short", timeZone: b.practice.timezone }).format(new Date(b.starts_at));
+    const m = declinedEmail({ lang, name: b.owner.name, practice: b.practice.name, when, reply, paidOnline, againUrl: `${process.env.APP_URL}/${pathLang}/${b.practice.country.toLowerCase()}/veterinaire/${b.practice.slug}` });
+    await sendEmail(b.owner.email, m.subject, m.html);
+  } catch (e) { console.error("declined email", e); }
+}
+

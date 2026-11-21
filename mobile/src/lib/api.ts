@@ -6,7 +6,7 @@ export class ApiError extends Error {
   constructor(public status: number, public code: string) { super(code); }
 }
 
-type Init = { method?: "GET" | "POST" | "DELETE" | "PATCH"; body?: unknown; auth?: boolean };
+type Init = { method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; body?: unknown; auth?: boolean };
 
 /** Calls the Televet API on the website, signed with the person's session when there is one. */
 export async function api<T>(path: string, init: Init = {}): Promise<T> {

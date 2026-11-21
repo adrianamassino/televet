@@ -1,9 +1,10 @@
 "use client";
+import { directionsUrl } from "@/lib/travel";
 import JoinVideo from "@/components/JoinVideo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export type AgendaBooking = { id: string; starts_at: string; ends_at: string; type: string; status: string; address: string | null; motive: string | null; access_notes: string | null; price_cents: number; currency: string; video_room: string | null; owners: { full_name: string; phone: string | null } | null; pets: { name: string; species: string } | null };
+export type AgendaBooking = { id: string; starts_at: string; ends_at: string; type: string; status: string; address: string | null; motive: string | null; access_notes: string | null; travel_min?: number | null; price_cents: number; currency: string; video_room: string | null; owners: { full_name: string; phone: string | null } | null; pets: { name: string; species: string } | null };
 
 const H0 = 7, H1 = 21, PX = 46; // visible hours and pixels per hour
 
@@ -69,7 +70,7 @@ export default function AgendaWeek({ lang, tz, t, money, token, onAct }: { lang:
         <span className={`chip ${sel.status === "confirmed" ? "ok" : "wait"}`}>{t("s_" + sel.status)}</span>
         <div>{t("t_" + sel.type).split(" (")[0]} · {money(sel.price_cents, sel.currency)}</div>
         <div>{sel.owners?.full_name}{sel.owners?.phone ? ` · ${sel.owners.phone}` : ""}{sel.pets?.name ? ` — ${sel.pets.name} (${sel.pets.species})` : ""}</div>
-        {sel.motive && <small>{sel.motive}</small>}{sel.address && <div><small>{sel.address}{sel.access_notes ? ` · ${sel.access_notes}` : ""}</small></div>}
+        {sel.motive && <small>{sel.motive}</small>}{sel.address && <div><small><a href={directionsUrl(sel.address)} target="_blank" rel="noopener noreferrer">{sel.address} ↗</a>{sel.access_notes ? ` · ${sel.access_notes}` : ""}{sel.travel_min ? ` · 🚗 ${sel.travel_min} min` : ""}</small></div>}
         {sel.status === "confirmed" && sel.video_room && sel.type === "video" && <div style={{ marginTop: 6 }}><JoinVideo bookingId={sel.id} lang={lang} /></div>}
         {sel.status === "pending" && <p><button className="btn" disabled={busy} onClick={async () => { await onAct(sel.id, "confirm"); setSel(null); load(); }}>{t("accept")}</button>{" "}<button className="btn btn-ghost" disabled={busy} onClick={async () => { await onAct(sel.id, "decline"); setSel(null); load(); }}>{t("decline")}</button></p>}
       </div>}

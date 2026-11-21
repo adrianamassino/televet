@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { Pressable, Share, StyleSheet, Text, View } from "react-native";
 import { ProGate } from "@/components/pro";
 import { Header, Screen } from "@/components/Screen";
@@ -13,7 +14,7 @@ import { C, F } from "@/lib/theme";
 
 /** The clinic's card, the booking link to share, the door to the full space on the website, settings and sign-out. */
 export default function VetProfile() {
-  const { t, lang } = useI18n(), { practice, bookings } = usePro(), { session, signOut } = useSession();
+  const { t, lang } = useI18n(), { practice, bookings } = usePro(), { session, signOut } = useSession(), router = useRouter();
   if (!practice || !bookings) return <Screen><Header title={t("tabProfile")} /><ProGate /></Screen>;
   const cc = practice.country.toLowerCase(), site = `${API_URL}/${siteLang(lang, practice.country)}/${cc}`;
   const link = `${site}/reserver/${practice.slug}`;
@@ -37,6 +38,11 @@ export default function VetProfile() {
         <Txt v="h3">{t("bookingLink")}</Txt>
         <View style={st.link}><Text style={st.linkTxt} numberOfLines={2} selectable>{link.replace(/^https?:\/\//, "")}</Text></View>
         <PillButton small icon="share-variant-outline" label={t("share")} onPress={() => Share.share({ message: t("shareText", { name: practice.name, url: link }) }).catch(() => {})} />
+      </Card>
+
+      <Card style={{ gap: 10 }}>
+        <Txt v="h3">{t("hvTitle")}</Txt>
+        <PillButton kind="outline" small icon="map-marker-radius-outline" arrow label={t("hvOpen")} onPress={() => router.push("/v/home-visits")} />
       </Card>
 
       <Card style={{ gap: 10 }}>

@@ -19,6 +19,7 @@ export default function VetLayout() {
       }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="booking/[id]" options={{ headerShown: true, title: t("appointment") }} />
+        <Stack.Screen name="home-visits" options={{ headerShown: true, title: t("hvTitle") }} />
       </Stack>
     </ProProvider>
   );
