@@ -57,7 +57,7 @@ async function country(cc: string) {
     };
   });
   mkdirSync("data", { recursive: true });
-  writeFileSync(`data/directory-${cc.toLowerCase()}.json`, JSON.stringify(rows));
+  writeFileSync(`data/directory-${cc === "FR" ? "osm-fr" : cc.toLowerCase()}.json`, JSON.stringify(rows)); // France keeps its SIRENE file
   console.log(`${cc}: ${rows.length} clinics, ${rows.filter((r) => r.city).length} with a town, ${rows.filter((r) => r.address).length} with a street address`);
 }
 
