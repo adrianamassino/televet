@@ -6,19 +6,21 @@
 type Guide = { lead: string; title: string; sections: { h: string; p?: string; li?: string[] }[]; steps: string[]; faq: { q: string; a: string }[]; cities?: boolean };
 export const GUIDE_FR: Partial<Record<"video" | "home", Guide>> = {
   video: {
-    title: "Téléconsultation vétérinaire : consulter un vétérinaire en visio",
-    lead: "Un vétérinaire vous répond en vidéo, depuis chez vous, sans transport ni salle d'attente. Idéal pour un premier avis, un suivi ou une question sur la santé, l'alimentation ou le comportement de votre animal.",
+    title: "Téléconsultation et téléconseil vétérinaire en visio, à partir de 20 €",
+    lead: "Un vétérinaire en quelques minutes, sans déplacement ni application à télécharger. Le téléconseil vous donne des informations générales sur la santé de votre animal avec un vétérinaire partenaire ; la téléconsultation permet de faire consulter votre animal à distance par votre vétérinaire traitant, pour un suivi personnalisé.",
     sections: [
-      { h: "Quand la téléconsultation est utile", li: ["Un premier avis sur un symptôme récent (démangeaisons, perte d'appétit, petite boiterie, troubles digestifs légers)", "Le suivi après une opération ou un traitement", "Les questions d'alimentation, de poids, de comportement ou d'éducation", "Un animal stressé par le transport ou un propriétaire qui ne peut pas se déplacer", "Savoir s'il faut consulter en personne, et avec quelle urgence"] },
-      { h: "Téléconseil ou téléconsultation ?", p: "Le téléconseil est un échange d'informations et d'orientation : le vétérinaire vous conseille sans poser de diagnostic. La téléconsultation est un acte vétérinaire à distance, encadré par la réglementation : selon la situation, le vétérinaire peut poser un diagnostic, et parfois prescrire, s'il estime disposer d'assez d'éléments. Chaque vétérinaire indique sur Televet ce qu'il propose." },
-      { h: "Quand il faut aller tout de suite chez un vétérinaire", p: "Difficulté à respirer, saignement important, suspicion d'intoxication, convulsions, ventre gonflé et dur, animal qui ne se lève plus : rendez-vous immédiatement dans une clinique vétérinaire d'urgence. Une consultation en ligne ne doit jamais retarder des soins urgents." },
+      { h: "Téléconseil vétérinaire", p: "Avec un vétérinaire partenaire de Televet, en visio : informations générales sur la santé animale, orientation (faut-il consulter rapidement ?), alimentation, comportement, prévention. En France, le téléconseil ne donne lieu à aucun diagnostic ni à aucune ordonnance." },
+      { h: "Téléconsultation vétérinaire", p: "Avec votre vétérinaire traitant, qui connaît déjà votre animal : suivi après une consultation ou une opération, point sur un traitement, contrôle. Gardez le lien avec votre vétérinaire habituel grâce à la télémédecine vétérinaire." },
+      { h: "Nos domaines d'expertise", li: ["Téléconseil vétérinaire d'urgence, par nos vétérinaires télérégulateurs", "Nutrition", "Comportement", "Naturopathie", "NAC : lapin, furet, oiseau, poisson…", "Équin : cheval, âne"] },
+      { h: "Simple, sécurisé, 24h/24", li: ["Aucune application à télécharger : la visio s'ouvre depuis un lien", "Lien confidentiel, partagé uniquement entre vous et le vétérinaire", "Paiement sécurisé en ligne par carte", "Prise de rendez-vous en ligne 24h/24"] },
+      { h: "Quand il faut aller tout de suite chez un vétérinaire", p: "Difficulté à respirer, saignement important, suspicion d'intoxication, convulsions, ventre gonflé et dur, animal qui ne se lève plus : rendez-vous immédiatement dans une clinique vétérinaire d'urgence. Le téléconseil ne remplace pas l'examen clinique et ne doit jamais retarder des soins urgents." },
     ],
-    steps: ["Choisissez un vétérinaire et un horaire libre", "Décrivez la situation et ajoutez des photos si besoin", "Payez en ligne : le montant est seulement réservé tant que le vétérinaire n'a pas confirmé", "À l'heure prévue, rejoignez la visio depuis votre téléphone ou ordinateur, sans rien installer"],
+    steps: ["Choisissez téléconseil ou téléconsultation, puis un vétérinaire et un horaire", "Décrivez la situation et ajoutez des photos si besoin", "Payez en ligne : le montant est seulement réservé tant que le vétérinaire n'a pas confirmé", "À l'heure prévue, ouvrez le lien de la visio depuis votre téléphone ou ordinateur"],
     faq: [
-      { q: "Faut-il installer une application pour la visio ?", a: "Non. La visio s'ouvre dans le navigateur du téléphone ou de l'ordinateur à partir du lien reçu par e-mail ou depuis votre espace Televet." },
-      { q: "Combien coûte une téléconsultation ?", a: "Chaque vétérinaire fixe son prix, affiché avant la réservation, frais de service compris. Vous ne payez rien de plus." },
+      { q: "Combien coûte un téléconseil vétérinaire ?", a: "À partir de 20 €. Chaque vétérinaire fixe son prix, affiché avant la réservation, frais de service compris." },
+      { q: "Puis-je obtenir une ordonnance en visio ?", a: "Non pour un téléconseil : en France, aucun diagnostic ni aucune ordonnance n'est établi lors d'un téléconseil vétérinaire. Pour une prescription, votre animal doit être examiné, par exemple lors d'une visite à domicile." },
+      { q: "Faut-il installer une application ?", a: "Non. La visio s'ouvre dans le navigateur du téléphone ou de l'ordinateur, à partir du lien reçu." },
       { q: "Que se passe-t-il si le vétérinaire refuse ou annule ?", a: "Le montant réservé sur votre carte est libéré, ou remboursé s'il avait déjà été débité." },
-      { q: "Le vétérinaire peut-il prescrire un médicament à distance ?", a: "Cela dépend de la situation et de ce que le vétérinaire peut évaluer en vidéo. S'il estime qu'un examen est nécessaire, il vous orientera vers une consultation en personne." },
     ],
   },
   home: {

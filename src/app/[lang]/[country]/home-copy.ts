@@ -4,7 +4,7 @@ export type HomeTxt = {
   how: string; steps: { t: string; d: string }[]; pro: string; proBtn: string; results: string; noRes: string; kind: Record<string, string>; resFor: string; next: string; wTitle: string; wOwner: string; wOwnerD: string; wVet: string; wVetD: string;
 };
 export const HOME: Record<string, HomeTxt> = {
-  fr: { title: "Vétérinaire à domicile et téléconsultation en ligne | Televet", desc: "Un vétérinaire diplômé chez vous ou en téléconsultation vétérinaire par visio. Réservez en ligne pour votre chien, chat ou NAC.", h1: "Vétérinaire à domicile et téléconsultation vétérinaire", lead: "Un vétérinaire diplômé vient chez vous, ou vous répond en visio depuis chez vous. Réservez en ligne en quelques clics.",
+  fr: { title: "Vétérinaire à domicile et téléconsultation en ligne | Televet", desc: "Un vétérinaire diplômé chez vous ou en téléconsultation vétérinaire par visio. Réservez en ligne pour votre chien, chat ou NAC.", h1: "Vétérinaire à domicile et téléconsultation vétérinaire", lead: "Un vétérinaire en quelques minutes, à partir de 20 €. Téléconseil, téléconsultation avec votre vétérinaire traitant ou vétérinaire à domicile : prenez rendez-vous en ligne 24h/24.",
     tabs: { home: "À domicile", video: "En visio", clinic: "En clinique" }, ph: "Ville ou code postal", go: "Rechercher",
     trust: ["Vétérinaires diplômés", "Réservation en ligne", "Rappels par e-mail", "Compte-rendu après la consultation"], vets: "Vétérinaires sur Televet", all: "Voir tous les vétérinaires", book: "Prendre rendez-vous", none: "Les premiers vétérinaires arrivent bientôt.",
     animals: "Pour tous les animaux", animalsList: ["Chiens", "Chats", "Lapins", "Oiseaux", "Reptiles", "Rongeurs"],

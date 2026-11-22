@@ -1,4 +1,6 @@
 import { pick } from "@/lib/pick";
+import { faqFor } from "@/lib/faq";
+import { SPECIALTIES_FR } from "./specialties-fr";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Globe, Activity, ArrowRight, Brain, Check, Clock, Leaf, MapPin, MessageCircle, Mic, PhoneOff, Salad, Siren, Bird, Cat, CalendarCheck, ClipboardList, Dog, FileText, Fish, Hospital, House, Rabbit, Rat, Search, ShieldCheck, Stethoscope, Turtle, Video, BellRing, HeartPulse, Syringe, Pill, Microscope, Bone, PawPrint, Sparkles, Heart, Cross, Thermometer } from "lucide-react";
@@ -30,7 +32,11 @@ export default async function OwnerHome({ params }: P) {
   let vets: { id: string; name: string; slug: string; kind: string; headline: string | null; address: string | null }[] = [];
   try { const { data } = await adminClient().from("practices").select("id, name, slug, kind, headline, address").eq("country", cc).eq("published", true).order("created_at", { ascending: false }).limit(6); vets = data ?? []; } catch { /* no data yet */ }
   let cities: { slug: string; name: string; n: number }[] = [];
-  try { const { data } = await adminClient().from("directory_listings").select("city").eq("country", cc).neq("status", "removed").limit(5000); const m = new Map<string, { name: string; n: number }>(); for (const r of data ?? []) { if (!r.city) continue; const k = slugify(r.city); const c = m.get(k) ?? { name: r.city, n: 0 }; c.n++; m.set(k, c); } cities = [...m.entries()].map(([slug, c]) => ({ slug, ...c })).sort((a, b) => b.n - a.n).slice(0, 12); } catch { /* none */ }
+  try {
+    const { data } = await adminClient().from("cities").select("name, slug, directory_listings(count)").eq("country", cc).limit(5000);
+    cities = ((data ?? []) as unknown as { name: string; slug: string; directory_listings: { count: number }[] }[])
+      .map((c) => ({ slug: c.slug, name: c.name, n: c.directory_listings?.[0]?.count ?? 0 })).filter((c) => c.n > 0).sort((a, b) => b.n - a.n).slice(0, 12);
+  } catch { /* none */ }
   const D = DIR[lang] ?? DIR.en, F = pick(FOCUS, lang, country);
   const A = pick(ABOUT, lang, country), TVc = pick(TV, lang, country);
   const C = pick(CONSULT, lang, country), CP = { home: "vet-family", video: "vet-white-cat", clinic: "vet-dachshund" } as const;
@@ -117,6 +123,11 @@ export default async function OwnerHome({ params }: P) {
         </div>
       </section>
 
+      {lang === "fr" && <section className="tv-sec tv-spec" aria-labelledby="spec-h">
+        <header className="tv-head"><h2 id="spec-h">Nos domaines d&apos;expertise</h2><p>Leur bien-être, notre passion : des vétérinaires partenaires pour chaque besoin, en téléconseil.</p></header>
+        <ul className="tv-spec-grid">{SPECIALTIES_FR.map((x) => <li key={x.t}><span aria-hidden>{x.e}</span><h3>{x.t}</h3><p>{x.d}</p><a href={`${base}/recherche?type=video`}>Prendre RDV →</a></li>)}</ul>
+      </section>}
+
       <section className="tv-sec tv-about" aria-labelledby="about-h">
         <header className="tv-head"><h2 id="about-h">{A.aboutH}</h2></header>
         <div className="tv-cols">{A.about.map((x) => <p key={x}>{x}</p>)}</div>
@@ -124,7 +135,7 @@ export default async function OwnerHome({ params }: P) {
 
       <section className="tv-sec tv-faq" aria-labelledby="faq-h">
         <header className="tv-head"><h2 id="faq-h">{A.faqH}</h2></header>
-        {A.faq.map((x) => <details key={x.q}><summary>{x.q}</summary><p>{x.a}</p></details>)}
+        {(lang === "fr" ? faqFor("fr").items : A.faq).map((x) => <details key={x.q}><summary>{x.q}</summary><p>{x.a}</p></details>)}
       </section>
 
       <section className="tv-sec tv-dir" aria-labelledby="dir-h">
