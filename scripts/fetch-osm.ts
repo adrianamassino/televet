@@ -32,13 +32,27 @@ const km = (a: [number, number], b: [number, number]) => {
   return 2 * 6371 * Math.asin(Math.sqrt(x));
 };
 
+/** Big countries are fetched region by region (ISO 3166-2 codes): one query for all of France times out. */
+const REGIONS: Record<string, string[]> = {
+  FR: ["FR-ARA", "FR-BFC", "FR-BRE", "FR-CVL", "FR-20R", "FR-GES", "FR-HDF", "FR-IDF", "FR-NOR", "FR-NAQ", "FR-OCC", "FR-PDL", "FR-PAC", "FR-971", "FR-972", "FR-973", "FR-974", "FR-976"],
+};
+async function byArea(cc: string, what: string): Promise<El[]> {
+  const parts = REGIONS[cc]?.map((r) => `area["ISO3166-2"="${r}"]->.a;`) ?? [`area["ISO3166-1"="${cc}"][admin_level=2]->.a;`];
+  const seen = new Map<string, El>();
+  for (const area of parts) {
+    for (const e of await overpass(`[out:json][timeout:900][maxsize:1073741824];${area}${what}(area.a);out center tags;`)) seen.set(`${e.type}/${e.id}`, e);
+    await wait(3000);
+  }
+  return [...seen.values()];
+}
+
 async function country(cc: string) {
-  const area = `area["ISO3166-1"="${cc}"][admin_level=2]->.a;`;
-  const vets = await overpass(`[out:json][timeout:900][maxsize:1073741824];${area}nwr["amenity"="veterinary"](area.a);out center tags;`);
+  const vets = await byArea(cc, `nwr["amenity"="veterinary"]`);
   const towns = vets.some((e) => !e.tags?.["addr:city"])
-    ? (await overpass(`[out:json][timeout:900][maxsize:1073741824];${area}node["place"~"^(city|town|village)$"]["name"](area.a);out;`))
+    ? (await byArea(cc, `node["place"~"^(city|town|village)$"]["name"]`))
       .filter((p) => p.lat != null).map((p) => ({ name: p.tags!.name, at: [p.lat!, p.lon!] as [number, number], big: p.tags!.place !== "village" }))
     : [];
+  console.log(`${cc}: ${vets.length} vet places, ${towns.length} towns`);
   const grid = new Map<string, typeof towns>(); // coarse grid: the nearest-town lookup stays fast
   for (const t of towns) { const k = `${Math.floor(t.at[0] * 5)}:${Math.floor(t.at[1] * 5)}`; if (!grid.has(k)) grid.set(k, []); grid.get(k)!.push(t); }
   const nearest = (p: [number, number]) => {
