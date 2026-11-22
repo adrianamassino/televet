@@ -5,24 +5,24 @@
  * Usage: npx tsx scripts/fetch-osm.ts IT ES AR
  */
 import { mkdirSync, writeFileSync } from "fs";
+import { execFileSync } from "child_process";
 import { slugForListing } from "../src/lib/directory";
 
 type El = { type: string; id: number; lat?: number; lon?: number; center?: { lat: number; lon: number }; tags?: Record<string, string> };
 const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** Overpass via curl: a region can take more than the 5 minutes Node's fetch waits for the first byte. */
 async function overpass(q: string): Promise<El[]> {
   for (let i = 0; i < 8; i++) {
+    const url = OVERPASS[i % OVERPASS.length];
     try {
-      const r = await fetch(OVERPASS[i % OVERPASS.length], { method: "POST", body: new URLSearchParams({ data: q }), headers: { "user-agent": "Televet directory (contact@televet.co)" } });
-      if (r.ok) {
-        const j = (await r.json()) as { elements: El[]; remark?: string };
-        if (!j.remark) return j.elements;
-        console.log(`overpass incomplete (${j.remark.slice(0, 120)}), retry`); // a time-out returns partial data: never keep it
-      }
-      console.log(`overpass ${r.status}, retry`);
-    } catch (e) { console.log(`overpass error ${(e as Error).message}, retry`); }
-    await wait(10000 * (i + 1));
+      const out = execFileSync("curl", ["-sS", "-f", "--max-time", "1200", "-A", "Televet directory (contact@televet.co)", "--data-urlencode", `data=${q}`, url], { maxBuffer: 512 * 1024 * 1024 }).toString();
+      const j = JSON.parse(out) as { elements: El[]; remark?: string };
+      if (!j.remark) return j.elements;
+      console.log(`overpass incomplete (${j.remark.slice(0, 120)}), retry`); // a time-out returns partial data: never keep it
+    } catch (e) { console.log(`overpass error ${(e as Error).message.slice(0, 120)}, retry`); }
+    await wait(15000 * (i + 1));
   }
   throw new Error("overpass unavailable");
 }
@@ -40,7 +40,7 @@ async function byArea(cc: string, what: string): Promise<El[]> {
   const parts = REGIONS[cc]?.map((r) => `area["ISO3166-2"="${r}"]->.a;`) ?? [`area["ISO3166-1"="${cc}"][admin_level=2]->.a;`];
   const seen = new Map<string, El>();
   for (const area of parts) {
-    for (const e of await overpass(`[out:json][timeout:900][maxsize:1073741824];${area}${what}(area.a);out center tags;`)) seen.set(`${e.type}/${e.id}`, e);
+    for (const e of await overpass(`[out:json][timeout:1100][maxsize:1073741824];${area}${what}(area.a);out center tags;`)) seen.set(`${e.type}/${e.id}`, e);
     await wait(3000);
   }
   return [...seen.values()];
