@@ -1,3 +1,4 @@
+import { serviceTitle } from "@/lib/consult-catalog";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BookingFlow, { type SvcIn } from "@/components/BookingFlow";
@@ -15,11 +16,11 @@ export default async function Page({ params, searchParams }: P) {
   if (!c || !c.languages.includes(lang)) notFound();
   const db = adminClient();
   const { data: p } = await db.from("practices")
-    .select("id, name, timezone, country, commission_pct, commission_fixed_cents, services(id, practitioner_id, type, custom_name, duration_min, price_cents, currency, online_payment, active), practitioners(id, active, approved, commission_pct, commission_fixed_cents)")
+    .select("id, name, timezone, country, commission_pct, commission_fixed_cents, services(id, practitioner_id, type, custom_name, catalog_code, duration_min, price_cents, currency, online_payment, active), practitioners(id, active, approved, commission_pct, commission_fixed_cents)")
     .eq("slug", slug).eq("country", c.code).eq("published", true).maybeSingle();
   const pr = p?.practitioners?.find((x: { id: string; active: boolean; approved: boolean }) => x.active && x.approved && (!vet || x.id === vet)) ?? p?.practitioners?.find((x: { active: boolean; approved: boolean }) => x.active && x.approved);
   const priceOf = p ? await clientPricer(db, p) : (x: number) => x;
-  const services: SvcIn[] = (p?.services ?? []).filter((s: { active: boolean; practitioner_id: string | null }) => s.active && (!s.practitioner_id || s.practitioner_id === pr?.id)).map((s: { id: string; type: SvcIn["type"]; custom_name: string | null; duration_min: number; price_cents: number; currency: string; online_payment: boolean }) => ({ id: s.id, type: s.type, name: s.custom_name, duration: s.duration_min, price: s.online_payment ? priceOf(s.price_cents, pr) : s.price_cents, currency: s.currency, onlinePayment: s.online_payment }));
+  const services: SvcIn[] = (p?.services ?? []).filter((s: { active: boolean; practitioner_id: string | null }) => s.active && (!s.practitioner_id || s.practitioner_id === pr?.id)).map((s: { id: string; type: SvcIn["type"]; custom_name: string | null; catalog_code: string | null; duration_min: number; price_cents: number; currency: string; online_payment: boolean }) => ({ id: s.id, type: s.type, name: serviceTitle(s, lang, "") || null, duration: s.duration_min, price: s.online_payment ? priceOf(s.price_cents, pr) : s.price_cents, currency: s.currency, onlinePayment: s.online_payment }));
   if (!p || !pr || services.length === 0) notFound();
   return (
     <main className="wrap narrow">

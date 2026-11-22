@@ -52,7 +52,7 @@ function mailData(b: BookingCtx, forVet: boolean, note: string | null): MailData
     lang, when, appUrl, note,
     name: forVet ? b.practitioner.display_name : b.owner.name,
     withName: forVet ? b.owner.name : b.practitioner.display_name,
-    service: serviceLabel(b.service.custom_name, b.type, lang),
+    service: serviceLabel(b.service.custom_name, b.type, lang, b.service.catalog_code),
     address: isVideo(b) ? null : b.type === "home" ? b.address : b.practice.address,
     joinUrl: isVideo(b) ? signedVisioLink(appUrl, b.id, forVet ? "vet" : "owner") : null,
   };

@@ -6,6 +6,7 @@ import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
 import { breadcrumbLd, faqLd, ldJson, organizationLd, pageMetadata, SERVICE_SLUGS, serviceFromSlug, SITE, slugify, veterinaryCareLd } from "@/lib/seo";
 import { GUIDE_FR } from "./guide-fr";
+import SpeciesPage, { speciesMetadata, speciesPageFor } from "./species-page";
 
 /**
  * Country-level page for a service: /fr/fr/veterinaire-en-ligne, /es/ar/veterinario-a-domicilio …
@@ -42,6 +43,8 @@ async function load(lang: string, country: string, service: string) {
 
 export async function generateMetadata({ params }: P): Promise<Metadata> {
   const { lang, country, service } = await params;
+  const sp = speciesPageFor(lang, country, service);
+  if (sp) return speciesMetadata(lang, sp.cc, sp.code);
   const d = await load(lang, country, service);
   if (!d) return {};
   const t = pick(TXT, lang, country), g = guideFor(lang, d.cc, d.svc);
@@ -55,6 +58,8 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
 
 export default async function ServicePage({ params }: P) {
   const { lang, country, service } = await params;
+  const sp = speciesPageFor(lang, country, service);
+  if (sp) return <SpeciesPage lang={lang} cc={sp.cc} code={sp.code} />;
   const d = await load(lang, country, service);
   if (!d) notFound();
   const t = pick(TXT, lang, country), g = guideFor(lang, d.cc, d.svc);

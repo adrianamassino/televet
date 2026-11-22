@@ -1,3 +1,4 @@
+import { serviceTitle } from "@/lib/consult-catalog";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
@@ -18,7 +19,7 @@ async function load(lang: string, country: string, slug: string) {
   const cc = country.toUpperCase();
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) return null;
   const { data } = await adminClient().from("practices")
-    .select("id, name, slug, kind, headline, about, address, postal_code, city, phone, website, cover_url, logo_url, languages, species, facilities, payment_methods, access_info, founded_year, timezone, country, booking_enabled, commission_pct, commission_fixed_cents, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, online_payment, active), practitioners(id, approved, commission_pct, commission_fixed_cents, slug, title, display_name, photo_url, specialties, active, opening_rules(weekday, start_time, end_time))")
+    .select("id, name, slug, kind, headline, about, address, postal_code, city, phone, website, cover_url, logo_url, languages, species, facilities, payment_methods, access_info, founded_year, timezone, country, booking_enabled, commission_pct, commission_fixed_cents, services(type, practitioner_id, custom_name, catalog_code, description, duration_min, price_cents, currency, online_payment, active), practitioners(id, approved, commission_pct, commission_fixed_cents, slug, title, display_name, photo_url, specialties, active, opening_rules(weekday, start_time, end_time))")
     .eq("slug", slug).eq("country", cc).eq("published", true).maybeSingle();
   return data ? { cc, p: data } : null;
 }
@@ -84,7 +85,7 @@ export default async function ClinicPage({ params }: P) {
                 {v.slug && <a href={`${rel}/veterinaire/${p.slug}/${v.slug}`}>{t.seeProfile}</a>}</div></li>))}</ul></Section>}
           {services.length > 0 && <Section id="services" title={t.services}><ul className="svc-list">{services.map((s, i) => (
             <li key={i} className="svc"><span className="ico"><VI n={SI[s.type as keyof typeof SI] ?? "stethoscope"} size={38} /></span>
-              <div><strong>{s.custom_name ?? t.types[s.type]}</strong><small>{s.custom_name ? `${t.types[s.type]} · ` : ""}{s.duration_min} {t.min}</small>{s.description && <p>{s.description}</p>}</div>
+              <div><strong>{serviceTitle(s, lang, t.types[s.type])}</strong><small>{serviceTitle(s, lang, "") ? `${t.types[s.type]} · ` : ""}{s.duration_min} {t.min}</small>{s.description && <p>{s.description}</p>}</div>
               <span className="price">{money(s.online_payment ? priceOf(s.price_cents, s.practitioner_id ? p.practitioners?.find((x: { id: string }) => x.id === s.practitioner_id) : null) : s.price_cents, s.currency)}</span></li>))}</ul></Section>}
           <PhotoStrip set="c" />
           {rules.length > 0 && <Section id="hours" title={t.hours}><Hours t={t} rules={rules} /></Section>}
@@ -93,7 +94,7 @@ export default async function ClinicPage({ params }: P) {
             {p.access_info && <p style={{ whiteSpace: "pre-line" }}>{p.access_info}</p>}
             {p.facilities?.length > 0 && <><h3>{t.facilities}</h3><Chips items={p.facilities} map={t.fac} icon="check" /></>}
             {p.payment_methods?.length > 0 && <><h3>{t.payments}</h3><Chips items={p.payment_methods} map={t.pay} /></>}</Section>}
-          {p.species?.length > 0 && <Section id="animals" title={t.animals}><Animals t={t} items={p.species} />
+          {p.species?.length > 0 && <Section id="animals" title={t.animals}><Animals lang={lang} items={p.species} />
             {p.languages?.length > 0 && <p><strong>{t.langs}:</strong> {names(p.languages)}</p>}</Section>}
           <p className="muted"><a href="mailto:contact@televet.co">{t.contact}</a></p>
         </div>

@@ -9,10 +9,10 @@ type Row = {
   id: string; status: string; type: string; starts_at: string; address: string | null; access_notes: string | null; motive: string | null;
   price_cents: number; currency: string; travel_min?: number | null;
   practices: { name: string; country: string; timezone: string; email: string | null; email_language: string | null; owner_user_id: string } | null;
-  practitioners: { display_name: string } | null; services: { custom_name: string | null } | null;
+  practitioners: { display_name: string } | null; services: { custom_name: string | null; catalog_code?: string | null } | null;
   owners: { full_name: string | null; phone: string | null } | null; pets: { name: string; species: string } | null;
 };
-const COLS = "id, status, type, starts_at, address, access_notes, motive, price_cents, currency, practices(name, country, timezone, email, email_language, owner_user_id), practitioners(display_name), services(custom_name), owners(full_name, phone), pets(name, species)";
+const COLS = "id, status, type, starts_at, address, access_notes, motive, price_cents, currency, practices(name, country, timezone, email, email_language, owner_user_id), practitioners(display_name), services(custom_name, catalog_code), owners(full_name, phone), pets(name, species)";
 
 /**
  * Tells the vet about a booking that just became visible to them: a request to accept or decline, or an appointment already
@@ -40,7 +40,7 @@ export async function notifyVetNewBooking(bookingId: string): Promise<void> {
     const m = vetBookingEmail({
       lang, kind, vetName: b.practitioners?.display_name ?? p.name, when,
       client: b.owners?.full_name || "—", phone: b.owners?.phone, pet: b.pets ? `${b.pets.name} (${b.pets.species})` : null,
-      service: serviceLabel(b.services?.custom_name, b.type, lang), motive: b.motive,
+      service: serviceLabel(b.services?.custom_name, b.type, lang, b.services?.catalog_code), motive: b.motive,
       price: new Intl.NumberFormat(lang, { style: "currency", currency: b.currency }).format(ZERO_DECIMAL.has(b.currency) ? b.price_cents : b.price_cents / 100),
       address: home ? b.address : null, accessNotes: home ? b.access_notes : null, mapsUrl: home ? directionsUrl(b.address!) : null, travelMin: home ? b.travel_min ?? null : null,
       dashboardUrl: `${process.env.APP_URL}/${pathLang}/${p.country.toLowerCase()}/pro/dashboard`,

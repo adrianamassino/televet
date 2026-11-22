@@ -1,4 +1,5 @@
 import { VI } from "@/components/VI";
+import { CATEGORIES, COMMON, categoryOf, speciesName } from "@/lib/species";
 import { hoursByDay, type PC } from "@/lib/profile-copy";
 
 /** Small server components shared by the clinic and vet pages. */
@@ -12,8 +13,13 @@ export function Chips({ items, map, icon }: { items: string[]; map?: Record<stri
 }
 
 export const SPECIES_ICON: Record<string, string> = { dog: "dog", cat: "cat", rabbit: "rabbit", bird: "bird", ferret: "paw", horse: "paw", reptile: "turtle", rodent: "hamster", other: "paw" };
-export function Animals({ t, items }: { t: PC; items: string[] }) {
-  return <ul className="animal-tiles">{items.map((k) => <li key={k}><span className="ico"><VI n={SPECIES_ICON[k] ?? "paw"} size={40} /></span>{t.sp[k] ?? k}</li>)}</ul>;
+/** Icon of an animal, or of its category for animals added later (guinea pig → rodent…). */
+export const speciesIcon = (k: string) => SPECIES_ICON[k] ?? SPECIES_ICON[categoryOf(k) ?? ""] ?? "paw";
+/** Animals treated: common ones first, categories ("Rodents") or the chosen members ("Rodents (guinea pigs, hamsters)"). */
+export function Animals({ lang, items }: { lang: string; items: string[] }) {
+  const order = [...COMMON, ...CATEGORIES.flatMap((c) => [c.code, ...c.members]), "other"];
+  const shown = items.filter((k) => !categoryOf(k) || !items.includes(categoryOf(k)!)).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+  return <ul className="animal-tiles">{shown.map((k) => <li key={k}><span className="ico"><VI n={speciesIcon(k)} size={40} /></span>{speciesName(k, lang, true)}</li>)}</ul>;
 }
 
 export function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {

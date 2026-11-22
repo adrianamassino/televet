@@ -1,4 +1,5 @@
 "use client";
+import { speciesName } from "@/lib/species";
 import { directionsUrl } from "@/lib/travel";
 import JoinVideo from "@/components/JoinVideo";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -69,7 +70,7 @@ export default function AgendaWeek({ lang, tz, t, money, token, onAct }: { lang:
         <strong>{new Intl.DateTimeFormat(lang, { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: tz }).format(new Date(sel.starts_at))}</strong>{" "}
         <span className={`chip ${sel.status === "confirmed" ? "ok" : "wait"}`}>{t("s_" + sel.status)}</span>
         <div>{t("t_" + sel.type).split(" (")[0]} · {money(sel.price_cents, sel.currency)}</div>
-        <div>{sel.owners?.full_name}{sel.owners?.phone ? ` · ${sel.owners.phone}` : ""}{sel.pets?.name ? ` — ${sel.pets.name} (${sel.pets.species})` : ""}</div>
+        <div>{sel.owners?.full_name}{sel.owners?.phone ? ` · ${sel.owners.phone}` : ""}{sel.pets?.name ? ` — ${sel.pets.name} (${speciesName(sel.pets.species, lang, false, false)})` : ""}</div>
         {sel.motive && <small>{sel.motive}</small>}{sel.address && <div><small><a href={directionsUrl(sel.address)} target="_blank" rel="noopener noreferrer">{sel.address} ↗</a>{sel.access_notes ? ` · ${sel.access_notes}` : ""}{sel.travel_min ? ` · 🚗 ${sel.travel_min} min` : ""}</small></div>}
         {sel.status === "confirmed" && sel.video_room && sel.type === "video" && <div style={{ marginTop: 6 }}><JoinVideo bookingId={sel.id} lang={lang} /></div>}
         {sel.status === "pending" && <p><button className="btn" disabled={busy} onClick={async () => { await onAct(sel.id, "confirm"); setSel(null); load(); }}>{t("accept")}</button>{" "}<button className="btn btn-ghost" disabled={busy} onClick={async () => { await onAct(sel.id, "decline"); setSel(null); load(); }}>{t("decline")}</button></p>}

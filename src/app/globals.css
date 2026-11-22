@@ -1414,3 +1414,35 @@ body:has(.app)::before, body:has(.app)::after { display: none !important; }
 .tv-spec-grid h3 { margin: 0; font-size: 1.08rem; color: #0b1f5c; }
 .tv-spec-grid p { margin: 0; color: #4a5a85; font-size: .95rem; }
 .tv-spec-grid a { font-weight: 700; text-decoration: none; margin-top: 4px; }
+
+/* v56 — consultation picker (vet editor), animals picker, species pages */
+.cpick { position: relative; }
+.cpick-list { position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 4px); margin: 0; padding: 6px; list-style: none; background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-md); box-shadow: 0 14px 34px rgba(16,26,68,.16); max-height: 320px; overflow: auto; }
+.cpick-list li[role="option"] { display: flex; flex-direction: column; gap: 1px; padding: 9px 10px; border-radius: 9px; cursor: pointer; }
+.cpick-list li[role="option"] span { font-weight: 650; color: var(--ink); }
+.cpick-list li[role="option"] small { color: var(--ink-soft); font-size: .8rem; }
+.cpick-list li.on { background: var(--mist); }
+.cpick-h { padding: 8px 10px 4px; font-size: .78rem; font-weight: 700; color: var(--ink-soft); }
+.cpick-new { color: var(--cobalt); font-weight: 700; border-top: 1px solid var(--line); margin-top: 4px; }
+.cpick-note { margin: 6px 0 0; font-size: .84rem; color: var(--ink-soft); }
+.cpick-note.cat::before { content: "✓ "; color: var(--meadow); font-weight: 800; }
+.cpick-browse { margin-top: 6px; padding: 6px 0; font-weight: 700; color: var(--cobalt); background: none; border: 0; cursor: pointer; }
+.cpick-cat { margin-top: 6px; border: 1.5px solid var(--line); border-radius: var(--r-md); max-height: 300px; overflow: auto; padding: 4px 10px; }
+.cpick-cat summary { padding: 8px 0; font-weight: 700; cursor: pointer; }
+.cpick-cat ul { list-style: none; margin: 0 0 8px; padding: 0 0 0 10px; }
+.cpick-cat button { background: none; border: 0; padding: 5px 0; text-align: left; color: var(--cobalt); cursor: pointer; font: inherit; }
+.sp-pick { display: grid; gap: 8px; }
+.sp-cat { border: 1.5px solid var(--line); border-radius: var(--r-md); padding: 4px 12px; }
+.sp-cat summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; cursor: pointer; list-style: none; }
+.sp-cat summary::-webkit-details-marker { display: none; }
+.sp-cat summary label { display: inline-flex; gap: 8px; align-items: center; font-weight: 650; }
+.sp-cat summary small { color: var(--ink-soft); font-weight: 500; }
+.sp-more { font-size: .84rem; font-weight: 700; color: var(--cobalt); }
+.sp-cat[open] .sp-more { opacity: .6; }
+.sp-cat .days { padding: 4px 0 10px; }
+.species-note { margin: 18px 0; padding: 16px 18px; border-radius: var(--r-md); background: var(--mist); border-left: 4px solid var(--cobalt); }
+.species-note p { margin: 4px 0 0; }
+.species-modes, .species-reasons { padding-left: 1.2em; }
+.species-modes li, .species-reasons li { margin: 6px 0; }
+.species-reasons { columns: 2 220px; }
+.species-page .svc-towns li { break-inside: avoid; }

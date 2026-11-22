@@ -5,6 +5,7 @@
  */
 import { COUNTRIES } from "./countries";
 import { SERVICE_SLUGS, SITE, slugify } from "./seo";
+import { SPECIES_LANGS, SPECIES_PAGES, speciesSlug } from "./species";
 
 export type Kind = "pages" | "services" | "cities" | "clinics" | "vets" | "directory" | "listings" | "blog";
 export const KINDS: Kind[] = ["pages", "services", "cities", "clinics", "vets", "directory", "listings", "blog"];
@@ -89,6 +90,9 @@ export function buildEntries(d: SitemapData): Entry[] {
     out.push(...group("services", versionsOf([cc], (l, c) => (SERVICE_SLUGS[svc][l] ? `/${l}/${c}/${SERVICE_SLUGS[svc][l]}` : null))));
   }
   for (const x of cityServices.values()) out.push(...group("cities", versionsOf([x.cc], (l, c) => (SERVICE_SLUGS[x.svc][l] ? `/${l}/${c}/${SERVICE_SLUGS[x.svc][l]}/${x.city}` : null)), x.lastmod));
+
+  // one page per animal and per category of animals, in every published version whose language has the texts
+  for (const code of SPECIES_PAGES) out.push(...group("services", versionsOf(live, (l, c) => `/${l}/${c}/${speciesSlug(code, l)}`, (l) => (SPECIES_LANGS as readonly string[]).includes(l.slice(0, 2)))));
 
   // directory: country index + one page per city that has listings
   const dirCountries = new Set<string>();

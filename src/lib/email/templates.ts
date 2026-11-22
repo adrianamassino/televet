@@ -1,3 +1,4 @@
+import { consultName } from "@/lib/consult-catalog";
 /** Transactional e-mails (confirmation + reminders), in the 7 platform languages. */
 type Lang = "fr" | "it" | "en" | "es" | "pt" | "de" | "pl";
 const T: Record<Lang, Record<string, string>> = {
@@ -97,7 +98,7 @@ const TYPE_NAMES: Record<string, L7> = {
   expertise: { fr: "Télé-expertise", it: "Tele-expertise", en: "Tele-expertise", es: "Teleexperticia", pt: "Tele-expertise", de: "Tele-Expertise", pl: "Teleekspertyza" },
 };
 /** Name of a consultation for an e-mail: the vet's own name for it, else the kind of appointment in the reader's language. */
-export const serviceLabel = (customName: string | null | undefined, type: string, lang: string) => customName?.trim() || TYPE_NAMES[type]?.[langOf(lang)] || type;
+export const serviceLabel = (customName: string | null | undefined, type: string, lang: string, catalogCode?: string | null) => customName?.trim() || consultName(catalogCode ?? "", lang) || TYPE_NAMES[type]?.[langOf(lang)] || type;
 const BTN = "display:inline-block;background:#053ABE;color:#fff;text-decoration:none;font-weight:bold;padding:14px 22px;border-radius:10px";
 
 /** Shared look of the newer e-mails: logo, greeting, intro, a table of facts, then free HTML (buttons, notes). */

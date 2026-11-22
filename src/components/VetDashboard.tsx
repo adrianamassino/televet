@@ -11,6 +11,9 @@ import { pc } from "@/lib/profile-copy";
 import { zonedToUtc, addDays } from "@/lib/time";
 import { X } from "@/lib/vet-extra-copy";
 import AgendaWeek from "@/components/vet/AgendaWeek";
+import ConsultPicker from "@/components/vet/ConsultPicker";
+import SpeciesPicker from "@/components/SpeciesPicker";
+import { consultOf, serviceTitle } from "@/lib/consult-catalog";
 import ClientsList from "@/components/vet/ClientsList";
 import OnboardingBanner from "@/components/vet/OnboardingBanner";
 import type { Missing } from "@/lib/onboarding-copy";
@@ -154,7 +157,7 @@ export default function VetDashboard({ lang, country, currency, languages, provi
     if (rows.length && fail((await sb.from("opening_rules").insert(rows)).error)) return; flash(t("saved"));
   }
   async function saveSvc() {
-    const s = editSvc!; const row = { practice_id: p!.id, practitioner_id: vetId, type: s.type, catalog_code: CATALOG[s.type] ?? "custom", custom_name: s.custom_name || null, description: s.description || null, duration_min: Math.min(240, Math.max(5, s.duration_min)), price_cents: s.price_cents, currency: s.currency, active: s.active, online_payment: s.online_payment, weekdays: s.weekdays, confirmation_note: s.confirmation_note || null, reminder_note: s.reminder_note || null };
+    const s = editSvc!; const row = { practice_id: p!.id, practitioner_id: vetId, type: s.type, catalog_code: consultOf(s.catalog_code) ? s.catalog_code : CATALOG[s.type] ?? "custom", custom_name: s.custom_name?.trim() || null, description: s.description || null, duration_min: Math.min(240, Math.max(5, s.duration_min)), price_cents: s.price_cents, currency: s.currency, active: s.active, online_payment: s.online_payment, weekdays: s.weekdays, confirmation_note: s.confirmation_note || null, reminder_note: s.reminder_note || null };
     const res = s.id ? await sb.from("services").update(row).eq("id", s.id) : await sb.from("services").insert(row);
     if (!fail(res.error)) { setEditSvc(null); flash(t("saved")); load(); }
   }
@@ -243,7 +246,7 @@ export default function VetDashboard({ lang, country, currency, languages, provi
           <label className="label">{t("accessInfo")}</label><textarea className="field" style={{ minHeight: 70 }} value={p.access_info ?? ""} onChange={(e) => setP({ ...p, access_info: e.target.value })} />
           <label className="label">{t("facL")}</label><Checks keys={Object.keys(PCt.fac)} labels={PCt.fac} value={p.facilities ?? []} onChange={(v) => setP({ ...p, facilities: v })} />
           <label className="label">{t("payL")}</label><Checks keys={Object.keys(PCt.pay)} labels={PCt.pay} value={p.payment_methods ?? []} onChange={(v) => setP({ ...p, payment_methods: v })} />
-          <label className="label">{t("animalsL")}</label><Checks keys={Object.keys(PCt.sp)} labels={PCt.sp} value={p.species ?? []} onChange={(v) => setP({ ...p, species: v })} />
+          <label className="label">{t("animalsL")}</label><SpeciesPicker lang={lang} value={p.species ?? []} onChange={(v) => setP({ ...p, species: v })} />
           <p><a href={`/${lang}/${country.toLowerCase()}/veterinaire/${p.slug}`} target="_blank" rel="noopener noreferrer">{t("pageLink")}</a></p>
           <label className="panel" style={{ display: "block", marginTop: 22 }}><input type="checkbox" checked={p.auto_confirm} onChange={(e) => setP({ ...p, auto_confirm: e.target.checked })} /> <strong>{t("auto")}</strong><br /><small>{t("autoHelp")}</small></label>
           <p><button className="btn" onClick={() => saveP({})}>{t("confirm")}</button></p></section>}
@@ -265,7 +268,7 @@ export default function VetDashboard({ lang, country, currency, languages, provi
             <label className="label">{t("vSchool")}</label><input className="field" value={vet.school ?? ""} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, school: e.target.value } : v)))} />
             <label className="label">{t("vYears")}</label><input className="field" inputMode="numeric" value={vet.experience_years ?? ""} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, experience_years: e.target.value === "" ? null : Math.min(70, Number(e.target.value) || 0) } : v)))} />
             <label className="label">{t("langs")}</label><Checks keys={languages} labels={Object.fromEntries(languages.map((l) => [l, new Intl.DisplayNames([lang], { type: "language" }).of(l) ?? l]))} value={vet.languages ?? []} onChange={(l) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, languages: l } : v)))} />
-            <label className="label">{t("animalsL")}</label><Checks keys={Object.keys(PCt.sp)} labels={PCt.sp} value={vet.species ?? []} onChange={(l) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, species: l } : v)))} />
+            <label className="label">{t("animalsL")}</label><SpeciesPicker lang={lang} value={vet.species ?? []} onChange={(l) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, species: l } : v)))} />
             <label className="label">{t("lead")}</label><input className="field" inputMode="numeric" value={vet.lead_time_min} onChange={(e) => setVets(vets.map((v) => (v.id === vet.id ? { ...v, lead_time_min: Number(e.target.value) || 0 } : v)))} />
             <p style={{ marginTop: 18 }}><button className="btn" onClick={() => saveVet({ display_name: vet.display_name, lead_time_min: vet.lead_time_min, title: vet.title?.trim() || null, specialties: (vet.specialties ?? []).map((x) => x.trim()).filter(Boolean), bio: vet.bio?.trim() || null, school: vet.school?.trim() || null, experience_years: vet.experience_years, languages: vet.languages ?? [], species: vet.species ?? [], slug: vet.slug || slugOf(vet.display_name) || null })}>{t("confirm")}</button></p></div>}
           {sub === "hours" && <div><h2>{t("mHours")}</h2>{[1, 2, 3, 4, 5, 6, 0].map((d) => { const r = rules.find((x) => x.weekday === d); return <div key={d} className="row" style={{ margin: "8px 0" }}>
@@ -273,7 +276,7 @@ export default function VetDashboard({ lang, country, currency, languages, provi
             {r && <>{t("from")} <input className="field" style={{ width: 130 }} type="time" value={r.start_time.slice(0, 5)} onChange={(e) => setRules(rules.map((x) => (x.weekday === d ? { ...x, start_time: e.target.value } : x)))} /> {t("to")} <input className="field" style={{ width: 130 }} type="time" value={r.end_time.slice(0, 5)} onChange={(e) => setRules(rules.map((x) => (x.weekday === d ? { ...x, end_time: e.target.value } : x)))} /></>}</div>; })}
             <p style={{ marginTop: 18 }}><button className="btn" onClick={saveHours}>{t("confirm")}</button></p></div>}
           {sub === "services" && <div><h2>{t("mServices")}</h2>
-            {vetSvcs.map((s) => <div key={s.id} className="panel row" style={{ justifyContent: "space-between" }}><div><strong>{s.custom_name ?? t("t_" + s.type).split(" (")[0]}</strong>{!s.active && <span className="chip"> off</span>}<div><small>{t("t_" + s.type).split(" (")[0]} · {s.duration_min} min · {money(s.price_cents, s.currency)}</small></div></div><button className="btn btn-ghost" onClick={() => setEditSvc(s)}>{t("edit")}</button></div>)}
+            {vetSvcs.map((s) => <div key={s.id} className="panel row" style={{ justifyContent: "space-between" }}><div><strong>{serviceTitle(s, lang, t("t_" + s.type).split(" (")[0])}</strong>{!s.active && <span className="chip"> off</span>}<div><small>{t("t_" + s.type).split(" (")[0]} · {s.duration_min} min · {money(s.price_cents, s.currency)}</small></div></div><button className="btn btn-ghost" onClick={() => setEditSvc(s)}>{t("edit")}</button></div>)}
             <p><button className="btn" onClick={() => setEditSvc({ id: "", practitioner_id: vetId, type: "video", custom_name: "", description: "", duration_min: 20, price_cents: 0, currency: svcs[0]?.currency ?? currency, active: true, online_payment: true, weekdays: [0, 1, 2, 3, 4, 5, 6], confirmation_note: "", reminder_note: "", catalog_code: "" })}>+ {t("newSvc")}</button></p></div>}
           {sub === "holidays" && <div><h2>{t("mHolidays")}</h2>
             <div className="grid2"><div><label className="label">{t("hStart")}</label><input className="field" type="date" value={hol.from} onChange={(e) => setHol({ ...hol, from: e.target.value })} /></div><div><label className="label">{t("hEnd")}</label><input className="field" type="date" value={hol.to} min={hol.from} onChange={(e) => setHol({ ...hol, to: e.target.value })} /></div></div>
@@ -314,7 +317,15 @@ export default function VetDashboard({ lang, country, currency, languages, provi
 
       {editSvc && <div className="modal-bg" onClick={() => setEditSvc(null)}><div className="modal" role="dialog" aria-modal onClick={(e) => e.stopPropagation()}>
         <h2 style={{ marginTop: 0 }}>{editSvc.id ? t("mServices") : t("newSvc")}</h2>
-        <label className="label">{t("svcName")}</label><input className="field" value={editSvc.custom_name ?? ""} onChange={(e) => setEditSvc({ ...editSvc, custom_name: e.target.value })} />
+        <label className="label">{t("svcName")}</label>
+        <ConsultPicker lang={lang} mode={editSvc.type as "video" | "home" | "clinic" | "expertise"} value={{ code: editSvc.catalog_code, customName: editSvc.custom_name ?? "" }}
+          onChange={(v, c) => setEditSvc((cur) => {
+            if (!cur) return cur;
+            const next = { ...cur, catalog_code: v.code === "custom" || !v.code ? (consultOf(cur.catalog_code) ? "" : cur.catalog_code) : v.code, custom_name: v.customName };
+            // a consultation picked from the catalogue suggests its usual length and a kind it can be done in
+            if (c) { if (!cur.id) next.duration_min = c.minutes; if (!c.modes.includes(cur.type as never)) next.type = c.modes[0]; }
+            return next;
+          })} />
         <label className="label">{t("desc")}</label><textarea className="field" value={editSvc.description ?? ""} onChange={(e) => setEditSvc({ ...editSvc, description: e.target.value })} />
         <label className="label">{t("type")}</label><div className="days">{(["clinic", "video", "home", "expertise"] as const).map((k) => <label key={k}><input type="radio" name="stype" checked={editSvc.type === k} onChange={() => setEditSvc({ ...editSvc, type: k })} />{t("t_" + k)}</label>)}</div>
         <div className="grid2"><div><label className="label">{t("price")} ({editSvc.currency || svcs[0]?.currency || "EUR"})</label><input className="field" inputMode="decimal" value={editSvc.currency && ZERO_DECIMAL.has(editSvc.currency) ? editSvc.price_cents : editSvc.price_cents / 100} onChange={(e) => { const v = Number(e.target.value.replace(",", ".")) || 0; setEditSvc({ ...editSvc, price_cents: ZERO_DECIMAL.has(editSvc.currency) ? Math.round(v) : Math.round(v * 100) }); }} /></div>

@@ -1,4 +1,5 @@
 "use client";
+import { SpeciesSelect } from "@/components/SpeciesPicker";
 import { useEffect, useMemo, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { VI } from "@/components/VI";
@@ -139,7 +140,7 @@ export default function BookingFlow({ lang, country, practiceName, practitionerI
       {step === "details" && svc && <section><h2>{t.pet}</h2>
         <select className="field" value={petId || "new"} onChange={(e) => setPetId(e.target.value)}>{pets.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}<option value="new">{t.newPet}</option></select>
         {(petId === "new" || pets.length === 0) && <div className="row" style={{ marginTop: 8 }}><input className="field" placeholder={t.petName} value={petName} onChange={(e) => setPetName(e.target.value)} />
-          <select className="field" value={species} onChange={(e) => setSpecies(e.target.value)}>{Object.entries(t.species).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></div>}
+          <SpeciesSelect lang={lang} value={species} onChange={setSpecies} /></div>}
         <label className="label">{t.motive}</label><textarea className="field" style={{ minHeight: 80 }} maxLength={1000} value={motive} onChange={(e) => setMotive(e.target.value)} />
         {svc.type === "home" && <><label className="label">{t.address}</label><input className="field" value={address} onChange={(e) => setAddress(e.target.value)} /><label className="label">{t.access}</label><input className="field" maxLength={300} value={access} onChange={(e) => setAccess(e.target.value)} /></>}
         {svc.type === "video" && <label style={{ display: "block", margin: "14px 0" }}><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /> {t.consent}</label>}

@@ -1,3 +1,4 @@
+import { serviceTitle } from "@/lib/consult-catalog";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
@@ -16,7 +17,7 @@ async function load(lang: string, country: string, slug: string, vet: string) {
   const cc = country.toUpperCase();
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang)) return null;
   const { data: p } = await adminClient().from("practices")
-    .select("id, name, slug, address, postal_code, city, languages, booking_enabled, country, commission_pct, commission_fixed_cents, services(type, practitioner_id, custom_name, description, duration_min, price_cents, currency, online_payment, active), practitioners(id, approved, commission_pct, commission_fixed_cents, slug, title, display_name, photo_url, bio, specialties, languages, species, school, experience_years, active, opening_rules(weekday, start_time, end_time))")
+    .select("id, name, slug, address, postal_code, city, languages, booking_enabled, country, commission_pct, commission_fixed_cents, services(type, practitioner_id, custom_name, catalog_code, description, duration_min, price_cents, currency, online_payment, active), practitioners(id, approved, commission_pct, commission_fixed_cents, slug, title, display_name, photo_url, bio, specialties, languages, species, school, experience_years, active, opening_rules(weekday, start_time, end_time))")
     .eq("slug", slug).eq("country", cc).eq("published", true).maybeSingle();
   const v = p?.practitioners?.find((x) => x.active && x.approved && x.slug === vet);
   return p && v ? { cc, p, v } : null;
@@ -72,9 +73,9 @@ export default async function VetPage({ params }: P) {
             {v.languages?.length > 0 && <li><VI n="check" size={22} />{t.langs}: {names(v.languages)}</li>}</ul></Section>}
           {services.length > 0 && <Section id="services" title={t.services}><ul className="svc-list">{services.map((s, i) => (
             <li key={i} className="svc"><span className="ico"><VI n={SI[s.type as keyof typeof SI] ?? "stethoscope"} size={38} /></span>
-              <div><strong>{s.custom_name ?? t.types[s.type]}</strong><small>{s.custom_name ? `${t.types[s.type]} · ` : ""}{s.duration_min} {t.min}</small>{s.description && <p>{s.description}</p>}</div>
+              <div><strong>{serviceTitle(s, lang, t.types[s.type])}</strong><small>{serviceTitle(s, lang, "") ? `${t.types[s.type]} · ` : ""}{s.duration_min} {t.min}</small>{s.description && <p>{s.description}</p>}</div>
               <span className="price">{money(s.online_payment ? priceOf(s.price_cents, v) : s.price_cents, s.currency)}</span></li>))}</ul></Section>}
-          {v.species?.length > 0 && <Section id="animals" title={t.animals}><Animals t={t} items={v.species} /></Section>}
+          {v.species?.length > 0 && <Section id="animals" title={t.animals}><Animals lang={lang} items={v.species} /></Section>}
           {rules.length > 0 && <Section id="hours" title={t.hours}><Hours t={t} rules={rules} /></Section>}
           {colleagues.length > 0 && <Section id="team" title={t.others}><ul className="team-grid">{colleagues.map((c) => (
             <li key={c.id}><Avatar src={c.photo_url} name={c.display_name} size={64} /><div><strong>{[c.title, c.display_name].filter(Boolean).join(" ")}</strong>

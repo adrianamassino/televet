@@ -1,4 +1,6 @@
 "use client";
+import { SpeciesSelect } from "@/components/SpeciesPicker";
+import { categoryOf, speciesName } from "@/lib/species";
 import JoinVideo from "@/components/JoinVideo";
 import { useEffect, useState } from "react";
 import { signInWithProvider, signOut, supabaseBrowser } from "@/lib/auth-client";
@@ -53,9 +55,9 @@ export default function OwnerAccount({ lang }: { lang: string }) {
         <span className={`pill st-${b.status}`}>{t.st[b.status]}</span>{b.status === "confirmed" && (b.type === "video" || b.type === "expertise") && new Date(b.ends_at).getTime() + 3600000 > Date.now() && <JoinVideo bookingId={b.id} lang={lang} />}</li>)}</ul>}
     </section>
     <section><h2>{t.pets}</h2>
-      {pets.length === 0 ? <p>{t.noPets}</p> : <ul className="acct-list">{pets.map((p) => <li key={p.id}><span className="ico sm"><VI n={PET[p.species] ?? "paw"} size={30} /></span><span><strong>{p.name}</strong><br /><small>{(t.sp as Record<string, string>)[p.species]}</small></span><a className="btn btn-ghost" style={{ marginLeft: "auto" }} href={`/${lang}/${typeof window !== "undefined" ? window.location.pathname.split("/")[2] || lang : lang}/compte/animal/${p.id}`}>{CARNET[lang] ?? CARNET.en}</a></li>)}</ul>}
+      {pets.length === 0 ? <p>{t.noPets}</p> : <ul className="acct-list">{pets.map((p) => <li key={p.id}><span className="ico sm"><VI n={PET[p.species] ?? PET[categoryOf(p.species) ?? ""] ?? (p.species === "rodent" ? "hamster" : "paw")} size={30} /></span><span><strong>{p.name}</strong><br /><small>{speciesName(p.species, lang)}</small></span><a className="btn btn-ghost" style={{ marginLeft: "auto" }} href={`/${lang}/${typeof window !== "undefined" ? window.location.pathname.split("/")[2] || lang : lang}/compte/animal/${p.id}`}>{CARNET[lang] ?? CARNET.en}</a></li>)}</ul>}
       <div className="row" style={{ marginTop: 8 }}><input className="field" placeholder={t.name} value={name} onChange={(e) => setName(e.target.value)} />
-        <select className="field" value={species} onChange={(e) => setSpecies(e.target.value)}>{Object.entries(t.sp).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
+        <SpeciesSelect lang={lang} value={species} onChange={setSpecies} />
         <button className="btn" onClick={addPet} disabled={!name.trim()}>{t.add}</button></div>
     </section>
     <p><button className="btn btn-quiet" onClick={async () => { await signOut(); setUser(false); }}>{t.out}</button></p>
