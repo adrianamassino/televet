@@ -1384,3 +1384,15 @@ body:has(.app)::before, body:has(.app)::after { display: none !important; }
 .sr-search:has(input[name="type"][value="video"]:checked) .sr-go, .sr-search:not(:has(input[name="type"]:checked)) .sr-go { flex: 1; }
 @supports not selector(:has(*)) { .sr-search .sr-field { max-width: 100%; flex: 1 1 220px; padding: 0 14px; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .sr-search .sr-field { transition: none; } }
+
+/* v56 — directory: every town by department (collapsible, crawlable links) */
+.dir-deps { margin-top: 40px; }
+.dir-deps details { border-bottom: 1px solid #e2e9f7; }
+.dir-deps summary { cursor: pointer; display: flex; justify-content: space-between; gap: 12px; padding: 12px 4px; list-style: none; color: #0b1f5c; }
+.dir-deps summary::-webkit-details-marker { display: none; }
+.dir-deps summary::after { content: "+"; font-weight: 700; color: #0a3fd6; }
+.dir-deps details[open] summary::after { content: "–"; }
+.dir-deps summary small { margin-left: auto; color: #5a6a91; }
+.dir-deps ul { list-style: none; padding: 0 4px 14px; margin: 0; columns: 3 180px; column-gap: 24px; }
+.dir-deps li { break-inside: avoid; padding: 3px 0; font-size: .95rem; }
+.dir-deps li small { color: #8a97b8; }
