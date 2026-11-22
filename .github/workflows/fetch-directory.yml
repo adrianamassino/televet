@@ -1,11 +1,16 @@
 name: Fetch directory data (France)
-# Downloads the public list of French veterinary establishments and saves it on the "directory-data" branch,
-# from where it is loaded into the database. Needs no secret and does not touch the website.
+# France: downloads the public list of French veterinary establishments (SIRENE).
+# Other countries: fill "countries" (e.g. IT ES AR) to download vet clinics from OpenStreetMap instead.
+# Files are saved on the "directory-data" branch, from where "Load directory into Supabase" loads them.
 on:
   workflow_dispatch:
     inputs:
       departments:
-        description: "Departments (space-separated), empty = all"
+        description: "France: departments (space-separated), empty = all"
+        required: false
+        default: ""
+      countries:
+        description: "Other countries from OpenStreetMap (e.g. IT ES AR); when set, France is skipped"
         required: false
         default: ""
 permissions:
@@ -19,14 +24,14 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: npm install --no-save tsx@4
-      - run: npx tsx scripts/fetch-directory.ts ${{ github.event.inputs.departments }}
-      - name: Save on the directory-data branch
+      - if: github.event.inputs.countries == ''
+        run: npx tsx scripts/fetch-directory.ts ${{ github.event.inputs.departments }}
+      - if: github.event.inputs.countries != ''
+        run: npx tsx scripts/fetch-osm.ts ${{ github.event.inputs.countries }}
+      - name: Save on the directory-data branch (other files are kept)
         run: |
-          mv data/directory-fr.json /tmp/directory-fr.json
+          mkdir -p /tmp/out && mv data/directory-*.json /tmp/out/
           git config user.name "televet-bot"; git config user.email "bot@televet.co"
-          git checkout --orphan directory-data
-          git rm -rf --cached . >/dev/null; rm -rf ./* .github 2>/dev/null || true
-          mkdir -p data && mv /tmp/directory-fr.json data/
-          git add data/directory-fr.json
-          git commit -m "Directory data $(date -u +%F)"
-          git push -f origin directory-data
+          git fetch origin directory-data && git checkout -f directory-data
+          mkdir -p data && cp /tmp/out/*.json data/
+          git add data && git commit -m "Directory data $(date -u +%F)" && git push origin directory-data

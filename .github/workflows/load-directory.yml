@@ -9,7 +9,7 @@ on:
         required: true
         default: "fr"
   workflow_run:
-    workflows: ["Fetch directory data (France)", "Fetch directory data (OpenStreetMap)"]
+    workflows: ["Fetch directory data (France)"]
     types: [completed]
 permissions:
   id-token: write
