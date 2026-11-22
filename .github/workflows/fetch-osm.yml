@@ -1,0 +1,29 @@
+name: Fetch directory data (OpenStreetMap)
+# Downloads vet clinics of other countries from OpenStreetMap and adds them to the "directory-data" branch;
+# "Load directory into Supabase" then loads them. No secret, no website involved.
+on:
+  workflow_dispatch:
+    inputs:
+      countries:
+        description: "Country codes (space-separated), e.g. IT ES AR"
+        required: true
+        default: "IT ES AR"
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-save tsx@4
+      - run: npx tsx scripts/fetch-osm.ts ${{ github.event.inputs.countries }}
+      - name: Add to the directory-data branch
+        run: |
+          mkdir -p /tmp/out && mv data/directory-*.json /tmp/out/
+          git config user.name "televet-bot"; git config user.email "bot@televet.co"
+          git fetch origin directory-data && git checkout -f directory-data
+          mkdir -p data && cp /tmp/out/*.json data/
+          git add data && git commit -m "OSM directory data $(date -u +%F)" && git push origin directory-data
