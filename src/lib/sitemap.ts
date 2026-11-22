@@ -82,6 +82,8 @@ export function buildEntries(d: SitemapData): Entry[] {
       }
     }
   }
+  // French guide pages (video, home visits) are useful before the first vet joins: always listed for France, in French
+  if (live.includes("FR")) for (const svc of ["video", "home"] as const) { countryServices.delete(`FR|${svc}`); out.push(...group("services", [["fr", "FR", `/fr/fr/${SERVICE_SLUGS[svc].fr}`]])); }
   for (const k of countryServices) {
     const [cc, svc] = k.split("|") as [string, "home" | "video" | "clinic"];
     out.push(...group("services", versionsOf([cc], (l, c) => (SERVICE_SLUGS[svc][l] ? `/${l}/${c}/${SERVICE_SLUGS[svc][l]}` : null))));

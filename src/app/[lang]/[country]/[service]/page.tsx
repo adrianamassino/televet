@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/countries";
-import { breadcrumbLd, ldJson, organizationLd, pageMetadata, SERVICE_SLUGS, serviceFromSlug, SITE, veterinaryCareLd } from "@/lib/seo";
+import { breadcrumbLd, faqLd, ldJson, organizationLd, pageMetadata, SERVICE_SLUGS, serviceFromSlug, SITE, slugify, veterinaryCareLd } from "@/lib/seo";
+import { GUIDE_FR } from "./guide-fr";
 
 /**
  * Country-level page for a service: /fr/fr/veterinaire-en-ligne, /es/ar/veterinario-a-domicilio …
@@ -27,6 +28,9 @@ const TXT: Record<string, { h1: Record<Svc, string>; intro: Record<Svc, string>;
 TXT["pt-BR"] = brazilian(TXT.pt);
 
 
+/** Guide content exists for French pages in France (video and home visits first). */
+const guideFor = (lang: string, cc: string, svc: Svc) => (lang === "fr" && cc === "FR" && (svc === "video" || svc === "home") ? GUIDE_FR[svc] : undefined);
+
 async function load(lang: string, country: string, service: string) {
   const cc = country.toUpperCase(), svc = serviceFromSlug(lang, service);
   if (!COUNTRIES[cc] || !COUNTRIES[cc].languages.includes(lang) || !svc) return null;
@@ -40,10 +44,11 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
   const { lang, country, service } = await params;
   const d = await load(lang, country, service);
   if (!d) return {};
-  const t = pick(TXT, lang, country);
+  const t = pick(TXT, lang, country), g = guideFor(lang, d.cc, d.svc);
   return pageMetadata({
-    title: `${t.h1[d.svc]} — ${d.countryName} | Televet`, description: t.intro[d.svc].replace("{c}", d.countryName),
-    lang, country: d.cc, onlyCountry: d.cc, index: d.list.length > 0,
+    title: g ? `${g.title} | Televet` : `${t.h1[d.svc]} — ${d.countryName} | Televet`, description: g ? g.lead.slice(0, 158) : t.intro[d.svc].replace("{c}", d.countryName),
+    lang, country: d.cc, onlyCountry: d.cc, index: d.list.length > 0 || !!g, // the guide makes the page useful even before the first vet
+
     path: (l, c) => `/${l}/${c.toLowerCase()}/${SERVICE_SLUGS[d.svc][l] ?? service}`,
   });
 }
@@ -52,18 +57,38 @@ export default async function ServicePage({ params }: P) {
   const { lang, country, service } = await params;
   const d = await load(lang, country, service);
   if (!d) notFound();
-  const t = pick(TXT, lang, country);
-  const base = `${SITE}/${lang}/${country}`;
+  const t = pick(TXT, lang, country), g = guideFor(lang, d.cc, d.svc);
+  const base = `${SITE}/${lang}/${country}`, rel = `/${lang}/${country}`;
+  // biggest towns of the directory, for the home-visit guide (internal links to the city pages)
+  let towns: { name: string; slug: string }[] = [];
+  if (g?.cities) {
+    const { data } = await adminClient().from("cities").select("name, slug, directory_listings(count)").eq("country", d.cc).limit(400);
+    towns = ((data ?? []) as unknown as { name: string; slug: string; directory_listings: { count: number }[] }[])
+      .sort((a, b) => (b.directory_listings?.[0]?.count ?? 0) - (a.directory_listings?.[0]?.count ?? 0)).slice(0, 24).map((x) => ({ name: x.name, slug: x.slug || slugify(x.name) }));
+  }
   const ld = [organizationLd(), breadcrumbLd([{ name: "Televet", url: `${base}/` }, { name: t.h1[d.svc], url: `${base}/${service}` }]),
+    ...(g ? [faqLd(g.faq), { "@context": "https://schema.org", "@type": "Service", serviceType: t.h1[d.svc], provider: { "@type": "Organization", name: "Televet", url: SITE }, areaServed: { "@type": "Country", name: d.countryName } }] : []),
     ...d.list.map((p) => veterinaryCareLd({ name: p.name, url: `${base}/veterinaire/${p.slug}`, description: p.headline ?? undefined, address: p.address ?? undefined, postalCode: p.postal_code ?? undefined, country: d.cc, phone: p.phone ?? undefined, languages: p.languages }))];
   return (
-    <main className="wrap narrow">
+    <main className="wrap narrow svc-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
-      <h1>{t.h1[d.svc]}</h1>
-      <p>{t.intro[d.svc].replace("{c}", d.countryName)}</p>
+      <nav aria-label="breadcrumb"><a href={`${rel}/`}>Televet</a> › {t.h1[d.svc]}</nav>
+      <h1>{g ? g.title : t.h1[d.svc]}</h1>
+      <p className="lead-p">{g ? g.lead : t.intro[d.svc].replace("{c}", d.countryName)}</p>
+      <p><a className="btn" href={`${rel}/recherche?type=${d.svc}`}>{d.svc === "video" ? "Voir les vétérinaires en visio" : d.svc === "home" ? "Trouver un vétérinaire qui se déplace" : t.list} →</a></p>
       {d.list.length === 0
-        ? <p>{t.empty.replace("{c}", d.countryName)} <a href="mailto:contact@televet.co">{t.ask}</a></p>
-        : (<><h2>{t.list}</h2><ul className="cards">{d.list.map((p) => <li key={p.id}><h3><a href={`/${lang}/${country}/veterinaire/${p.slug}`}>{p.name}</a></h3><p>{p.headline}</p></li>)}</ul></>)}
+        ? (!g && <p>{t.empty.replace("{c}", d.countryName)} <a href="mailto:contact@televet.co">{t.ask}</a></p>)
+        : (<><h2>{t.list}</h2><ul className="cards">{d.list.map((p) => <li key={p.id}><h3><a href={`${rel}/veterinaire/${p.slug}`}>{p.name}</a></h3><p>{p.headline}</p></li>)}</ul></>)}
+      {g && <>
+        <h2>Comment ça marche</h2>
+        <ol className="svc-steps">{g.steps.map((x) => <li key={x}>{x}</li>)}</ol>
+        {g.sections.map((sec) => <section key={sec.h}><h2>{sec.h}</h2>{sec.p && <p>{sec.p}</p>}{sec.li && <ul>{sec.li.map((x) => <li key={x}>{x}</li>)}</ul>}</section>)}
+        {towns.length > 0 && <section><h2>Cliniques et vétérinaires par ville</h2>
+          <ul className="svc-towns">{towns.map((x) => <li key={x.slug}><a href={`${rel}/annuaire/${x.slug}`}>{x.name}</a></li>)}</ul></section>}
+        <h2>Questions fréquentes</h2>
+        {g.faq.map((f) => <details key={f.q} className="svc-faq"><summary>{f.q}</summary><p>{f.a}</p></details>)}
+        <p className="sr-urgent" style={{ marginTop: 24 }}>En cas d&apos;urgence, allez immédiatement dans une clinique vétérinaire d&apos;urgence.</p>
+      </>}
     </main>
   );
 }

@@ -1396,3 +1396,13 @@ body:has(.app)::before, body:has(.app)::after { display: none !important; }
 .dir-deps ul { list-style: none; padding: 0 4px 14px; margin: 0; columns: 3 180px; column-gap: 24px; }
 .dir-deps li { break-inside: avoid; padding: 3px 0; font-size: .95rem; }
 .dir-deps li small { color: #8a97b8; }
+
+/* v57 — service guide pages */
+.svc-page h2 { margin-top: 36px; }
+.svc-steps { counter-reset: s; list-style: none; padding: 0; display: grid; gap: 10px; }
+.svc-steps li { counter-increment: s; position: relative; padding: 12px 14px 12px 54px; background: #f3f7ff; border-radius: 16px; }
+.svc-steps li::before { content: counter(s); position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; background: linear-gradient(135deg, #0a3fd6, #22b8ea); }
+.svc-towns { list-style: none; padding: 0; columns: 3 160px; }
+.svc-towns li { padding: 3px 0; }
+.svc-faq { border-bottom: 1px solid #e2e9f7; padding: 10px 0; }
+.svc-faq summary { cursor: pointer; font-weight: 700; color: #0b1f5c; }
