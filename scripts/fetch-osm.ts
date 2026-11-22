@@ -15,7 +15,11 @@ async function overpass(q: string): Promise<El[]> {
   for (let i = 0; i < 8; i++) {
     try {
       const r = await fetch(OVERPASS[i % OVERPASS.length], { method: "POST", body: new URLSearchParams({ data: q }), headers: { "user-agent": "Televet directory (contact@televet.co)" } });
-      if (r.ok) return ((await r.json()) as { elements: El[] }).elements;
+      if (r.ok) {
+        const j = (await r.json()) as { elements: El[]; remark?: string };
+        if (!j.remark) return j.elements;
+        console.log(`overpass incomplete (${j.remark.slice(0, 120)}), retry`); // a time-out returns partial data: never keep it
+      }
       console.log(`overpass ${r.status}, retry`);
     } catch (e) { console.log(`overpass error ${(e as Error).message}, retry`); }
     await wait(10000 * (i + 1));
@@ -30,9 +34,9 @@ const km = (a: [number, number], b: [number, number]) => {
 
 async function country(cc: string) {
   const area = `area["ISO3166-1"="${cc}"][admin_level=2]->.a;`;
-  const vets = await overpass(`[out:json][timeout:600];${area}nwr["amenity"="veterinary"](area.a);out center tags;`);
+  const vets = await overpass(`[out:json][timeout:900][maxsize:1073741824];${area}nwr["amenity"="veterinary"](area.a);out center tags;`);
   const towns = vets.some((e) => !e.tags?.["addr:city"])
-    ? (await overpass(`[out:json][timeout:600];${area}node["place"~"^(city|town|village)$"]["name"](area.a);out;`))
+    ? (await overpass(`[out:json][timeout:900][maxsize:1073741824];${area}node["place"~"^(city|town|village)$"]["name"](area.a);out;`))
       .filter((p) => p.lat != null).map((p) => ({ name: p.tags!.name, at: [p.lat!, p.lon!] as [number, number], big: p.tags!.place !== "village" }))
     : [];
   const grid = new Map<string, typeof towns>(); // coarse grid: the nearest-town lookup stays fast
